@@ -30,6 +30,7 @@ Auth Google, Realtime, Storage) + Zod + TanStack Query + Zustand.
 
 ## Aturan wajib (ringkasan, detail lengkap di file terkait)
 
+- Perubahan schema database HANYA boleh dilakukan lewat file migration di `supabase/migrations/`. DILARANG mengeksekusi SQL (`CREATE TABLE`, `ALTER`, dll) langsung ke database remote lewat tool/MCP apapun tanpa melalui migration file dan tanpa persetujuan eksplisit dari user, bahkan untuk keperluan testing sekalipun.
 - Business logic terpisah dari UI: `components/` harus "dumb" (presentational only), semua logic ada di `hooks/` atau Server Action.
 - Perhitungan skor final selalu divalidasi di server, tidak boleh hanya di client.
 - Naming: file/folder `kebab-case`, komponen `PascalCase`, function/variable `camelCase`, hook diawali `use`.

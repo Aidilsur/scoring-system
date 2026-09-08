@@ -74,3 +74,9 @@ standings (bisa berupa view/materialized computation, bukan tabel manual)
 `matches` yang sudah `completed` — baik lewat SQL view/RPC function di Supabase,
 ataupun dihitung di server saat fetch — jangan disimpan sebagai state manual
 yang gampang out-of-sync.
+
+---
+
+## Aturan Perubahan Schema & Migration (Wajib Dipatuhi)
+
+> **PENTING**: Perubahan schema database HANYA boleh dilakukan lewat file migration di `supabase/migrations/`. DILARANG mengeksekusi SQL (`CREATE TABLE`, `ALTER`, dll) langsung ke database remote lewat tool/MCP apapun tanpa melalui migration file dan tanpa persetujuan eksplisit dari user, bahkan untuk keperluan testing sekalipun.
