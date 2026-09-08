@@ -16,6 +16,11 @@ export interface Category {
     partner_type: PartnerType | string
     level: CategoryLevel | string
     is_active?: boolean
+    created_at?: string
+}
+
+export interface CategoryWithTeamCount extends Category {
+    team_count: number
 }
 
 export interface Team {

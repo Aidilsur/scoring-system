@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/server'
 import { Card, Badge } from '@/components/ui'
 import { LogoutButton } from '@/components/admin/LogoutButton'
 import {
+    Layers,
     Users,
     SlidersHorizontal,
     Shuffle,
@@ -23,6 +24,13 @@ export const dynamic = 'force-dynamic'
 
 // Menu modul admin yang akan diimplementasikan sesuai §6.2 (Module-level constant sesuai docs/component-architecture.md §G & §H)
 const ADMIN_MODULES = [
+    {
+        title: 'Kategori Turnamen',
+        path: '/admin/categories',
+        description: 'Kelola kelas kategori (tipe partner × skill level)',
+        badge: 'Prasyarat',
+        icon: Layers,
+    },
     {
         title: 'Verifikasi Peserta',
         path: '/admin/teams',
@@ -147,11 +155,13 @@ export default async function AdminDashboardPage() {
                         <span className="text-[11px] text-zinc-500">Berdasarkan Spesifikasi §6.2</span>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
                         {ADMIN_MODULES.map((module) => {
                             const isAvailable =
+                                module.path === '/admin/categories' ||
                                 module.path === '/admin/teams' ||
-                                module.path === '/admin/tournament-setup'
+                                module.path === '/admin/tournament-setup' ||
+                                module.path === '/admin/draw'
                             return (
                                 <Link
                                     key={module.path}

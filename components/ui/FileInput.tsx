@@ -54,6 +54,19 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
                     </p>
                 )}
 
+                {/* Elemen input file harus selalu ter-mount di DOM agar browser FormData selalu menyertakan file saat form submit */}
+                <input
+                    ref={ref}
+                    type="file"
+                    id={inputId}
+                    name={name}
+                    accept={accept}
+                    onChange={onFileChange}
+                    disabled={disabled}
+                    className="hidden"
+                    {...props}
+                />
+
                 {!selectedFile ? (
                     <label
                         htmlFor={inputId}
@@ -65,17 +78,6 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
                                 : 'border-zinc-300 dark:border-zinc-700 hover:border-emerald-500 dark:hover:border-emerald-500'
                         }`}
                     >
-                        <input
-                            ref={ref}
-                            type="file"
-                            id={inputId}
-                            name={name}
-                            accept={accept}
-                            onChange={onFileChange}
-                            disabled={disabled}
-                            className="hidden"
-                            {...props}
-                        />
                         <div className="w-12 h-12 bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 rounded-full flex items-center justify-center mx-auto mb-3">
                             <UploadCloud className="w-6 h-6" />
                         </div>

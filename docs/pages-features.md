@@ -7,6 +7,7 @@
 
 ## 6.2 Admin (butuh login Google, protected route `/admin/*`)
 - `/admin/login` — Google OAuth via Supabase Auth
+- `/admin/categories` — kelola kategori turnamen (kombinasi partner_type × level), sesuai docs/business-rules.md §4.1. Wajib dikerjakan/diisi sebelum modul lain (register, teams, draw) bisa berfungsi.
 - `/admin/teams` — kelola & verifikasi peserta (approve/reject pembayaran)
 - `/admin/tournament-setup` — set jumlah court, ukuran grup, toggle golden point/third place
 - `/admin/draw` — generate/regenerate drawing grup per kategori

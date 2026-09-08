@@ -100,6 +100,12 @@ export function useTeamRegistration(): UseTeamRegistrationReturn {
 
             const formData = new FormData(e.currentTarget)
 
+            // Fail-safe: jika browser FormData belum menangkap file tapi selectedFile ada di state
+            const currentFileInForm = formData.get('payment_proof')
+            if ((!currentFileInForm || (currentFileInForm instanceof File && currentFileInForm.size === 0)) && selectedFile) {
+                formData.set('payment_proof', selectedFile)
+            }
+
             // Ekstrak nilai untuk validasi Zod client-side cepat
             const rawValues = {
                 category_id: formData.get('category_id')?.toString() || '',
@@ -159,7 +165,7 @@ export function useTeamRegistration(): UseTeamRegistrationReturn {
                 }
             })
         },
-        [filePreview]
+        [selectedFile, filePreview]
     )
 
     return {
