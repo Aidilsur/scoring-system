@@ -46,3 +46,9 @@ selalu "cukup 1 tempat".
 - Data statis (array/object yang tidak berubah, seperti daftar hint/petunjuk, opsi dropdown tetap, konfigurasi label, tabs filter, daftar modul) **harus didefinisikan sebagai module-level constant di luar function component**, bukan didefinisikan ulang di dalam body komponen.
 - Tujuan: Menghindari re-creation referensi object/array baru di setiap re-render dan mencegah duplikasi markup berulang di JSX.
 - Render elemen daftar tersebut secara data-driven menggunakan `.map()`, dan selalu sertakan `key` yang unik dan stabil (misal `item.id` atau `item.label`, bukan index array).
+
+## H. Standardisasi Icon Menggunakan lucide-react
+
+- Semua icon menggunakan library `lucide-react`, dilarang menulis SVG path manual inline di komponen.
+- Import hanya icon yang dipakai (named import) untuk menjaga bundle size dan tree-shaking tetap optimal (contoh: `import { Users, ChevronDown } from 'lucide-react'`).
+- Pengecualian: Aset brand resmi pihak ketiga (seperti logo Google OAuth 4-warna) yang tidak tersedia di `lucide-react` wajib ditempatkan di komponen icon tersendiri di `components/icons/` (misal `components/icons/GoogleIcon.tsx`), bukan ditulis inline di dalam komponen view/button.

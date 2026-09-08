@@ -2,6 +2,7 @@
 
 import React from 'react'
 import Link from 'next/link'
+import { CheckCircle2, AlertCircle, X, Info } from 'lucide-react'
 import { useTournamentSettingsForm } from '@/hooks/useTournamentSettingsForm'
 import { TournamentSetupForm } from './TournamentSetupForm'
 import { Card, Button } from '@/components/ui'
@@ -109,23 +110,19 @@ export function TournamentSetupView({ initialData }: TournamentSetupViewProps) {
                 >
                     <div className="flex items-center gap-2">
                         {feedback.type === 'success' ? (
-                            <svg className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
+                            <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
                         ) : (
-                            <svg className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
+                            <AlertCircle className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0" />
                         )}
                         <span>{feedback.message}</span>
                     </div>
                     <button
                         type="button"
                         onClick={clearFeedback}
-                        className="text-xs opacity-70 hover:opacity-100 transition p-1"
+                        className="text-xs opacity-70 hover:opacity-100 transition p-1 cursor-pointer"
                         aria-label="Tutup pemberitahuan"
                     >
-                        ✕
+                        <X className="w-4 h-4" />
                     </button>
                 </div>
             )}
@@ -166,7 +163,7 @@ export function TournamentSetupView({ initialData }: TournamentSetupViewProps) {
                 <div className="space-y-6">
                     <Card className="p-5 bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 space-y-4">
                         <div className="flex items-center gap-2 text-zinc-900 dark:text-white font-bold text-sm">
-                            <span className="text-emerald-500">ℹ</span>
+                            <Info className="w-4 h-4 text-emerald-500 shrink-0" />
                             Petunjuk Konfigurasi
                         </div>
                         <ul className="text-xs text-zinc-600 dark:text-zinc-400 space-y-2.5 list-disc pl-4 leading-relaxed">

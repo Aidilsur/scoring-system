@@ -1,4 +1,5 @@
 import React, { forwardRef, SelectHTMLAttributes } from 'react'
+import { ChevronDown } from 'lucide-react'
 
 export interface SelectOption {
     value: string
@@ -74,9 +75,7 @@ export const SelectInput = forwardRef<HTMLSelectElement, SelectInputProps>(
                             : children}
                     </select>
                     <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3.5 text-zinc-400">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
+                        <ChevronDown className="w-4 h-4" />
                     </div>
                 </div>
                 {error && <p className="text-xs text-rose-500 font-medium">{error}</p>}

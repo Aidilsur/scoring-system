@@ -44,3 +44,39 @@ export interface TournamentSettings {
     updated_at?: string
 }
 
+export interface Group {
+    id?: string
+    category_id?: string
+    name: string
+    teams?: Team[]
+    created_at?: string
+}
+
+export interface GroupTeam {
+    id?: string
+    group_id: string
+    team_id: string
+    teams?: Team
+}
+
+export interface Match {
+    id: string
+    category_id: string
+    group_id?: string | null
+    round: MatchRound
+    team_a_id: string
+    team_b_id: string
+    court_id?: string | null
+    status: MatchStatus
+    winner_team_id?: string | null
+    games_team_a: number
+    games_team_b: number
+    current_point_a?: string | null
+    current_point_b?: string | null
+    scheduled_time?: string | null
+    completed_at?: string | null
+    team_a?: Team | null
+    team_b?: Team | null
+    group?: Group | null
+}
+

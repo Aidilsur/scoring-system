@@ -2,6 +2,7 @@
 
 import React from 'react'
 import Link from 'next/link'
+import { RefreshCw, CheckCircle2, AlertCircle, X } from 'lucide-react'
 import { useTeamsManagement } from '@/hooks/useTeamsManagement'
 import { TeamFilters } from './TeamFilters'
 import { TeamCard } from './TeamCard'
@@ -66,19 +67,9 @@ export function TeamsManagementView() {
                         onClick={() => refetch()}
                         disabled={isLoading}
                     >
-                        <svg
+                        <RefreshCw
                             className={`w-3.5 h-3.5 mr-1.5 ${isLoading ? 'animate-spin' : ''}`}
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                            />
-                        </svg>
+                        />
                         Refresh Data
                     </Button>
                 </div>
@@ -95,13 +86,9 @@ export function TeamsManagementView() {
                 >
                     <div className="flex items-center gap-2">
                         {toast.type === 'success' ? (
-                            <svg className="w-4 h-4 text-emerald-600 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                            </svg>
+                            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                         ) : (
-                            <svg className="w-4 h-4 text-rose-600 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                            </svg>
+                            <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
                         )}
                         <span>{toast.message}</span>
                     </div>
@@ -114,9 +101,7 @@ export function TeamsManagementView() {
                         className="p-1 text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 rounded-lg"
                         aria-label="Tutup notifikasi"
                     >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
+                        <X className="w-4 h-4" />
                     </Button>
                 </div>
             )}

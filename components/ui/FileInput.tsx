@@ -1,4 +1,5 @@
 import React, { forwardRef, InputHTMLAttributes } from 'react'
+import { UploadCloud, X } from 'lucide-react'
 import { formatFileSize } from '@/utils/format'
 
 export interface FileInputProps
@@ -76,9 +77,7 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
                             {...props}
                         />
                         <div className="w-12 h-12 bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                            </svg>
+                            <UploadCloud className="w-6 h-6" />
                         </div>
                         <p className="text-sm font-medium text-zinc-800 dark:text-zinc-200">
                             Klik untuk memilih file bukti transfer
@@ -119,9 +118,7 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
                                 className="p-2 text-zinc-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition shrink-0 cursor-pointer disabled:opacity-50"
                                 title="Hapus file"
                             >
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                </svg>
+                                <X className="w-5 h-5" />
                             </button>
                         )}
                     </div>

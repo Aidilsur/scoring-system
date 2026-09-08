@@ -1,4 +1,5 @@
 import React from 'react'
+import { X, ExternalLink } from 'lucide-react'
 import { Team } from '@/types/domain'
 import { TeamStatusBadge } from './TeamStatusBadge'
 import { formatCategoryBadge, formatPhoneNumber } from '@/utils/format'
@@ -62,9 +63,7 @@ export function TeamDetailModal({
                         className="p-1.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 rounded-lg"
                         aria-label="Tutup modal"
                     >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
+                        <X className="w-5 h-5" />
                     </Button>
                 </div>
 
@@ -172,9 +171,7 @@ export function TeamDetailModal({
                                     className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold hover:underline inline-flex items-center gap-1"
                                 >
                                     <span>Buka Dokumen di Tab Baru</span>
-                                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                    </svg>
+                                    <ExternalLink className="w-3.5 h-3.5" />
                                 </a>
                             </div>
                         </div>

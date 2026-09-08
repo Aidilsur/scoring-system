@@ -5,6 +5,14 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { Card, Badge } from '@/components/ui'
 import { LogoutButton } from '@/components/admin/LogoutButton'
+import {
+    Users,
+    SlidersHorizontal,
+    Shuffle,
+    Zap,
+    ArrowRight,
+    ShieldCheck,
+} from 'lucide-react'
 
 export const metadata: Metadata = {
     title: 'Admin Dashboard — Padel Tournament',
@@ -13,63 +21,35 @@ export const metadata: Metadata = {
 
 export const dynamic = 'force-dynamic'
 
-// Menu modul admin yang akan diimplementasikan sesuai §6.2 (Module-level constant sesuai docs/component-architecture.md §G)
+// Menu modul admin yang akan diimplementasikan sesuai §6.2 (Module-level constant sesuai docs/component-architecture.md §G & §H)
 const ADMIN_MODULES = [
     {
         title: 'Verifikasi Peserta',
         path: '/admin/teams',
         description: 'Kelola tim pendaftar & verifikasi bukti pembayaran',
         badge: 'Pending Review',
-        icon: (
-            <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-            />
-        ),
+        icon: Users,
     },
     {
         title: 'Setup Turnamen',
         path: '/admin/tournament-setup',
         description: 'Atur jumlah court, ukuran grup, & golden point',
         badge: 'Konfigurasi',
-        icon: (
-            <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-            />
-        ),
+        icon: SlidersHorizontal,
     },
     {
         title: 'Drawing Grup',
         path: '/admin/draw',
         description: 'Generate & acak pembagian grup per kategori',
         badge: 'Otomatis',
-        icon: (
-            <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
-            />
-        ),
+        icon: Shuffle,
     },
     {
         title: 'Live Scoring (Hari-H)',
         path: '/admin/scoring',
         description: 'Pilih court aktif dan input skor poin langsung',
         badge: 'Prioritas Utama',
-        icon: (
-            <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M13 10V3L4 14h7v7l9-11h-7z"
-            />
-        ),
+        icon: Zap,
     },
 ]
 
@@ -182,9 +162,7 @@ export default async function AdminDashboardPage() {
                                 >
                                     <div className="flex items-center justify-between">
                                         <div className="w-10 h-10 rounded-xl bg-zinc-800/80 text-emerald-400 flex items-center justify-center group-hover:scale-105 transition-transform">
-                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                {module.icon}
-                                            </svg>
+                                            <module.icon className="w-5 h-5" />
                                         </div>
                                         <span className="text-[10px] font-semibold text-zinc-400 bg-zinc-800/60 px-2 py-0.5 rounded-md border border-zinc-700/40">
                                             {module.badge}
@@ -203,9 +181,7 @@ export default async function AdminDashboardPage() {
                                     <div className="pt-2">
                                         <span className="text-[11px] font-medium text-emerald-500 inline-flex items-center gap-1">
                                             {isAvailable ? 'Buka Modul' : 'Segera Hadir'}
-                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                            </svg>
+                                            <ArrowRight className="w-3 h-3" />
                                         </span>
                                     </div>
                                 </Link>
@@ -217,9 +193,7 @@ export default async function AdminDashboardPage() {
                 {/* Session Diagnostic & Info Card */}
                 <Card variant="bordered" className="bg-zinc-900/30 p-5 text-xs text-zinc-400 space-y-2">
                     <p className="font-semibold text-zinc-300 flex items-center gap-1.5">
-                        <svg className="w-4 h-4 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                        </svg>
+                        <ShieldCheck className="w-4 h-4 text-emerald-400" />
                         Sistem Proteksi Middleware Berjalan Normal
                     </p>
                     <p>

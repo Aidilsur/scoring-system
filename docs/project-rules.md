@@ -94,6 +94,6 @@ npm install zustand @tanstack/react-query
 ## 8. Asumsi & Hal yang Perlu Dikonfirmasi Saat Implementasi
 
 - Golden Point saat deuce diasumsikan **default ON**, tapi dibuat toggleable per turnamen
-- Jumlah grup per kategori mengikuti jumlah tim confirmed dibagi `team_per_group` — jika tidak habis dibagi rata (misal sisa 3 tim), perlu aturan tambahan (grup ganjil dengan bye, atau gabung ke grup lain) — **tandai sebagai TODO, minta konfirmasi user sebelum implementasi generate draw**
+- Jika jumlah tim tidak habis dibagi rata sesuai target ukuran grup, sistem mendistribusikan tim seserata mungkin antar grup (misal 14 tim target 4/grup → menghasilkan grup berisi 5,5,4 bukan 4,4,4,2), diimplementasikan di lib/draw/distributeTeamsToGroups.ts.
 - Pairing semifinal untuk kasus lebih dari 2 grup per kategori belum didefinisikan detail — buat fungsi pairing generik yang bisa dikonfigurasi
 - Pembayaran hanya diverifikasi manual oleh admin (tidak ada payment gateway otomatis di scope ini)
