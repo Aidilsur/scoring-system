@@ -2,7 +2,7 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { CheckCircle2, AlertCircle, X, Info } from 'lucide-react'
+import { CheckCircle2, AlertCircle, X, Info, ArrowLeft } from 'lucide-react'
 import { useTournamentSettingsForm } from '@/hooks/useTournamentSettingsForm'
 import { TournamentSetupForm } from './TournamentSetupForm'
 import { Card, Button } from '@/components/ui'
@@ -15,7 +15,7 @@ export interface TournamentSetupViewProps {
 const TOURNAMENT_SETTING_HINTS = [
     {
         label: 'Nama Turnamen',
-        description: 'Judul kegiatan yang tertera pada public scoreboard display.',
+        description: 'Judul kegiatan yang tertera pada public scoreboard display & pendaftaran.',
     },
     {
         label: 'Ukuran Grup',
@@ -71,29 +71,34 @@ export function TournamentSetupView({ initialData }: TournamentSetupViewProps) {
     return (
         <div className="space-y-6">
             {/* Top Navigation & Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-zinc-200 dark:border-zinc-800">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-emerald-800">
                 <div>
-                    <div className="flex items-center gap-2 text-xs text-zinc-500 mb-1">
-                        <Link href="/admin" className="hover:underline">
+                    <div className="flex items-center gap-2 text-xs text-emerald-400 mb-1">
+                        <Link href="/admin" className="hover:text-lime-400 transition-colors">
                             Admin
                         </Link>
                         <span>/</span>
-                        <span className="text-zinc-800 dark:text-zinc-200 font-medium">
+                        <span className="text-lime-400 font-bold uppercase tracking-wider">
                             Setup Turnamen
                         </span>
                     </div>
-                    <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">
+                    <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight uppercase">
                         Konfigurasi Turnamen
                     </h1>
-                    <p className="text-xs text-zinc-500 mt-0.5">
-                        Kelola parameter turnamen, format pertandingan grup, jumlah lapangan, dan aturan skor.
+                    <p className="text-xs sm:text-sm text-emerald-300/90 mt-1">
+                        Kelola parameter turnamen, format pertandingan grup, jumlah lapangan, dan aturan scoring.
                     </p>
                 </div>
 
                 <div className="flex items-center gap-2">
                     <Link href="/admin">
-                        <Button variant="secondary" size="sm">
-                            ← Kembali ke Dashboard
+                        <Button
+                            variant="secondary"
+                            size="sm"
+                            className="bg-emerald-900/80 hover:bg-emerald-800 border border-emerald-800 text-emerald-300 hover:text-white rounded-xl"
+                        >
+                            <ArrowLeft className="w-4 h-4 mr-1.5 text-lime-400" />
+                            Kembali ke Dashboard
                         </Button>
                     </Link>
                 </div>
@@ -102,19 +107,19 @@ export function TournamentSetupView({ initialData }: TournamentSetupViewProps) {
             {/* Alert / Feedback Notification */}
             {feedback && (
                 <div
-                    className={`p-4 rounded-xl text-sm flex items-start justify-between gap-3 transition ${
+                    className={`p-4 rounded-xl text-sm flex items-start justify-between gap-3 transition shadow-lg ${
                         feedback.type === 'success'
-                            ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-200 border border-emerald-200 dark:border-emerald-800/60'
-                            : 'bg-rose-50 dark:bg-rose-950/40 text-rose-800 dark:text-rose-200 border border-rose-200 dark:border-rose-800/60'
+                            ? 'bg-emerald-950 border border-lime-400/50 text-lime-300 shadow-emerald-950/60'
+                            : 'bg-red-950/80 border border-red-500/50 text-red-200 shadow-red-950/60'
                     }`}
                 >
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2.5">
                         {feedback.type === 'success' ? (
-                            <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                            <CheckCircle2 className="w-5 h-5 text-lime-400 shrink-0" />
                         ) : (
-                            <AlertCircle className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0" />
+                            <AlertCircle className="w-5 h-5 text-red-400 shrink-0" />
                         )}
-                        <span>{feedback.message}</span>
+                        <span className="font-semibold">{feedback.message}</span>
                     </div>
                     <button
                         type="button"
@@ -129,9 +134,14 @@ export function TournamentSetupView({ initialData }: TournamentSetupViewProps) {
 
             {/* Query Error State */}
             {isQueryError && (
-                <div className="p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 text-rose-800 dark:text-rose-200 text-sm flex items-center justify-between">
+                <div className="p-4 rounded-xl bg-red-950/80 border border-red-500/50 text-red-200 text-sm flex items-center justify-between shadow-lg">
                     <div>Gagal memuat pengaturan: {queryError?.message}</div>
-                    <Button variant="secondary" size="sm" onClick={() => refetch()}>
+                    <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => refetch()}
+                        className="bg-red-900/60 hover:bg-red-800 text-white border border-red-700/60 rounded-xl"
+                    >
                         Coba Lagi
                     </Button>
                 </div>
@@ -142,9 +152,9 @@ export function TournamentSetupView({ initialData }: TournamentSetupViewProps) {
                 {/* Form Column */}
                 <div className="lg:col-span-2">
                     {isQueryLoading && !settings ? (
-                        <Card className="p-12 text-center bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800">
-                            <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-emerald-500 border-t-transparent mb-3" />
-                            <p className="text-sm text-zinc-500">Memuat konfigurasi turnamen...</p>
+                        <Card className="p-12 text-center bg-emerald-900/70 border-emerald-800 rounded-xl">
+                            <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-lime-400 border-t-transparent mb-3" />
+                            <p className="text-sm text-emerald-300 font-medium">Memuat konfigurasi turnamen...</p>
                         </Card>
                     ) : (
                         <TournamentSetupForm
@@ -161,37 +171,39 @@ export function TournamentSetupView({ initialData }: TournamentSetupViewProps) {
 
                 {/* Information / Guidelines Sidebar */}
                 <div className="space-y-6">
-                    <Card className="p-5 bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 space-y-4">
-                        <div className="flex items-center gap-2 text-zinc-900 dark:text-white font-bold text-sm">
-                            <Info className="w-4 h-4 text-emerald-500 shrink-0" />
+                    <Card className="p-6 bg-emerald-900/70 border-emerald-800 rounded-xl space-y-4 shadow-xl shadow-emerald-950/40">
+                        <div className="flex items-center gap-2 text-lime-400 font-black text-xs uppercase tracking-wider">
+                            <Info className="w-4 h-4 text-lime-400 shrink-0" />
                             Petunjuk Konfigurasi
                         </div>
-                        <ul className="text-xs text-zinc-600 dark:text-zinc-400 space-y-2.5 list-disc pl-4 leading-relaxed">
+                        <ul className="text-xs text-emerald-300 space-y-3 list-disc pl-4 leading-relaxed">
                             {TOURNAMENT_SETTING_HINTS.map((hint) => (
                                 <li key={hint.label}>
-                                    <strong className="text-zinc-800 dark:text-zinc-200">
+                                    <strong className="text-white font-bold">
                                         {hint.label}:
                                     </strong>{' '}
-                                    {hint.description}
+                                    <span className="text-emerald-300/90">{hint.description}</span>
                                 </li>
                             ))}
                         </ul>
                     </Card>
 
-                    <Card className="p-5 bg-zinc-50 dark:bg-zinc-900/60 border-zinc-200 dark:border-zinc-800 space-y-3">
-                        <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-500">
+                    <Card className="p-6 bg-emerald-900/50 border-emerald-800 rounded-xl space-y-3 shadow-md shadow-emerald-950/30">
+                        <h4 className="text-xs font-black uppercase tracking-wider text-emerald-400">
                             Modul Terkait Selanjutnya
                         </h4>
-                        <div className="space-y-2">
+                        <div className="space-y-2.5">
                             {RELATED_MODULES.map((module) => (
                                 <div
                                     key={module.title}
-                                    className="text-xs text-zinc-500 p-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800/40"
+                                    className="text-xs p-3.5 rounded-xl border border-emerald-800/80 bg-emerald-950/70 hover:border-lime-400/60 transition-colors"
                                 >
-                                    <strong className="text-zinc-800 dark:text-zinc-200">{module.title}</strong>
-                                    <p className="text-[11px] text-zinc-400 mt-0.5">
+                                    <div className="font-bold text-white">
+                                        {module.title}
+                                    </div>
+                                    <div className="text-emerald-300/80 mt-0.5">
                                         {module.description}
-                                    </p>
+                                    </div>
                                 </div>
                             ))}
                         </div>
