@@ -72,21 +72,21 @@ export function TournamentSetupView({ initialData }: TournamentSetupViewProps) {
     return (
         <div className="space-y-6">
             {/* Top Navigation & Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-emerald-800">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-zinc-800">
                 <div>
-                    <div className="flex items-center gap-2 text-xs text-emerald-400 mb-1">
+                    <div className="flex items-center gap-2 text-xs text-zinc-400 mb-1">
                         <Link href="/admin" className="hover:text-lime-400 transition-colors">
                             Admin
                         </Link>
                         <span>/</span>
-                        <span className="text-lime-400 font-bold uppercase tracking-wider">
+                        <span className="text-zinc-200 font-medium">
                             Setup Turnamen
                         </span>
                     </div>
-                    <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight uppercase">
+                    <h1 className="font-[family-name:var(--font-anton)] text-3xl sm:text-4xl text-white uppercase tracking-tight">
                         Konfigurasi Turnamen
                     </h1>
-                    <p className="text-xs sm:text-sm text-emerald-300/90 mt-1">
+                    <p className="text-xs sm:text-sm text-zinc-400 mt-1">
                         Kelola parameter turnamen, format pertandingan grup, jumlah lapangan, dan aturan scoring.
                     </p>
                 </div>
@@ -96,7 +96,7 @@ export function TournamentSetupView({ initialData }: TournamentSetupViewProps) {
                         <Button
                             variant="secondary"
                             size="sm"
-                            className="bg-emerald-900/80 hover:bg-emerald-800 border border-emerald-800 text-emerald-300 hover:text-white rounded-xl"
+                            className="bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white rounded-xl transition"
                         >
                             <ArrowLeft className="w-4 h-4 mr-1.5 text-lime-400" />
                             Kembali ke Dashboard
@@ -110,8 +110,8 @@ export function TournamentSetupView({ initialData }: TournamentSetupViewProps) {
                 <div
                     className={`p-4 rounded-xl text-sm flex items-start justify-between gap-3 transition shadow-lg ${
                         feedback.type === 'success'
-                            ? 'bg-emerald-950 border border-lime-400/50 text-lime-300 shadow-emerald-950/60'
-                            : 'bg-red-950/80 border border-red-500/50 text-red-200 shadow-red-950/60'
+                            ? 'bg-zinc-900 border border-lime-400/50 text-lime-300 shadow-black/40'
+                            : 'bg-zinc-900 border border-red-500/50 text-red-200 shadow-black/40'
                     }`}
                 >
                     <div className="flex items-center gap-2.5">
@@ -135,7 +135,7 @@ export function TournamentSetupView({ initialData }: TournamentSetupViewProps) {
 
             {/* Query Error State */}
             {isQueryError && (
-                <div className="p-4 rounded-xl bg-red-950/80 border border-red-500/50 text-red-200 text-sm flex items-center justify-between shadow-lg">
+                <div className="p-4 rounded-xl bg-zinc-900 border border-red-500/50 text-red-200 text-sm flex items-center justify-between shadow-lg">
                     <div>Gagal memuat pengaturan: {queryError?.message}</div>
                     <Button
                         variant="secondary"
@@ -153,9 +153,9 @@ export function TournamentSetupView({ initialData }: TournamentSetupViewProps) {
                 {/* Form & Share Column */}
                 <div className="lg:col-span-2 space-y-6">
                     {isQueryLoading && !settings ? (
-                        <Card className="p-12 text-center bg-emerald-900/70 border-emerald-800 rounded-xl">
+                        <Card className="p-12 text-center bg-zinc-900/70 border border-zinc-800 rounded-2xl">
                             <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-lime-400 border-t-transparent mb-3" />
-                            <p className="text-sm text-emerald-300 font-medium">Memuat konfigurasi turnamen...</p>
+                            <p className="text-sm text-zinc-400 font-medium">Memuat konfigurasi turnamen...</p>
                         </Card>
                     ) : (
                         <>
@@ -179,37 +179,37 @@ export function TournamentSetupView({ initialData }: TournamentSetupViewProps) {
 
                 {/* Information / Guidelines Sidebar */}
                 <div className="space-y-6">
-                    <Card className="p-6 bg-emerald-900/70 border-emerald-800 rounded-xl space-y-4 shadow-xl shadow-emerald-950/40">
-                        <div className="flex items-center gap-2 text-lime-400 font-black text-xs uppercase tracking-wider">
+                    <Card className="p-6 bg-zinc-900/80 border border-zinc-800 rounded-2xl space-y-4 shadow-xl">
+                        <div className="flex items-center gap-2 text-lime-400 font-bold text-xs uppercase tracking-wider">
                             <Info className="w-4 h-4 text-lime-400 shrink-0" />
                             Petunjuk Konfigurasi
                         </div>
-                        <ul className="text-xs text-emerald-300 space-y-3 list-disc pl-4 leading-relaxed">
+                        <ul className="text-xs text-zinc-400 space-y-3 list-disc pl-4 leading-relaxed">
                             {TOURNAMENT_SETTING_HINTS.map((hint) => (
                                 <li key={hint.label}>
-                                    <strong className="text-white font-bold">
+                                    <strong className="text-zinc-200 font-bold">
                                         {hint.label}:
                                     </strong>{' '}
-                                    <span className="text-emerald-300/90">{hint.description}</span>
+                                    <span className="text-zinc-400">{hint.description}</span>
                                 </li>
                             ))}
                         </ul>
                     </Card>
 
-                    <Card className="p-6 bg-emerald-900/50 border-emerald-800 rounded-xl space-y-3 shadow-md shadow-emerald-950/30">
-                        <h4 className="text-xs font-black uppercase tracking-wider text-emerald-400">
+                    <Card className="p-6 bg-zinc-900/50 border border-zinc-800 rounded-2xl space-y-3 shadow-md">
+                        <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-400">
                             Modul Terkait Selanjutnya
                         </h4>
                         <div className="space-y-2.5">
                             {RELATED_MODULES.map((module) => (
                                 <div
                                     key={module.title}
-                                    className="text-xs p-3.5 rounded-xl border border-emerald-800/80 bg-emerald-950/70 hover:border-lime-400/60 transition-colors"
+                                    className="text-xs p-3.5 rounded-xl border border-zinc-800 bg-zinc-950/70 hover:border-lime-400/50 transition-colors"
                                 >
                                     <div className="font-bold text-white">
                                         {module.title}
                                     </div>
-                                    <div className="text-emerald-300/80 mt-0.5">
+                                    <div className="text-zinc-400 mt-0.5">
                                         {module.description}
                                     </div>
                                 </div>
