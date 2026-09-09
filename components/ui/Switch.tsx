@@ -50,17 +50,17 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
                             {label && (
                                 <label
                                     htmlFor={switchId}
-                                    className={`text-xs font-semibold select-none cursor-pointer ${
+                                    className={`text-xs font-bold uppercase tracking-wider select-none cursor-pointer ${
                                         disabled
-                                            ? 'text-zinc-400 dark:text-zinc-600'
-                                            : 'text-zinc-700 dark:text-zinc-300'
+                                            ? 'text-zinc-600'
+                                            : 'text-zinc-200'
                                     }`}
                                 >
                                     {label}
                                 </label>
                             )}
                             {description && (
-                                <p className="text-[11px] text-zinc-500 dark:text-zinc-400 select-none">
+                                <p className="text-[11px] text-zinc-400 select-none">
                                     {description}
                                 </p>
                             )}
@@ -76,22 +76,22 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
                         aria-checked={checked}
                         disabled={disabled}
                         onClick={handleToggle}
-                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-emerald-500/50 disabled:opacity-50 disabled:cursor-not-allowed ${
+                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-lime-400/40 disabled:opacity-50 disabled:cursor-not-allowed ${
                             checked
-                                ? 'bg-emerald-600 dark:bg-emerald-500'
-                                : 'bg-zinc-300 dark:bg-zinc-700'
+                                ? 'bg-lime-400'
+                                : 'bg-zinc-800 border-zinc-700'
                         } ${className}`}
                     >
                         <span
                             aria-hidden="true"
-                            className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
-                                checked ? 'translate-x-5' : 'translate-x-0'
+                            className={`pointer-events-none inline-block h-5 w-5 transform rounded-full shadow-md ring-0 transition duration-200 ease-in-out ${
+                                checked ? 'translate-x-5 bg-zinc-950' : 'translate-x-0 bg-zinc-400'
                             }`}
                         />
                     </button>
                 </div>
 
-                {error && <p className="text-xs text-rose-500 font-medium">{error}</p>}
+                {error && <p className="text-xs text-rose-400 font-medium">{error}</p>}
             </div>
         )
     }

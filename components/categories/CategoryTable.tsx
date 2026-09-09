@@ -105,10 +105,10 @@ export function CategoryTable({
     return (
         <div className="space-y-4">
             {/* Desktop Table View */}
-            <div className="hidden md:block overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/70 shadow-sm">
+            <div className="hidden md:block overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/80 shadow-xl shadow-black/30">
                 <table className="w-full text-left border-collapse">
                     <thead>
-                        <tr className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/75 dark:bg-zinc-900/90 text-[11px] font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                        <tr className="border-b border-zinc-800 bg-zinc-950/80 text-[11px] font-bold uppercase tracking-wider text-zinc-400">
                             {TABLE_HEADERS.map((header) => (
                                 <th
                                     key={header.label}
@@ -125,7 +125,7 @@ export function CategoryTable({
                             ))}
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800 text-sm">
+                    <tbody className="divide-y divide-zinc-800 text-sm">
                         {categories.map((category) => {
                             const partnerInfo = formatPartnerType(category.partner_type)
                             const levelInfo = formatCategoryLevel(category.level)
@@ -135,7 +135,7 @@ export function CategoryTable({
                             return (
                                 <tr
                                     key={category.id}
-                                    className="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/40 transition-colors"
+                                    className="hover:bg-zinc-800/40 transition-colors"
                                 >
                                     {/* Kategori Name */}
                                     <td className="px-5 py-4">
@@ -143,17 +143,17 @@ export function CategoryTable({
                                             <div
                                                 className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs border ${
                                                     isActive
-                                                        ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500'
-                                                        : 'bg-zinc-100 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-400'
+                                                        ? 'bg-lime-400/15 border-lime-400/30 text-lime-400'
+                                                        : 'bg-zinc-800 border-zinc-700 text-zinc-400'
                                                 }`}
                                             >
                                                 <Layers className="w-4 h-4" />
                                             </div>
                                             <div>
-                                                <span className="font-bold text-zinc-900 dark:text-white block">
+                                                <span className="font-bold text-white block">
                                                     {category.name}
                                                 </span>
-                                                <span className="text-[11px] text-zinc-400 font-mono">
+                                                <span className="text-[11px] text-zinc-500 font-mono">
                                                     ID: {category.id.slice(0, 8)}...
                                                 </span>
                                             </div>
@@ -176,7 +176,7 @@ export function CategoryTable({
 
                                     {/* Tim Terdaftar */}
                                     <td className="px-5 py-4 text-center">
-                                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700/80 font-bold text-xs text-zinc-800 dark:text-zinc-200">
+                                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-800 border border-zinc-700 font-mono font-bold text-xs text-zinc-200">
                                             <Users className="w-3.5 h-3.5 text-zinc-400" />
                                             {category.team_count} Tim
                                         </span>
@@ -187,15 +187,15 @@ export function CategoryTable({
                                         <div className="flex items-center justify-end gap-3">
                                             <div className="text-right">
                                                 <span
-                                                    className={`text-xs font-semibold flex items-center justify-end gap-1 ${
+                                                    className={`text-xs font-bold flex items-center justify-end gap-1 ${
                                                         isActive
-                                                            ? 'text-emerald-600 dark:text-emerald-400'
-                                                            : 'text-zinc-400 dark:text-zinc-500'
+                                                            ? 'text-lime-400'
+                                                            : 'text-zinc-500'
                                                     }`}
                                                 >
                                                     {isActive ? (
                                                         <>
-                                                            <CheckCircle2 className="w-3.5 h-3.5" />
+                                                            <CheckCircle2 className="w-3.5 h-3.5 text-lime-400" />
                                                             Pendaftaran Dibuka
                                                         </>
                                                     ) : (
@@ -205,7 +205,7 @@ export function CategoryTable({
                                                         </>
                                                     )}
                                                 </span>
-                                                <span className="text-[10px] text-zinc-400 block">
+                                                <span className="text-[10px] text-zinc-400 block font-mono">
                                                     {isActive ? 'Aktif' : 'Nonaktif'}
                                                 </span>
                                             </div>
@@ -220,8 +220,8 @@ export function CategoryTable({
                                                     }
                                                 />
                                                 {isToggling && (
-                                                    <div className="absolute inset-0 flex items-center justify-center bg-zinc-900/30 rounded-full">
-                                                        <Loader2 className="w-3.5 h-3.5 animate-spin text-emerald-500" />
+                                                    <div className="absolute inset-0 flex items-center justify-center bg-zinc-900/50 rounded-full">
+                                                        <Loader2 className="w-3.5 h-3.5 animate-spin text-lime-400" />
                                                     </div>
                                                 )}
                                             </div>
@@ -246,11 +246,11 @@ export function CategoryTable({
                         <Card
                             key={category.id}
                             variant="bordered"
-                            className="bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 p-4 space-y-3.5"
+                            className="bg-zinc-900/80 border-zinc-800 p-4 space-y-3.5 rounded-2xl shadow-md"
                         >
                             <div className="flex items-start justify-between gap-2">
                                 <div>
-                                    <h4 className="font-bold text-zinc-900 dark:text-white text-base">
+                                    <h4 className="font-bold text-white text-base">
                                         {category.name}
                                     </h4>
                                     <div className="flex flex-wrap gap-1.5 mt-1.5">
@@ -262,19 +262,19 @@ export function CategoryTable({
                                         </Badge>
                                     </div>
                                 </div>
-                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 font-semibold text-xs text-zinc-700 dark:text-zinc-300">
-                                    <Users className="w-3 h-3" />
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-zinc-800 border border-zinc-700 font-mono font-bold text-xs text-zinc-300">
+                                    <Users className="w-3 h-3 text-zinc-400" />
                                     {category.team_count}
                                 </span>
                             </div>
 
-                            <div className="flex items-center justify-between pt-3 border-t border-zinc-100 dark:border-zinc-800">
-                                <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                            <div className="flex items-center justify-between pt-3 border-t border-zinc-800">
+                                <span className="text-xs text-zinc-400 font-medium">
                                     {isActive ? 'Pendaftaran Dibuka' : 'Pendaftaran Ditutup'}
                                 </span>
                                 <div className="flex items-center gap-2">
                                     {isToggling && (
-                                        <Loader2 className="w-3.5 h-3.5 animate-spin text-emerald-500" />
+                                        <Loader2 className="w-3.5 h-3.5 animate-spin text-lime-400" />
                                     )}
                                     <Switch
                                         id={`switch-mobile-${category.id}`}

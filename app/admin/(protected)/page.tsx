@@ -85,11 +85,11 @@ export default async function AdminDashboardPage() {
             {/* Top Navbar */}
             <header className="border-b border-zinc-800/80 bg-zinc-900/60 backdrop-blur-md sticky top-0 z-30 px-4 sm:px-8 py-3.5 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-extrabold text-sm">
+                    <div className="w-8 h-8 rounded-lg bg-lime-400/15 border border-lime-400/30 flex items-center justify-center text-lime-400 font-extrabold text-sm">
                         PT
                     </div>
                     <div>
-                        <h2 className="text-sm font-bold text-white tracking-wide">
+                        <h2 className="text-sm font-bold text-white tracking-wide uppercase">
                             Padel Scoring System
                         </h2>
                         <p className="text-[11px] text-zinc-400">Admin Control Center</p>
@@ -105,7 +105,7 @@ export default async function AdminDashboardPage() {
                                 className="w-5 h-5 rounded-full object-cover"
                             />
                         ) : (
-                            <div className="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px] font-bold">
+                            <div className="w-5 h-5 rounded-full bg-lime-400 text-zinc-950 flex items-center justify-center text-[10px] font-bold">
                                 {adminName.charAt(0).toUpperCase()}
                             </div>
                         )}
@@ -120,14 +120,14 @@ export default async function AdminDashboardPage() {
             <main className="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-8 space-y-8">
                 {/* Welcome Card */}
                 <Card variant="elevated" className="bg-zinc-900/80 border-zinc-800 relative overflow-hidden p-6 sm:p-8">
-                    <div className="absolute right-0 top-0 translate-x-10 -translate-y-10 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+                    <div className="absolute right-0 top-0 translate-x-10 -translate-y-10 w-64 h-64 bg-lime-400/10 rounded-full blur-3xl pointer-events-none" />
 
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative z-10">
                         <div className="space-y-1.5">
                             <Badge variant="success" size="sm">
                                 Authenticated Session Active
                             </Badge>
-                            <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                            <h1 className="font-[family-name:var(--font-anton)] text-3xl sm:text-4xl lg:text-5xl text-white uppercase tracking-tight">
                                 Selamat Datang, {adminName}!
                             </h1>
                             <p className="text-xs sm:text-sm text-zinc-400">
@@ -138,7 +138,7 @@ export default async function AdminDashboardPage() {
                         <div className="shrink-0 flex items-center gap-2">
                             <Link
                                 href="/register"
-                                className="px-4 py-2 rounded-xl text-xs font-semibold bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700 transition"
+                                className="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-zinc-800 hover:bg-zinc-700 text-zinc-200 hover:text-white border border-zinc-700 transition"
                             >
                                 Halaman Pendaftaran Publik
                             </Link>
@@ -167,11 +167,11 @@ export default async function AdminDashboardPage() {
                                     key={module.path}
                                     href={isAvailable ? module.path : '#'}
                                     className={`bg-zinc-900/50 border border-zinc-800/80 rounded-2xl p-5 hover:border-zinc-700 transition space-y-3 group block ${
-                                        !isAvailable ? 'cursor-default' : 'hover:border-emerald-500/50'
+                                        !isAvailable ? 'cursor-default' : 'hover:border-lime-400/50'
                                     }`}
                                 >
                                     <div className="flex items-center justify-between">
-                                        <div className="w-10 h-10 rounded-xl bg-zinc-800/80 text-emerald-400 flex items-center justify-center group-hover:scale-105 transition-transform">
+                                        <div className="w-10 h-10 rounded-xl bg-zinc-800/90 border border-zinc-700/60 text-lime-400 flex items-center justify-center group-hover:scale-105 transition-transform">
                                             <module.icon className="w-5 h-5" />
                                         </div>
                                         <span className="text-[10px] font-semibold text-zinc-400 bg-zinc-800/60 px-2 py-0.5 rounded-md border border-zinc-700/40">
@@ -180,7 +180,7 @@ export default async function AdminDashboardPage() {
                                     </div>
 
                                     <div>
-                                        <h4 className="text-sm font-bold text-white group-hover:text-emerald-400 transition">
+                                        <h4 className="text-sm font-bold text-white group-hover:text-lime-400 transition">
                                             {module.title}
                                         </h4>
                                         <p className="text-xs text-zinc-400 mt-1 leading-relaxed">
@@ -189,7 +189,7 @@ export default async function AdminDashboardPage() {
                                     </div>
 
                                     <div className="pt-2">
-                                        <span className="text-[11px] font-medium text-emerald-500 inline-flex items-center gap-1">
+                                        <span className="text-[11px] font-semibold text-lime-400 inline-flex items-center gap-1">
                                             {isAvailable ? 'Buka Modul' : 'Segera Hadir'}
                                             <ArrowRight className="w-3 h-3" />
                                         </span>
@@ -201,13 +201,13 @@ export default async function AdminDashboardPage() {
                 </div>
 
                 {/* Session Diagnostic & Info Card */}
-                <Card variant="bordered" className="bg-zinc-900/30 p-5 text-xs text-zinc-400 space-y-2">
+                <Card variant="bordered" className="bg-zinc-900/40 border border-zinc-800 p-5 text-xs text-zinc-400 space-y-2">
                     <p className="font-semibold text-zinc-300 flex items-center gap-1.5">
-                        <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                        <ShieldCheck className="w-4 h-4 text-lime-400" />
                         Sistem Proteksi Middleware Berjalan Normal
                     </p>
                     <p>
-                        Seluruh rute di bawah <code className="text-emerald-400 bg-zinc-800 px-1.5 py-0.5 rounded">/admin/*</code> telah diproteksi oleh middleware Supabase Auth. Sesi Anda akan otomatis di-refresh pada setiap navigasi request.
+                        Seluruh rute di bawah <code className="text-lime-400 bg-zinc-800 px-1.5 py-0.5 rounded font-mono">/admin/*</code> telah diproteksi oleh middleware Supabase Auth. Sesi Anda akan otomatis di-refresh pada setiap navigasi request.
                     </p>
                 </Card>
             </main>

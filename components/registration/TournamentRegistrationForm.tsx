@@ -78,30 +78,30 @@ export default function TournamentRegistrationForm({
     // Jika pendaftaran turnamen berhasil, tampilkan konfirmasi sukses
     if (response?.success) {
         return (
-            <Card variant="default" className="border-emerald-500/30 text-center shadow-emerald-500/5">
-                <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-5 ring-8 ring-emerald-50 dark:ring-emerald-950/30">
+            <Card variant="elevated" className="border-lime-400/30 text-center shadow-2xl">
+                <div className="w-16 h-16 bg-lime-400/15 border border-lime-400/30 text-lime-400 rounded-full flex items-center justify-center mx-auto mb-5 ring-8 ring-lime-400/10">
                     <Check className="w-8 h-8" />
                 </div>
 
-                <h3 className="text-2xl font-bold text-zinc-900 dark:text-white mb-2">
+                <h3 className="font-[family-name:var(--font-anton)] text-2xl sm:text-3xl uppercase tracking-tight text-white mb-2">
                     Pendaftaran Berhasil Terkirim!
                 </h3>
-                <p className="text-zinc-600 dark:text-zinc-300 text-sm sm:text-base leading-relaxed max-w-md mx-auto mb-6">
+                <p className="text-zinc-300 text-sm sm:text-base leading-relaxed max-w-md mx-auto mb-6">
                     {response.message}
                 </p>
 
-                <div className="bg-emerald-50/70 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/40 rounded-xl p-4 text-xs sm:text-sm text-emerald-800 dark:text-emerald-300 mb-8 max-w-md mx-auto text-left">
-                    <p className="font-semibold mb-1 flex items-center gap-1.5">
+                <div className="bg-zinc-950/80 border border-zinc-800 rounded-xl p-4 text-xs sm:text-sm text-zinc-300 mb-8 max-w-md mx-auto text-left">
+                    <p className="font-bold text-lime-400 uppercase tracking-wider mb-1.5 flex items-center gap-1.5 text-xs">
                         <Info className="w-4 h-4 shrink-0" />
                         Langkah Selanjutnya:
                     </p>
-                    <ul className="list-disc list-inside space-y-1 pl-1 text-emerald-700/90 dark:text-emerald-400/90">
+                    <ul className="list-disc list-inside space-y-1.5 pl-1 text-zinc-400">
                         {REGISTRATION_NEXT_STEPS.map((step) => (
                             <li key={step.id}>
                                 {step.highlight ? (
                                     <>
                                         Status tim Anda saat ini adalah{' '}
-                                        <strong className="font-semibold">{step.highlight}</strong>.
+                                        <strong className="font-bold text-amber-300">{step.highlight}</strong>.
                                     </>
                                 ) : (
                                     step.text
@@ -123,11 +123,11 @@ export default function TournamentRegistrationForm({
             <Card variant="elevated" className="space-y-7">
                 {/* Banner Error Global jika submit gagal */}
                 {response && !response.success && (
-                    <div className="bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 rounded-2xl p-4 text-rose-800 dark:text-rose-300 text-sm flex items-start gap-3">
+                    <div className="bg-rose-950/40 border border-rose-900/60 rounded-2xl p-4 text-rose-300 text-sm flex items-start gap-3">
                         <AlertCircle className="w-5 h-5 text-rose-500 shrink-0 mt-0.5" />
                         <div>
-                            <p className="font-semibold">Gagal Mengirim Pendaftaran</p>
-                            <p className="mt-0.5 text-xs sm:text-sm text-rose-700/90 dark:text-rose-400">
+                            <p className="font-semibold text-rose-200">Gagal Mengirim Pendaftaran</p>
+                            <p className="mt-0.5 text-xs sm:text-sm text-rose-400">
                                 {response.message}
                             </p>
                         </div>
@@ -156,8 +156,8 @@ export default function TournamentRegistrationForm({
                 />
 
                 {/* Section 2: Data Pemain */}
-                <div className="pt-2 border-t border-zinc-100 dark:border-zinc-800">
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-4 flex items-center gap-1.5">
+                <div className="pt-2 border-t border-zinc-800">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-lime-400 mb-4 flex items-center gap-1.5">
                         <Users className="w-4 h-4" />
                         Informasi Pasangan Pemain
                     </h4>
@@ -186,8 +186,8 @@ export default function TournamentRegistrationForm({
                 </div>
 
                 {/* Section 3: Kontak & Komunitas */}
-                <div className="pt-2 border-t border-zinc-100 dark:border-zinc-800">
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-4 flex items-center gap-1.5">
+                <div className="pt-2 border-t border-zinc-800">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-lime-400 mb-4 flex items-center gap-1.5">
                         <Phone className="w-4 h-4" />
                         Kontak & Akun Komunitas
                     </h4>
@@ -230,8 +230,8 @@ export default function TournamentRegistrationForm({
                 </div>
 
                 {/* Section 4: Bukti Pembayaran */}
-                <div className="pt-2 border-t border-zinc-100 dark:border-zinc-800">
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-2 flex items-center gap-1.5">
+                <div className="pt-2 border-t border-zinc-800">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-lime-400 mb-2 flex items-center gap-1.5">
                         <Receipt className="w-4 h-4" />
                         Bukti Pembayaran <span className="text-rose-500">*</span>
                     </h4>
@@ -265,7 +265,7 @@ export default function TournamentRegistrationForm({
                         <ArrowRight className="w-5 h-5 ml-2" />
                     </Button>
 
-                    <p className="text-center text-[11px] text-zinc-400 dark:text-zinc-500 mt-3">
+                    <p className="text-center text-[11px] text-zinc-500 mt-3">
                         Dengan mendaftar, Anda menyetujui jadwal dan peraturan resmi turnamen.
                     </p>
                 </div>

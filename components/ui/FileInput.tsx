@@ -42,14 +42,14 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
                 {label && (
                     <label
                         htmlFor={inputId}
-                        className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300"
+                        className="block text-xs font-bold uppercase tracking-wider text-zinc-300"
                     >
                         {label} {required && <span className="text-rose-500">*</span>}
                     </label>
                 )}
 
                 {helperText && (
-                    <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mb-1">
+                    <p className="text-[11px] text-zinc-400 mb-1">
                         {helperText}
                     </p>
                 )}
@@ -70,55 +70,54 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
                 {!selectedFile ? (
                     <label
                         htmlFor={inputId}
-                        className={`block border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition hover:bg-zinc-50/80 dark:hover:bg-zinc-800/40 ${
+                        className={`block border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition hover:bg-zinc-900/80 ${
                             disabled ? 'opacity-60 cursor-not-allowed pointer-events-none' : ''
                         } ${
                             error
-                                ? 'border-rose-400 bg-rose-50/20'
-                                : 'border-zinc-300 dark:border-zinc-700 hover:border-emerald-500 dark:hover:border-emerald-500'
+                                ? 'border-rose-500 bg-rose-950/20'
+                                : 'border-zinc-800 bg-zinc-900/50 hover:border-lime-400/50'
                         }`}
                     >
-                        <div className="w-12 h-12 bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <UploadCloud className="w-6 h-6" />
+                        <div className="w-12 h-12 bg-zinc-800 text-zinc-400 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <UploadCloud className="w-6 h-6 text-lime-400" />
                         </div>
-                        <p className="text-sm font-medium text-zinc-800 dark:text-zinc-200">
+                        <p className="text-sm font-bold text-white">
                             Klik untuk memilih file bukti transfer
                         </p>
-                        <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-1">
+                        <p className="text-xs text-zinc-400 mt-1">
                             Pilih foto screenshot struk atau file PDF
                         </p>
                     </label>
                 ) : (
-                    <div className="border border-zinc-200 dark:border-zinc-700 rounded-2xl p-4 bg-zinc-50/60 dark:bg-zinc-800/50 flex items-center justify-between gap-3">
+                    <div className="border border-zinc-800 rounded-2xl p-4 bg-zinc-900/90 flex items-center justify-between gap-3">
                         <div className="flex items-center gap-3 min-w-0">
                             {filePreview ? (
                                 <img
                                     src={filePreview}
                                     alt="Preview File"
-                                    className="w-14 h-14 object-cover rounded-xl border border-zinc-200 dark:border-zinc-700 shrink-0"
+                                    className="w-14 h-14 object-cover rounded-xl border border-zinc-800 shrink-0"
                                 />
                             ) : (
-                                <div className="w-14 h-14 bg-rose-100 dark:bg-rose-950/50 text-rose-600 rounded-xl flex items-center justify-center shrink-0 font-bold text-xs">
+                                <div className="w-14 h-14 bg-rose-950/50 border border-rose-900/40 text-rose-400 rounded-xl flex items-center justify-center shrink-0 font-bold text-xs font-mono">
                                     PDF
                                 </div>
                             )}
                             <div className="min-w-0">
-                                <p className="text-sm font-semibold text-zinc-900 dark:text-white truncate">
+                                <p className="text-sm font-semibold text-white truncate">
                                     {selectedFile.name}
                                 </p>
-                                <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                                <p className="text-xs text-zinc-400 font-mono">
                                     {formatFileSize(selectedFile.size)}
                                 </p>
                             </div>
                         </div>
 
-                        {onRemoveFile && (
+                        {onRemoveFile && !disabled && (
                             <button
                                 type="button"
                                 onClick={onRemoveFile}
-                                disabled={disabled}
-                                className="p-2 text-zinc-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition shrink-0 cursor-pointer disabled:opacity-50"
-                                title="Hapus file"
+                                className="p-2 text-zinc-400 hover:text-rose-400 hover:bg-zinc-800 rounded-xl transition cursor-pointer"
+                                aria-label="Hapus file terpilih"
                             >
                                 <X className="w-5 h-5" />
                             </button>

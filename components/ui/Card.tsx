@@ -11,14 +11,14 @@ export function Card({
     ...props
 }: CardProps) {
     const variants = {
-        default: 'bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800',
+        default: 'bg-zinc-900/80 border border-zinc-800 text-zinc-100 shadow-xl shadow-black/30',
         elevated:
-            'bg-white dark:bg-zinc-900/90 backdrop-blur-sm border border-zinc-200/80 dark:border-zinc-800 shadow-xl shadow-zinc-200/50 dark:shadow-black/40',
-        bordered: 'bg-transparent border border-zinc-200 dark:border-zinc-800',
+            'bg-zinc-900/90 backdrop-blur-md border border-zinc-800 shadow-2xl shadow-black/50 text-zinc-100',
+        bordered: 'bg-zinc-900/40 border border-zinc-800/80 text-zinc-100',
     }
 
     return (
-        <div className={`rounded-3xl p-6 sm:p-8 ${variants[variant]} ${className}`} {...props}>
+        <div className={`rounded-2xl p-6 sm:p-8 ${variants[variant]} ${className}`} {...props}>
             {children}
         </div>
     )

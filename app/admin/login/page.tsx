@@ -33,12 +33,12 @@ export default async function AdminLoginPage({ searchParams }: AdminLoginPagePro
                 <div className="text-center space-y-3">
                     <div className="flex justify-center">
                         <Badge variant="success" size="md">
-                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                            <span className="w-2 h-2 rounded-full bg-lime-400 animate-pulse" />
                             Admin Portal
                         </Badge>
                     </div>
 
-                    <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+                    <h1 className="font-[family-name:var(--font-anton)] text-3xl sm:text-4xl lg:text-5xl tracking-tight text-white uppercase">
                         Padel Tournament System
                     </h1>
                     <p className="text-xs sm:text-sm text-zinc-400 max-w-xs mx-auto">
@@ -80,7 +80,7 @@ export default async function AdminLoginPage({ searchParams }: AdminLoginPagePro
                 <div className="text-center">
                     <Link
                         href="/register"
-                        className="text-xs text-zinc-400 hover:text-emerald-400 transition inline-flex items-center gap-1.5"
+                        className="text-xs text-zinc-400 hover:text-lime-400 transition inline-flex items-center gap-1.5"
                     >
                         <ArrowLeft className="w-4 h-4" />
                         <span>Kembali ke Halaman Pendaftaran Peserta</span>

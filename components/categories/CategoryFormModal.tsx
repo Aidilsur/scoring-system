@@ -48,19 +48,19 @@ export function CategoryFormModal({
     if (!isOpen) return null
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs overflow-y-auto animate-fade-in">
-            <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl max-w-lg w-full p-6 space-y-6 shadow-2xl my-8">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md overflow-y-auto animate-fade-in">
+            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-lg w-full p-6 space-y-6 shadow-2xl shadow-black/80 my-8 text-white">
                 {/* Modal Header */}
-                <div className="flex items-start justify-between pb-3 border-b border-zinc-200 dark:border-zinc-800">
+                <div className="flex items-start justify-between pb-3 border-b border-zinc-800">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 flex items-center justify-center">
+                        <div className="w-10 h-10 rounded-xl bg-lime-400/15 border border-lime-400/30 text-lime-400 flex items-center justify-center">
                             <FolderPlus className="w-5 h-5" />
                         </div>
                         <div>
-                            <h3 className="text-lg font-bold text-zinc-900 dark:text-white">
+                            <h3 className="text-lg font-bold text-white uppercase tracking-tight">
                                 Tambah Kategori Turnamen
                             </h3>
-                            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+                            <p className="text-xs text-zinc-400 mt-0.5">
                                 Tentukan kombinasi tipe partner dan level turnamen.
                             </p>
                         </div>
@@ -70,7 +70,7 @@ export function CategoryFormModal({
                         variant="ghost"
                         size="sm"
                         onClick={onClose}
-                        className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 p-1.5"
+                        className="text-zinc-400 hover:text-white p-1.5 cursor-pointer"
                     >
                         <X className="w-5 h-5" />
                     </Button>
@@ -120,14 +120,14 @@ export function CategoryFormModal({
                         <div className="flex items-center justify-between">
                             <label
                                 htmlFor="category_name"
-                                className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300"
+                                className="block text-xs font-bold uppercase tracking-wider text-zinc-300"
                             >
                                 Nama Kategori <span className="text-rose-500">*</span>
                             </label>
                             <button
                                 type="button"
                                 onClick={onApplySuggestedName}
-                                className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400 hover:underline inline-flex items-center gap-1"
+                                className="text-[11px] font-bold text-lime-400 hover:underline inline-flex items-center gap-1 cursor-pointer"
                             >
                                 <Sparkles className="w-3 h-3" />
                                 Gunakan Format Standar
@@ -145,7 +145,7 @@ export function CategoryFormModal({
                     </div>
 
                     {/* Switch Status Aktif */}
-                    <div className="pt-2 border-t border-zinc-100 dark:border-zinc-800/80">
+                    <div className="pt-2 border-t border-zinc-800">
                         <Switch
                             id="is_active"
                             name="is_active"
@@ -157,7 +157,7 @@ export function CategoryFormModal({
                     </div>
 
                     {/* Actions */}
-                    <div className="flex items-center justify-end gap-3 pt-4 border-t border-zinc-200 dark:border-zinc-800">
+                    <div className="flex items-center justify-end gap-3 pt-4 border-t border-zinc-800">
                         <Button
                             type="button"
                             variant="secondary"

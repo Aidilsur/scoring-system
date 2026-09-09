@@ -25,31 +25,31 @@ export function DrawRegenerateConfirmModal({
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200"
     >
-      <div className="relative w-full max-w-md bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-2xl p-6 overflow-hidden">
+      <div className="relative w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl shadow-black/80 p-6 overflow-hidden">
         {/* Close Button */}
         <button
           onClick={onClose}
           disabled={isGenerating}
           aria-label="Tutup dialog"
-          className="absolute top-4 right-4 p-1.5 rounded-lg text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition disabled:opacity-50"
+          className="absolute top-4 right-4 p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition cursor-pointer disabled:opacity-50"
         >
           <X className="w-5 h-5" />
         </button>
 
         {/* Modal Header */}
         <div className="flex items-start gap-3.5 mb-4">
-          <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 shrink-0">
+          <div className="p-2.5 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-400 shrink-0">
             <AlertTriangle className="w-6 h-6" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-zinc-900 dark:text-white">
+            <h3 className="text-lg font-bold text-white uppercase tracking-tight">
               Regenerate Drawing Grup?
             </h3>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+            <p className="text-xs text-zinc-400 mt-0.5">
               Kategori:{' '}
-              <span className="font-semibold text-zinc-800 dark:text-zinc-200">
+              <span className="font-semibold text-lime-400">
                 {categoryName || 'Terpilih'}
               </span>
             </p>
@@ -57,9 +57,9 @@ export function DrawRegenerateConfirmModal({
         </div>
 
         {/* Modal Body */}
-        <div className="space-y-2.5 text-xs text-zinc-600 dark:text-zinc-400 bg-zinc-50 dark:bg-zinc-800/50 p-3.5 rounded-xl border border-zinc-200/70 dark:border-zinc-800 mb-6">
+        <div className="space-y-2.5 text-xs text-zinc-300 bg-zinc-950/80 p-3.5 rounded-xl border border-zinc-800 mb-6">
           <p>
-            Tindakan ini akan <span className="font-bold text-rose-500">mereset dan menghapus</span> seluruh struktur grup serta jadwal pertandingan round robin yang sebelumnya telah dibuat untuk kategori ini.
+            Tindakan ini akan <span className="font-bold text-rose-400">mereset dan menghapus</span> seluruh struktur grup serta jadwal pertandingan round robin yang sebelumnya telah dibuat untuk kategori ini.
           </p>
           <p>
             Seluruh tim terkonfirmasi akan diacak kembali ke dalam grup baru. Pertandingan yang belum dijadwalkan ulang akan dibuat kembali secara otomatis.

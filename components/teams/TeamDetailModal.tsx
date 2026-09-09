@@ -43,15 +43,15 @@ export function TeamDetailModal({
     const isPdf = team.payment_proof_url.toLowerCase().endsWith('.pdf')
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto">
-            <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl max-w-xl w-full p-6 space-y-6 shadow-2xl my-8">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md overflow-y-auto">
+            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-xl w-full p-6 space-y-6 shadow-2xl shadow-black/80 my-8 text-white">
                 {/* Modal Header */}
-                <div className="flex items-start justify-between pb-3 border-b border-zinc-200 dark:border-zinc-800">
+                <div className="flex items-start justify-between pb-3 border-b border-zinc-800">
                     <div>
-                        <h3 className="text-lg font-bold text-zinc-900 dark:text-white">
+                        <h3 className="text-lg font-bold text-white uppercase tracking-tight">
                             Detail Pendaftaran Tim
                         </h3>
-                        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+                        <p className="text-xs text-zinc-400 font-mono mt-0.5">
                             ID: {team.id}
                         </p>
                     </div>
@@ -60,7 +60,7 @@ export function TeamDetailModal({
                         variant="ghost"
                         size="sm"
                         onClick={onClose}
-                        className="p-1.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 rounded-lg"
+                        className="p-1.5 text-zinc-400 hover:text-white rounded-lg cursor-pointer"
                         aria-label="Tutup modal"
                     >
                         <X className="w-5 h-5" />
@@ -68,10 +68,10 @@ export function TeamDetailModal({
                 </div>
 
                 {/* Status & Kategori */}
-                <div className="flex flex-wrap items-center justify-between gap-3 p-3 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl">
+                <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 bg-zinc-950/80 border border-zinc-800 rounded-xl">
                     <div>
-                        <span className="text-xs text-zinc-500 block">Kategori Kelas</span>
-                        <span className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">
+                        <span className="text-xs font-bold uppercase tracking-wider text-zinc-400 block">Kategori Kelas</span>
+                        <span className="text-sm font-bold text-lime-400">
                             {team.categories
                                 ? `${team.categories.name} (${formatCategoryBadge(
                                       team.categories.partner_type,
@@ -85,23 +85,23 @@ export function TeamDetailModal({
 
                 {/* Informasi Pemain & Kontak */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                    <div className="p-3 border border-zinc-100 dark:border-zinc-800 rounded-xl space-y-1">
-                        <span className="text-xs text-zinc-500 font-medium">Pemain 1</span>
-                        <p className="font-bold text-zinc-900 dark:text-white">
+                    <div className="p-3 bg-zinc-950/60 border border-zinc-800 rounded-xl space-y-1">
+                        <span className="text-xs text-zinc-400 font-bold uppercase tracking-wider">Pemain 1</span>
+                        <p className="font-bold text-white">
                             {team.player1_name}
                         </p>
                     </div>
 
-                    <div className="p-3 border border-zinc-100 dark:border-zinc-800 rounded-xl space-y-1">
-                        <span className="text-xs text-zinc-500 font-medium">Pemain 2 (Partner)</span>
-                        <p className="font-bold text-zinc-900 dark:text-white">
+                    <div className="p-3 bg-zinc-950/60 border border-zinc-800 rounded-xl space-y-1">
+                        <span className="text-xs text-zinc-400 font-bold uppercase tracking-wider">Pemain 2 (Partner)</span>
+                        <p className="font-bold text-white">
                             {team.player2_name}
                         </p>
                     </div>
 
-                    <div className="p-3 border border-zinc-100 dark:border-zinc-800 rounded-xl space-y-1">
-                        <span className="text-xs text-zinc-500 font-medium">WhatsApp / Telepon</span>
-                        <p className="font-semibold text-emerald-600 dark:text-emerald-400">
+                    <div className="p-3 bg-zinc-950/60 border border-zinc-800 rounded-xl space-y-1">
+                        <span className="text-xs text-zinc-400 font-bold uppercase tracking-wider">WhatsApp / Telepon</span>
+                        <p className="font-semibold text-lime-400 font-mono">
                             <a
                                 href={`https://wa.me/${team.phone_number.replace(/\D/g, '')}`}
                                 target="_blank"
@@ -113,30 +113,30 @@ export function TeamDetailModal({
                         </p>
                     </div>
 
-                    <div className="p-3 border border-zinc-100 dark:border-zinc-800 rounded-xl space-y-1">
-                        <span className="text-xs text-zinc-500 font-medium">Media Sosial</span>
-                        <p className="text-zinc-700 dark:text-zinc-300">
-                            IG: <span className="font-semibold">{team.instagram_handle || '-'}</span>
+                    <div className="p-3 bg-zinc-950/60 border border-zinc-800 rounded-xl space-y-1">
+                        <span className="text-xs text-zinc-400 font-bold uppercase tracking-wider">Media Sosial</span>
+                        <p className="text-zinc-300 font-mono text-xs">
+                            IG: <span className="font-semibold text-white">{team.instagram_handle || '-'}</span>
                             <br />
-                            Reclub: <span className="font-semibold">{team.reclub_handle || '-'}</span>
+                            Reclub: <span className="font-semibold text-white">{team.reclub_handle || '-'}</span>
                         </p>
                     </div>
                 </div>
 
                 {/* Tanggal Daftar */}
-                <p className="text-xs text-zinc-500">
-                    Waktu Pendaftaran: <span className="font-medium text-zinc-700 dark:text-zinc-300">{formattedDate}</span>
+                <p className="text-xs text-zinc-400 font-mono">
+                    Waktu Pendaftaran: <span className="text-zinc-200">{formattedDate}</span>
                 </p>
 
                 {/* Preview Bukti Pembayaran */}
-                <div className="space-y-2 pt-2 border-t border-zinc-200 dark:border-zinc-800">
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-700 dark:text-zinc-300">
+                <div className="space-y-2 pt-2 border-t border-zinc-800">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-300">
                         Bukti Pembayaran (Private Storage)
                     </h4>
 
                     {isLoadingSignedUrl ? (
-                        <div className="p-8 text-center text-xs text-zinc-500 border border-dashed rounded-xl flex items-center justify-center gap-2">
-                            <div className="w-4 h-4 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+                        <div className="p-8 text-center text-xs text-zinc-400 border border-dashed border-zinc-800 rounded-xl flex items-center justify-center gap-2">
+                            <div className="w-4 h-4 border-2 border-lime-400 border-t-transparent rounded-full animate-spin" />
                             <span>Membuat secure signed URL...</span>
                         </div>
                     ) : signedPaymentUrl ? (
@@ -183,7 +183,7 @@ export function TeamDetailModal({
                 </div>
 
                 {/* Modal Footer Actions */}
-                <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-zinc-200 dark:border-zinc-800">
+                <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-zinc-800">
                     <Button
                         type="button"
                         variant="secondary"
@@ -201,7 +201,6 @@ export function TeamDetailModal({
                                 size="sm"
                                 disabled={isUpdating}
                                 onClick={() => onConfirm(team.id)}
-                                className="bg-emerald-600 hover:bg-emerald-500"
                             >
                                 Konfirmasi Tim
                             </Button>

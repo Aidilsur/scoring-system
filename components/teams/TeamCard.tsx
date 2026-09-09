@@ -39,14 +39,14 @@ export function TeamCard({
         : 'Kategori Umum'
 
     return (
-        <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 sm:p-5 shadow-sm space-y-4 hover:border-zinc-300 dark:hover:border-zinc-700 transition">
+        <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 sm:p-5 shadow-lg shadow-black/30 space-y-4 hover:border-zinc-700 transition">
             {/* Header: Kategori & Status */}
             <div className="flex items-start justify-between gap-2">
                 <div>
-                    <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                    <span className="text-xs font-bold uppercase tracking-wider text-lime-400">
                         {categoryText}
                     </span>
-                    <h3 className="text-base sm:text-lg font-bold text-zinc-900 dark:text-white mt-0.5">
+                    <h3 className="text-base sm:text-lg font-bold text-white mt-0.5">
                         {team.player1_name} &amp; {team.player2_name}
                     </h3>
                 </div>
@@ -54,26 +54,26 @@ export function TeamCard({
             </div>
 
             {/* Info baris: WhatsApp & Tanggal */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-zinc-600 dark:text-zinc-400 pt-2 border-t border-zinc-100 dark:border-zinc-800/80">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-zinc-400 pt-2 border-t border-zinc-800">
                 <div className="flex items-center gap-1.5">
                     <span className="font-medium text-zinc-500">WhatsApp:</span>
                     <a
                         href={`https://wa.me/${team.phone_number.replace(/\D/g, '')}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="text-emerald-600 dark:text-emerald-400 hover:underline"
+                        className="text-lime-400 hover:underline font-mono"
                     >
                         {formatPhoneNumber(team.phone_number)}
                     </a>
                 </div>
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5 font-mono">
                     <span className="font-medium text-zinc-500">Daftar:</span>
                     <span>{formattedDate}</span>
                 </div>
             </div>
 
             {/* Tombol Aksi */}
-            <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-zinc-100 dark:border-zinc-800/80">
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-zinc-800">
                 <Button
                     type="button"
                     variant="outline"
@@ -92,7 +92,7 @@ export function TeamCard({
                             size="sm"
                             disabled={isUpdating}
                             onClick={() => onConfirm(team.id)}
-                            className="text-xs bg-emerald-600 hover:bg-emerald-500"
+                            className="text-xs"
                         >
                             Konfirmasi
                         </Button>

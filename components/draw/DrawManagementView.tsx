@@ -83,21 +83,21 @@ export function DrawManagementView({
   return (
     <div className="space-y-8">
       {/* Top Header & Breadcrumbs */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-zinc-200 dark:border-zinc-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-zinc-800">
         <div>
-          <div className="flex items-center gap-2 text-xs text-zinc-500 mb-1">
-            <Link href="/admin" className="hover:underline">
+          <div className="flex items-center gap-2 text-xs text-zinc-400 mb-1">
+            <Link href="/admin" className="hover:text-lime-400 transition-colors">
               Admin
             </Link>
             <span>/</span>
-            <span className="text-zinc-800 dark:text-zinc-200 font-medium">
+            <span className="text-zinc-200 font-medium">
               Drawing Grup
             </span>
           </div>
-          <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">
+          <h1 className="font-[family-name:var(--font-anton)] text-3xl sm:text-4xl text-white uppercase tracking-tight">
             Drawing Grup &amp; Jadwal
           </h1>
-          <p className="text-xs text-zinc-500 mt-0.5">
+          <p className="text-xs text-zinc-400 mt-1">
             Acak peserta terkonfirmasi ke dalam grup dan buat jadwal pertandingan round robin otomatis.
           </p>
         </div>
@@ -107,11 +107,11 @@ export function DrawManagementView({
           type="button"
           onClick={() => refetchDraw()}
           disabled={isLoadingDraw || isRefetchingDraw}
-          className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition disabled:opacity-50"
+          className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white hover:border-zinc-700 transition cursor-pointer disabled:opacity-50"
         >
           <RotateCw
             className={`w-3.5 h-3.5 ${
-              isRefetchingDraw ? 'animate-spin text-emerald-500' : ''
+              isRefetchingDraw ? 'animate-spin text-lime-400' : ''
             }`}
           />
           Segarkan Data
@@ -123,22 +123,22 @@ export function DrawManagementView({
         <div
           className={`flex items-start justify-between gap-3 p-4 rounded-2xl border text-xs font-medium animate-in fade-in slide-in-from-top-2 duration-200 ${
             toast.type === 'success'
-              ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-700 dark:text-emerald-300'
-              : 'bg-rose-500/10 border-rose-500/20 text-rose-700 dark:text-rose-300'
+              ? 'bg-lime-400/10 border-lime-400/30 text-lime-300'
+              : 'bg-rose-500/10 border-rose-500/30 text-rose-300'
           }`}
         >
           <div className="flex items-center gap-2.5">
             {toast.type === 'success' ? (
-              <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+              <CheckCircle2 className="w-4 h-4 shrink-0 text-lime-400" />
             ) : (
-              <AlertCircle className="w-4 h-4 shrink-0 text-rose-600 dark:text-rose-400" />
+              <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
             )}
             <span>{toast.message}</span>
           </div>
           <button
             onClick={clearToast}
             aria-label="Tutup notifikasi"
-            className="p-1 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition"
+            className="p-1 rounded-lg hover:bg-white/10 transition cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -151,15 +151,15 @@ export function DrawManagementView({
         <div className="lg:col-span-2 space-y-6">
           {/* Category Selector Card */}
           <Card variant="elevated" className="space-y-4">
-            <div className="flex items-center gap-2 pb-3 border-b border-zinc-200 dark:border-zinc-800">
-              <Layers className="w-4 h-4 text-emerald-500" />
-              <h2 className="text-sm font-bold text-zinc-900 dark:text-white">
+            <div className="flex items-center gap-2 pb-3 border-b border-zinc-800">
+              <Layers className="w-4 h-4 text-lime-400" />
+              <h2 className="text-sm font-bold text-white uppercase tracking-wide">
                 Pilih Kategori Turnamen
               </h2>
             </div>
 
             {isCategoriesError ? (
-              <p className="text-xs text-rose-500">
+              <p className="text-xs text-rose-400">
                 Gagal memuat kategori:{' '}
                 {categoriesError instanceof Error
                   ? categoriesError.message
@@ -205,9 +205,9 @@ export function DrawManagementView({
         {/* Sidebar: Rules & Guidelines */}
         <div className="space-y-6">
           <Card variant="elevated" className="space-y-4">
-            <div className="flex items-center gap-2 pb-3 border-b border-zinc-200 dark:border-zinc-800">
-              <Info className="w-4 h-4 text-emerald-500" />
-              <h3 className="text-sm font-bold text-zinc-900 dark:text-white">
+            <div className="flex items-center gap-2 pb-3 border-b border-zinc-800">
+              <Info className="w-4 h-4 text-lime-400" />
+              <h3 className="text-sm font-bold text-white uppercase tracking-wide">
                 Petunjuk Drawing &amp; Jadwal
               </h3>
             </div>
@@ -216,12 +216,12 @@ export function DrawManagementView({
               {DRAW_RULE_HINTS.map((item) => (
                 <li
                   key={item.label}
-                  className="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200/60 dark:border-zinc-800"
+                  className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800"
                 >
-                  <p className="text-xs font-bold text-zinc-800 dark:text-zinc-200">
+                  <p className="text-xs font-bold text-white uppercase tracking-wide">
                     {item.label}
                   </p>
-                  <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1 leading-relaxed">
+                  <p className="text-[11px] text-zinc-400 mt-1 leading-relaxed">
                     {item.description}
                   </p>
                 </li>

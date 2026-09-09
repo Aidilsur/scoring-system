@@ -37,31 +37,34 @@ export default async function RegisterPage() {
     }))
 
     return (
-        <main className="min-h-screen bg-linear-to-b from-zinc-50 via-zinc-100 to-zinc-200 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950 text-zinc-900 dark:text-zinc-100 py-10 sm:py-16 px-4 sm:px-6 lg:px-8 flex flex-col justify-center items-center">
-            <div className="w-full max-w-xl mx-auto">
+        <main className="min-h-screen bg-zinc-950 text-zinc-100 py-10 sm:py-16 px-4 sm:px-6 lg:px-8 flex flex-col justify-center items-center relative overflow-hidden">
+            {/* Ambient Sports Undertone Blur */}
+            <div className="absolute top-10 left-1/2 -translate-x-1/2 w-96 h-96 bg-lime-400/5 rounded-full blur-3xl pointer-events-none" />
+
+            <div className="w-full max-w-xl mx-auto relative z-10">
                 {/* Header Section */}
                 <div className="text-center mb-8 sm:mb-10 space-y-3">
                     <Badge variant="success" size="md">
-                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                        <span className="w-2 h-2 rounded-full bg-lime-400 animate-pulse" />
                         Pendaftaran Dibuka
                     </Badge>
 
-                    <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
+                    <h1 className="font-[family-name:var(--font-anton)] text-3xl sm:text-4xl lg:text-5xl uppercase tracking-tight text-white">
                         Padel Tournament Registration
                     </h1>
 
-                    <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 max-w-md mx-auto leading-relaxed">
+                    <p className="text-sm sm:text-base text-zinc-400 max-w-md mx-auto leading-relaxed">
                         Lengkapi formulir di bawah ini untuk mendaftarkan tim Anda. Pastikan data pasangan dan bukti transfer valid untuk diverifikasi panitia.
                     </p>
                 </div>
 
                 {/* Banner jika belum ada kategori aktif di DB */}
                 {categories.length === 0 && (
-                    <div className="mb-6 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/50 rounded-2xl p-4 text-amber-800 dark:text-amber-300 text-xs sm:text-sm flex items-start gap-3">
-                        <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+                    <div className="mb-6 bg-amber-950/40 border border-amber-900/60 rounded-2xl p-4 text-amber-300 text-xs sm:text-sm flex items-start gap-3">
+                        <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
                         <div>
-                            <p className="font-semibold">Pemberitahuan</p>
-                            <p className="mt-0.5">
+                            <p className="font-semibold text-amber-200">Pemberitahuan</p>
+                            <p className="mt-0.5 text-amber-300/90">
                                 Belum ada kategori turnamen yang aktif di database. Silakan tambahkan data kategori di database Supabase terlebih dahulu agar pendaftaran dapat dipilih.
                             </p>
                         </div>
@@ -72,7 +75,7 @@ export default async function RegisterPage() {
                 <TournamentRegistrationForm categories={categories} />
 
                 {/* Footer Notes */}
-                <div className="mt-8 text-center text-xs text-zinc-500 dark:text-zinc-400 space-y-1">
+                <div className="mt-8 text-center text-xs text-zinc-500 space-y-1">
                     <p>Padel Tournament Scoring System &copy; {new Date().getFullYear()}</p>
                     <p>Butuh bantuan pendaftaran? Hubungi panitia via WhatsApp.</p>
                 </div>

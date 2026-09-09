@@ -20,12 +20,12 @@ export function TeamStatusBadge({ status, className = '' }: TeamStatusBadgeProps
         pending: {
             label: 'Pending',
             variant: 'warning',
-            dotClass: 'bg-amber-500',
+            dotClass: 'bg-amber-400',
         },
         confirmed: {
             label: 'Confirmed',
             variant: 'success',
-            dotClass: 'bg-emerald-500',
+            dotClass: 'bg-lime-400',
         },
         rejected: {
             label: 'Rejected',
