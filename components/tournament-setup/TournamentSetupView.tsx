@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { CheckCircle2, AlertCircle, X, Info, ArrowLeft } from 'lucide-react'
 import { useTournamentSettingsForm } from '@/hooks/useTournamentSettingsForm'
 import { TournamentSetupForm } from './TournamentSetupForm'
+import { ShareRegistrationCard } from './ShareRegistrationCard'
 import { Card, Button } from '@/components/ui'
 import { TournamentSettings } from '@/types/domain'
 
@@ -149,23 +150,30 @@ export function TournamentSetupView({ initialData }: TournamentSetupViewProps) {
 
             {/* Main Content Layout */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Form Column */}
-                <div className="lg:col-span-2">
+                {/* Form & Share Column */}
+                <div className="lg:col-span-2 space-y-6">
                     {isQueryLoading && !settings ? (
                         <Card className="p-12 text-center bg-emerald-900/70 border-emerald-800 rounded-xl">
                             <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-lime-400 border-t-transparent mb-3" />
                             <p className="text-sm text-emerald-300 font-medium">Memuat konfigurasi turnamen...</p>
                         </Card>
                     ) : (
-                        <TournamentSetupForm
-                            values={values}
-                            fieldErrors={fieldErrors}
-                            isSubmitting={isSubmitting}
-                            isEditMode={isEditMode}
-                            currentStatus={settings?.status}
-                            onFieldChange={setFieldValue}
-                            onSubmit={handleSubmit}
-                        />
+                        <>
+                            <TournamentSetupForm
+                                values={values}
+                                fieldErrors={fieldErrors}
+                                isSubmitting={isSubmitting}
+                                isEditMode={isEditMode}
+                                currentStatus={settings?.status}
+                                onFieldChange={setFieldValue}
+                                onSubmit={handleSubmit}
+                            />
+
+                            {/* Section: Bagikan Pendaftaran */}
+                            <ShareRegistrationCard
+                                tournamentName={values.name || settings?.name}
+                            />
+                        </>
                     )}
                 </div>
 
