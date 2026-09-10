@@ -26,6 +26,8 @@ export interface CategoryScheduleData {
     unscheduledMatches: Match[]
     hasExistingSchedule: boolean
     hasStartedMatches: boolean
+    hasAnyStartedGroupMatches: boolean
+    hasAnyScheduledGroupMatches: boolean
     allScheduled: boolean
 }
 
@@ -53,11 +55,10 @@ export function useCategoriesWithGroupsQuery() {
     return useQuery<Category[]>({
         queryKey: CATEGORIES_WITH_GROUPS_QUERY_KEY,
         queryFn: async () => {
-            // Mengambil kategori aktif yang memiliki relasi grup di tabel groups
+            // Mengambil semua kategori yang memiliki relasi grup di tabel groups (termasuk kategori nonaktif)
             const { data, error } = await supabase
                 .from('categories')
                 .select('*, groups!inner(id)')
-                .eq('is_active', true)
                 .order('name', { ascending: true })
 
             if (error) {
@@ -199,7 +200,25 @@ export function useCategoryScheduleQuery(categoryId?: string) {
                 }))
             }
 
-            // 6. Hitung metrik dan status
+            // 6. Hitung status global untuk seluruh match babak grup di semua kategori (untuk tombol reset)
+            const { count: startedCount } = await supabase
+                .from('matches')
+                .select('id', { count: 'exact', head: true })
+                .eq('round', 'group')
+                .in('status', ['live', 'completed'])
+
+            const hasAnyStartedGroupMatches = (startedCount || 0) > 0
+
+            const { count: scheduledCount } = await supabase
+                .from('matches')
+                .select('id', { count: 'exact', head: true })
+                .eq('round', 'group')
+                .not('court_id', 'is', null)
+                .not('scheduled_time', 'is', null)
+
+            const hasAnyScheduledGroupMatches = (scheduledCount || 0) > 0
+
+            // 7. Hitung metrik dan status
             const totalMatches = matches.length
             const scheduledMatches = matches.filter(
                 (m) => m.court_id !== null && m.scheduled_time !== null
@@ -224,6 +243,8 @@ export function useCategoryScheduleQuery(categoryId?: string) {
                 unscheduledMatches,
                 hasExistingSchedule,
                 hasStartedMatches,
+                hasAnyStartedGroupMatches,
+                hasAnyScheduledGroupMatches,
                 allScheduled,
             }
         },

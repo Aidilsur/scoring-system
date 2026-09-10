@@ -56,8 +56,8 @@ Peringkat **1 dan 2 tiap grup lolos ke Semifinal**.
 
 ## 4.6 Format Skor — Semifinal & Final (Knockout)
 - **First to 6 game**: tim yang lebih dulu mencapai 6 game menang match
-- Jika skor mencapai **5-5**, dimainkan **golden game / tie-break penentu** di game ke-6 (bukan harus menang selisih 2 — cukup menang tie-break tersebut) untuk mempercepat durasi turnamen
-- Aturan poin dalam game sama seperti fase grup (Golden Point saat deuce)
+- Golden game di skor 5-5 menggunakan format race to 7 poin - tim yang PERTAMA mencapai 7 poin langsung menang match, TANPA syarat selisih minimal 2 poin (berbeda dari tiebreak fase grup yang wajib selisih 2). Skor akhir bisa saja 7-6, 7-5, dst.
+- Aturan poin dalam game biasa sama seperti fase grup (Golden Point saat deuce)
 - Tidak ada skenario draw di babak ini — harus selalu ada pemenang untuk lanjut bracket
 
 ## 4.7 Bracket Knockout

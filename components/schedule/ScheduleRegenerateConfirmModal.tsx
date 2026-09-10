@@ -7,7 +7,7 @@ import { Button } from '@/components/ui'
 export interface ScheduleRegenerateConfirmModalProps {
     isOpen: boolean
     categoryName?: string
-    mode?: 'single' | 'all'
+    mode?: 'single' | 'all' | 'reset'
     isGenerating?: boolean
     onClose: () => void
     onConfirm: () => void
@@ -24,6 +24,7 @@ export function ScheduleRegenerateConfirmModal({
     if (!isOpen) return null
 
     const isAllMode = mode === 'all'
+    const isResetMode = mode === 'reset'
 
     return (
         <div
@@ -44,19 +45,35 @@ export function ScheduleRegenerateConfirmModal({
 
                 {/* Modal Header */}
                 <div className="flex items-start gap-3.5 mb-4">
-                    <div className="p-2.5 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-400 shrink-0">
+                    <div
+                        className={`p-2.5 rounded-xl border shrink-0 ${
+                            isResetMode
+                                ? 'bg-rose-500/15 border-rose-500/30 text-rose-400'
+                                : 'bg-amber-500/15 border-amber-500/30 text-amber-400'
+                        }`}
+                    >
                         <AlertTriangle className="w-6 h-6" />
                     </div>
                     <div>
                         <h3 className="text-lg font-bold text-white uppercase tracking-tight">
-                            {isAllMode
+                            {isResetMode
+                                ? 'Reset Semua Jadwal Pertandingan?'
+                                : isAllMode
                                 ? 'Regenerate Jadwal SEMUA Kategori?'
                                 : 'Regenerate Jadwal Pertandingan?'}
                         </h3>
                         <p className="text-xs text-zinc-400 mt-0.5">
                             Cakupan:{' '}
-                            <span className="font-semibold text-lime-400">
-                                {isAllMode ? 'Seluruh Kategori Aktif (Paralel)' : (categoryName || 'Terpilih')}
+                            <span
+                                className={`font-semibold ${
+                                    isResetMode ? 'text-rose-400' : 'text-lime-400'
+                                }`}
+                            >
+                                {isResetMode
+                                    ? 'Seluruh Kategori (Babak Grup)'
+                                    : isAllMode
+                                    ? 'Seluruh Kategori (Paralel)'
+                                    : (categoryName || 'Terpilih')}
                             </span>
                         </p>
                     </div>
@@ -64,10 +81,23 @@ export function ScheduleRegenerateConfirmModal({
 
                 {/* Modal Body */}
                 <div className="space-y-2.5 text-xs text-zinc-300 bg-zinc-950/80 p-3.5 rounded-xl border border-zinc-800 mb-6">
-                    {isAllMode ? (
+                    {isResetMode ? (
                         <>
                             <p>
-                                Seluruh slot jadwal babak grup untuk <strong>semua kategori aktif</strong> akan direset dan disusun ulang bersamaan dari awal.
+                                Seluruh penetapan <strong>lapangan (court)</strong> dan <strong>jam pertandingan</strong> untuk babak grup di SEMUA kategori akan dikosongkan.
+                            </p>
+                            <p className="text-zinc-400">
+                                • Semua pertandingan yang belum berlangsung akan kembali ke status belum terjadwal (unscheduled).
+                                <br />
+                                • Hasil drawing grup dan data pendaftaran tim tetap aman dan tidak berubah.
+                                <br />
+                                • Anda dapat menyusun jadwal baru kapan saja (secara bertahap atau paralel).
+                            </p>
+                        </>
+                    ) : isAllMode ? (
+                        <>
+                            <p>
+                                Seluruh slot jadwal babak grup untuk <strong>semua kategori</strong> akan direset dan disusun ulang bersamaan dari awal.
                             </p>
                             <p className="text-zinc-400">
                                 • Pertandingan dari kategori berbeda dapat mengisi lapangan berbeda pada ronde/waktu yang sama (paralel).
@@ -111,9 +141,13 @@ export function ScheduleRegenerateConfirmModal({
                         size="sm"
                         isLoading={isGenerating}
                         onClick={onConfirm}
-                        className="!bg-lime-400 hover:!bg-lime-300 !text-zinc-950 !font-black uppercase tracking-wider rounded-xl shadow-lg shadow-lime-400/20"
+                        className={`!font-black uppercase tracking-wider rounded-xl shadow-lg ${
+                            isResetMode
+                                ? '!bg-rose-600 hover:!bg-rose-500 !text-white shadow-rose-600/20'
+                                : '!bg-lime-400 hover:!bg-lime-300 !text-zinc-950 shadow-lime-400/20'
+                        }`}
                     >
-                        Ya, Susun Ulang Jadwal
+                        {isResetMode ? 'Ya, Reset Semua Jadwal' : 'Ya, Susun Ulang Jadwal'}
                     </Button>
                 </div>
             </div>

@@ -389,11 +389,10 @@ export async function generateAllCategoriesScheduleAction(): Promise<ScheduleAct
             }
         }
 
-        // 4. Ambil semua kategori aktif yang sudah memiliki groups hasil drawing
-        const { data: activeCategories, error: catError } = await supabase
+        // 4. Ambil semua kategori yang sudah memiliki groups hasil drawing (termasuk yang nonaktif)
+        const { data: categoriesWithGroups, error: catError } = await supabase
             .from('categories')
             .select('id, name, groups!inner(id)')
-            .eq('is_active', true)
 
         if (catError) {
             return {
@@ -402,12 +401,12 @@ export async function generateAllCategoriesScheduleAction(): Promise<ScheduleAct
             }
         }
 
-        const categoryIds = Array.from(new Set((activeCategories || []).map((c) => c.id)))
+        const categoryIds = Array.from(new Set((categoriesWithGroups || []).map((c) => c.id)))
 
         if (categoryIds.length === 0) {
             return {
                 success: false,
-                message: 'Belum ada kategori aktif yang memiliki hasil drawing grup.',
+                message: 'Belum ada kategori yang memiliki hasil drawing grup.',
             }
         }
 
@@ -546,6 +545,91 @@ export async function generateAllCategoriesScheduleAction(): Promise<ScheduleAct
             success: false,
             message:
                 err instanceof Error ? err.message : 'Terjadi kesalahan sistem saat membuat jadwal paralel.',
+        }
+    }
+}
+
+/**
+ * Server Action: Reset Semua Jadwal Pertandingan Babak Grup
+ * 
+ * Aturan Bisnis & Pengaman:
+ * 1. Verifikasi autentikasi admin.
+ * 2. Cek apakah ada match manapun di babak grup (round='group') di SEMUA kategori
+ *    yang berstatus 'live' atau 'completed'.
+ * 3. Jika ada match 'live' atau 'completed', TOLAK aksi ini dengan pesan jelas.
+ * 4. Jika aman, set court_id = null dan scheduled_time = null untuk SEMUA match round='group'.
+ * 5. Revalidate path /admin/schedule dan /admin.
+ */
+export async function resetAllGroupSchedulesAction(): Promise<ScheduleActionResponse> {
+    try {
+        const supabase = await createClient()
+
+        // 1. Verifikasi autentikasi admin
+        const {
+            data: { user },
+            error: authError,
+        } = await supabase.auth.getUser()
+
+        if (authError || !user) {
+            return {
+                success: false,
+                message: 'Akses ditolak. Silakan login sebagai admin terlebih dahulu.',
+            }
+        }
+
+        // 2. Cek apakah ada match round='group' di SEMUA kategori yang berstatus 'live' atau 'completed'
+        const { data: startedMatches, error: startedCheckError } = await supabase
+            .from('matches')
+            .select('id, status')
+            .eq('round', 'group')
+            .in('status', ['live', 'completed'])
+
+        if (startedCheckError) {
+            return {
+                success: false,
+                message: `Gagal memeriksa status pertandingan: ${startedCheckError.message}`,
+            }
+        }
+
+        if (startedMatches && startedMatches.length > 0) {
+            return {
+                success: false,
+                message:
+                    'Jadwal tidak dapat direset karena terdapat pertandingan babak grup yang berstatus live atau selesai.',
+            }
+        }
+
+        // 3. Reset seluruh match babak grup di semua kategori
+        const { error: resetError } = await supabase
+            .from('matches')
+            .update({
+                court_id: null,
+                scheduled_time: null,
+                updated_at: new Date().toISOString(),
+            })
+            .eq('round', 'group')
+
+        if (resetError) {
+            return {
+                success: false,
+                message: `Gagal mereset seluruh jadwal: ${resetError.message}`,
+            }
+        }
+
+        // 4. Revalidasi cache
+        revalidatePath('/admin/schedule')
+        revalidatePath('/admin')
+
+        return {
+            success: true,
+            message: 'Seluruh jadwal pertandingan babak grup berhasil direset.',
+        }
+    } catch (err: unknown) {
+        console.error('Unexpected Reset All Schedules Error:', err)
+        return {
+            success: false,
+            message:
+                err instanceof Error ? err.message : 'Terjadi kesalahan sistem saat mereset seluruh jadwal.',
         }
     }
 }

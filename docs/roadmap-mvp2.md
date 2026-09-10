@@ -19,3 +19,7 @@ MVP 1 stabil.
   - Tabel baru `tournament_invitations` (atau mekanisme link invite) untuk mengundang role tertentu
   - RLS policy perlu dirombak total mengikuti role & kepemilikan turnamen, bukan lagi "asal login = admin"
 - Pertanyaan yang masih perlu dijawab nanti sebelum eksekusi: role apa saja yang dibutuhkan persis, apakah wasit perlu login Google atau cukup akses link tanpa login, dan apakah pembuatan turnamen benar-benar terbuka untuk semua orang atau dibatasi.
+
+## Verifikasi & Keamanan Wasit Lapangan
+
+- **Verifikasi Wasit via QR Code** — saat wasit login untuk menangani court tertentu, tambahkan lapisan verifikasi dengan scan QR code fisik yang ditempel di masing-masing court, untuk memastikan wasit benar-benar berada di lokasi court yang sesuai sebelum bisa input skor. Ditunda ke MVP 2 karena kompleksitas implementasi scan QR di web (vs native app) belum sepadan dengan kebutuhan MVP 1 yang masih single-tournament dan wasit dipilih manual dari daftar court/match.

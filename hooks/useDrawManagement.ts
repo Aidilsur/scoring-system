@@ -9,6 +9,7 @@ import {
 } from './useDrawQuery'
 import { generateCategoryDrawAction } from '@/app/admin/(protected)/draw/actions'
 import { TOURNAMENT_SETTINGS_QUERY_KEY } from './useTournamentSettingsQuery'
+import { showToast } from '@/lib/toast'
 
 export interface DrawToast {
   type: 'success' | 'error'
@@ -70,6 +71,7 @@ export function useDrawManagement(initialCategoryId?: string) {
         type: 'success',
         message: res.message,
       })
+      showToast.success(res.message)
       // Refresh cache query draw dan turnamen
       queryClient.invalidateQueries({
         queryKey: [...CATEGORY_DRAW_QUERY_KEY, selectedCategoryId],
@@ -79,10 +81,12 @@ export function useDrawManagement(initialCategoryId?: string) {
       })
     },
     onError: (err: Error) => {
+      const errMsg = err.message || 'Terjadi kesalahan saat memproses drawing.'
       setToast({
         type: 'error',
-        message: err.message || 'Terjadi kesalahan saat memproses drawing.',
+        message: errMsg,
       })
+      showToast.error(errMsg)
     },
   })
 
@@ -90,15 +94,17 @@ export function useDrawManagement(initialCategoryId?: string) {
   const handleTriggerDraw = useCallback(() => {
     if (!selectedCategoryId) {
       setToast({ type: 'error', message: 'Silakan pilih kategori terlebih dahulu.' })
+      showToast.error('Silakan pilih kategori terlebih dahulu.')
       return
     }
 
     if (drawData?.hasStartedMatches) {
+      const errMsg = 'Regenerate draw tidak diizinkan karena pertandingan sudah live atau selesai.'
       setToast({
         type: 'error',
-        message:
-          'Regenerate draw tidak diizinkan karena pertandingan sudah live atau selesai.',
+        message: errMsg,
       })
+      showToast.error(errMsg)
       return
     }
 

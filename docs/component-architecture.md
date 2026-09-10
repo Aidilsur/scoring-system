@@ -52,3 +52,15 @@ selalu "cukup 1 tempat".
 - Semua icon menggunakan library `lucide-react`, dilarang menulis SVG path manual inline di komponen.
 - Import hanya icon yang dipakai (named import) untuk menjaga bundle size dan tree-shaking tetap optimal (contoh: `import { Users, ChevronDown } from 'lucide-react'`).
 - Pengecualian: Aset brand resmi pihak ketiga (seperti logo Google OAuth 4-warna) yang tidak tersedia di `lucide-react` wajib ditempatkan di komponen icon tersendiri di `components/icons/` (misal `components/icons/GoogleIcon.tsx`), bukan ditulis inline di dalam komponen view/button.
+
+## I. Konsistensi Bahasa dalam Kode (English Identifier vs Target Audience UI)
+
+- Semua identifier dalam kode (nama variable, function, komponen, tipe data, kolom database, nilai enum) **WAJIB menggunakan bahasa Inggris**, terlepas dari bahasa yang dipakai di UI.
+- Teks yang ditampilkan ke user (label, pesan, placeholder) mengikuti bahasa target audiens aplikasi (Bahasa Indonesia untuk admin/scoring, English untuk homepage sesuai keputusan sebelumnya).
+- Contoh: variable `isReferee` (BENAR) menyimpan nilai untuk menampilkan label 'Wasit' di UI (BENAR) — bukan variable `isWasit` (SALAH).
+ 
+## J. Standardisasi Feedback Server Action Melalui Toast Notification (via Sonner)
+
+- Semua feedback aksi (sukses/gagal) dari Server Action **WAJIB ditampilkan sebagai toast notification (via sonner)**, bukan hanya inline text di halaman — untuk memastikan admin selalu melihat feedback meski sedang scroll di bagian manapun halaman.
+- Gunakan helper standar dari `@/lib/toast` (`toast.success(message)`, `toast.error(message)`, `toast.warning(message)`) agar konsisten di seluruh aplikasi.
+- Inline alert/feedback kartu di body halaman bersifat opsional/sekunder; toast notification adalah saluran komunikasi utama untuk konfirmasi aksi mutasi data admin.

@@ -9,9 +9,10 @@ import {
     CheckCircle2,
     AlertCircle,
     X,
-    Clock,
     Layers,
-    MapPin,
+    Zap,
+    Trash2,
+    ShieldAlert,
 } from 'lucide-react'
 import { useScheduleManagement } from '@/hooks/useScheduleManagement'
 import { SelectInput, Card } from '@/components/ui'
@@ -42,9 +43,9 @@ const SCHEDULE_RULE_HINTS = [
             'Jika waktu operasional habis sebelum seluruh match terjadwal, sisa pertandingan akan diberi peringatan tanpa melanggar aturan jeda.',
     },
     {
-        label: 'Kunci Regenerate',
+        label: 'Kunci Regenerate & Reset',
         description:
-            'Fitur regenerate otomatis dikunci apabila ada pertandingan di kategori ini yang berstatus live atau selesai.',
+            'Regenerate dan reset otomatis dikunci apabila terdapat pertandingan yang berstatus live atau selesai.',
     },
 ] as const
 
@@ -56,9 +57,12 @@ export function ScheduleManagementView({
     initialCategoryId,
 }: ScheduleManagementViewProps) {
     const {
+        scheduleMode,
+        setScheduleMode,
         categories,
         selectedCategoryId,
         setSelectedCategoryId,
+        singleCategoryId,
         selectedCategory,
         isAllMode,
         scheduleData,
@@ -69,7 +73,7 @@ export function ScheduleManagementView({
         isCategoriesError,
         categoriesError,
         isGenerating,
-        isGeneratingAll,
+        isResetting,
         isConfirmModalOpen,
         setIsConfirmModalOpen,
         confirmModalMode,
@@ -79,16 +83,17 @@ export function ScheduleManagementView({
         clearUnscheduledWarning,
         handleTriggerSchedule,
         handleTriggerAllSchedule,
+        handleTriggerReset,
         handleConfirmRegenerate,
     } = useScheduleManagement(initialCategoryId)
 
-    const categoryOptions = [
-        { value: 'ALL', label: '🌟 Semua Kategori (Jadwal Gabungan Paralel)' },
-        ...categories.map((cat) => ({
-            value: cat.id,
-            label: `${cat.name} (${cat.partner_type.toUpperCase()} - ${cat.level.toUpperCase()})`,
-        })),
-    ]
+    const categoryOptions = categories.map((cat) => ({
+        value: cat.id,
+        label: `${cat.name} (${cat.partner_type.toUpperCase()} - ${cat.level.toUpperCase()})`,
+    }))
+
+    const hasStartedMatchesGlobal = Boolean(scheduleData?.hasAnyStartedGroupMatches)
+    const hasScheduledMatchesGlobal = Boolean(scheduleData?.hasAnyScheduledGroupMatches)
 
     return (
         <div className="space-y-8">
@@ -108,27 +113,31 @@ export function ScheduleManagementView({
                         Penjadwalan Pertandingan
                     </h1>
                     <p className="text-xs text-zinc-400 mt-1">
-                        Atur pembagian waktu &amp; court round-robin secara paralel atau per kategori dengan proteksi jeda istirahat 1 ronde.
+                        Atur pembagian waktu &amp; court round-robin secara bertahap per kategori atau serentak (paralel) dengan jaminan jeda istirahat 1 ronde.
                     </p>
                 </div>
 
-                {/* Top Action Buttons: Generate Semua & Refresh */}
+                {/* Top Action Controls: Reset Semua Jadwal & Refresh */}
                 <div className="flex items-center gap-2.5">
                     <button
                         type="button"
-                        onClick={handleTriggerAllSchedule}
-                        disabled={isGenerating || scheduleData?.hasStartedMatches}
-                        title={
-                            scheduleData?.hasStartedMatches
-                                ? 'Regenerate dikunci karena ada match live/selesai'
-                                : 'Jadwalkan seluruh match babak grup dari semua kategori secara serentak (paralel)'
+                        onClick={handleTriggerReset}
+                        disabled={
+                            isGenerating ||
+                            hasStartedMatchesGlobal ||
+                            !hasScheduledMatchesGlobal
                         }
-                        className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-bold uppercase tracking-wider rounded-xl bg-lime-400 hover:bg-lime-300 text-zinc-950 transition cursor-pointer disabled:opacity-50 shadow-md shadow-lime-400/20"
+                        title={
+                            hasStartedMatchesGlobal
+                                ? 'Reset dinonaktifkan: terdapat pertandingan babak grup yang sedang live atau selesai'
+                                : !hasScheduledMatchesGlobal
+                                ? 'Belum ada jadwal pertandingan babak grup yang tersimpan'
+                                : 'Kosongkan lapangan dan waktu pertandingan untuk SEMUA match babak grup di seluruh kategori'
+                        }
+                        className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-bold uppercase tracking-wider rounded-xl bg-zinc-900 border border-rose-500/40 text-rose-300 hover:bg-rose-950/40 hover:border-rose-500 hover:text-rose-200 transition cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed shadow-md shadow-black/40"
                     >
-                        <RotateCw
-                            className={`w-3.5 h-3.5 ${isGeneratingAll ? 'animate-spin' : ''}`}
-                        />
-                        <span>Generate SEMUA Kategori (Paralel)</span>
+                        <Trash2 className={`w-3.5 h-3.5 text-rose-400 ${isResetting ? 'animate-spin' : ''}`} />
+                        <span>Reset Semua Jadwal</span>
                     </button>
 
                     <button
@@ -136,7 +145,7 @@ export function ScheduleManagementView({
                         onClick={() => refetchSchedule()}
                         disabled={isLoadingSchedule || isRefetchingSchedule}
                         aria-label="Segarkan Data"
-                        className="inline-flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white hover:border-zinc-700 transition cursor-pointer disabled:opacity-50"
+                        className="inline-flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white hover:border-zinc-700 transition cursor-pointer disabled:opacity-50 shadow-md shadow-black/30"
                     >
                         <RotateCw
                             className={`w-3.5 h-3.5 ${
@@ -148,29 +157,106 @@ export function ScheduleManagementView({
                 </div>
             </div>
 
-            {/* Category Filter Selector & Quick Switcher */}
-            <div className="p-4 rounded-2xl bg-zinc-900/80 border border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="flex-1 max-w-md">
-                    <SelectInput
-                        id="schedule-category-select"
-                        label="Pilih Tampilan Kategori Jadwal"
-                        value={selectedCategoryId}
-                        onChange={(e) => setSelectedCategoryId(e.target.value)}
-                        disabled={isLoadingCategories || isGenerating}
-                        options={categoryOptions}
-                    />
+            {/* Mode Switcher Toggle (Bertahap vs Paralel) */}
+            <div className="p-3 sm:p-4 rounded-2xl bg-zinc-900/90 border border-zinc-800 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xl">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                    <span className="text-xs font-bold uppercase tracking-wider text-zinc-400 mr-2">
+                        Pilih Mode Penjadwalan:
+                    </span>
+                    <div className="inline-flex p-1 rounded-xl bg-zinc-950 border border-zinc-800 self-start">
+                        <button
+                            type="button"
+                            onClick={() => setScheduleMode('step_by_step')}
+                            disabled={isGenerating}
+                            className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition cursor-pointer ${
+                                scheduleMode === 'step_by_step'
+                                    ? 'bg-lime-400 text-zinc-950 shadow-md shadow-lime-400/20'
+                                    : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
+                            }`}
+                        >
+                            <Calendar className="w-3.5 h-3.5" />
+                            <span>Generate Bertahap</span>
+                            <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-900/60 text-zinc-300 font-mono">
+                                Default
+                            </span>
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={() => setScheduleMode('parallel')}
+                            disabled={isGenerating}
+                            className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition cursor-pointer ${
+                                scheduleMode === 'parallel'
+                                    ? 'bg-lime-400 text-zinc-950 shadow-md shadow-lime-400/20'
+                                    : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
+                            }`}
+                        >
+                            <Zap className="w-3.5 h-3.5" />
+                            <span>Generate Paralel</span>
+                        </button>
+                    </div>
                 </div>
 
-                <div className="text-xs text-zinc-400 flex items-center gap-2 pt-1 sm:pt-4">
+                <div className="text-xs text-zinc-400 flex items-center gap-2">
                     <Layers className="w-4 h-4 text-lime-400 shrink-0" />
                     <span>
-                        Mode aktif:{' '}
-                        <strong className="text-lime-300">
-                            {isAllMode ? 'Semua Kategori (Paralel)' : (selectedCategory?.name || '')}
-                        </strong>
+                        {scheduleMode === 'step_by_step' ? (
+                            <>
+                                Mode Bertahap: <strong className="text-lime-300">{selectedCategory?.name || 'Pilih Kategori'}</strong>
+                            </>
+                        ) : (
+                            <>
+                                Mode Paralel: <strong className="text-lime-300">Semua Kategori ({categories.length})</strong>
+                            </>
+                        )}
                     </span>
                 </div>
             </div>
+
+            {/* Category Selector (HANYA MUNCUL DI MODE BERTAHAP) */}
+            {scheduleMode === 'step_by_step' && (
+                <div className="p-4 rounded-2xl bg-zinc-900/60 border border-zinc-800/90 flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-in fade-in duration-200">
+                    <div className="flex-1 max-w-md">
+                        <SelectInput
+                            id="schedule-category-select"
+                            label="Pilih Kategori Yang Ingin Dijadwalkan"
+                            value={singleCategoryId}
+                            onChange={(e) => setSelectedCategoryId(e.target.value)}
+                            disabled={isLoadingCategories || isGenerating}
+                            options={categoryOptions}
+                        />
+                    </div>
+
+                    <div className="text-xs text-zinc-400 pt-1 sm:pt-4 max-w-sm leading-relaxed">
+                        💡 Penjadwalan bertahap pada kategori ini bersifat <strong>non-destructive</strong> terhadap kategori lain karena otomatis mendeteksi slot waktu dan court yang sudah terisi.
+                    </div>
+                </div>
+            )}
+
+            {/* Banner Mode Paralel (HANYA MUNCUL DI MODE PARALEL) */}
+            {scheduleMode === 'parallel' && (
+                <div className="p-4 rounded-2xl bg-lime-950/20 border border-lime-500/30 flex items-start gap-3 text-xs text-lime-200 animate-in fade-in duration-200">
+                    <Zap className="w-5 h-5 text-lime-400 shrink-0 mt-0.5" />
+                    <div className="space-y-0.5">
+                        <strong className="text-lime-300 font-bold block text-sm">
+                            Mode Generate Paralel Aktif
+                        </strong>
+                        <p className="text-zinc-300">
+                            Seluruh pertandingan babak grup dari seluruh kategori akan dijadwalkan secara terpadu. Court akan terisi serentak antar kategori dengan jaminan jeda istirahat minimal 1 ronde per tim.
+                        </p>
+                    </div>
+                </div>
+            )}
+
+            {/* Warning jika ada match live/completed sehingga reset dinonaktifkan */}
+            {hasStartedMatchesGlobal && (
+                <div className="p-3.5 rounded-xl bg-zinc-900 border border-amber-500/40 text-amber-200 text-xs flex items-center gap-2.5 shadow-md">
+                    <ShieldAlert className="w-4 h-4 text-amber-400 shrink-0" />
+                    <span>
+                        <strong>Proteksi Turnamen Aktif:</strong> Ada pertandingan babak grup yang sedang live atau telah selesai. Fitur Regenerate dan Reset dikunci demi menjaga integritas data.
+                    </span>
+                </div>
+            )}
 
             {/* Toast Notification */}
             {toast && (
@@ -227,7 +313,9 @@ export function ScheduleManagementView({
                         isAllMode={isAllMode}
                         isLoading={isLoadingSchedule}
                         isGenerating={isGenerating}
-                        onGenerate={handleTriggerSchedule}
+                        onGenerate={
+                            isAllMode ? handleTriggerAllSchedule : handleTriggerSchedule
+                        }
                     />
 
                     {selectedCategoryId && (
@@ -294,7 +382,7 @@ export function ScheduleManagementView({
                 </div>
             </div>
 
-            {/* Confirm Regenerate Dialog Modal */}
+            {/* Confirm Regenerate / Reset Dialog Modal */}
             <ScheduleRegenerateConfirmModal
                 isOpen={isConfirmModalOpen}
                 mode={confirmModalMode}

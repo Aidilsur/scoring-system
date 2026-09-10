@@ -9,6 +9,14 @@ export type CategoryLevel = 'beginner' | 'lower_bronze' | 'bronze'
 export type TournamentStatus = 'draft' | 'draw_done' | 'ongoing' | 'completed'
 export type MatchRound = 'group' | 'semifinal' | 'final' | 'third_place'
 export type MatchStatus = 'scheduled' | 'live' | 'completed' | 'walkover'
+export type AdminRole = 'admin' | 'referee'
+
+export interface AdminUser {
+    id: string
+    email: string
+    role: AdminRole
+    created_at: string
+}
 
 export interface Category {
     id: string

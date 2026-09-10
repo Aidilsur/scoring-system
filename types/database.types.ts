@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_users: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          role: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          role: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          role?: string
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
           created_at: string
@@ -367,7 +388,7 @@ export type Database = {
       }
     }
     Functions: {
-      [_ in never]: never
+      is_admin_user: { Args: never; Returns: boolean }
     }
     Enums: {
       category_level: "beginner" | "lower_bronze" | "bronze"

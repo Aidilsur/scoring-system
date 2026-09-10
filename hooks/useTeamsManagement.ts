@@ -8,6 +8,7 @@ import {
     getPaymentProofSignedUrlAction,
 } from '@/app/admin/(protected)/teams/actions'
 import { Team, TeamStatus } from '@/types/domain'
+import { showToast } from '@/lib/toast'
 
 export interface ToastNotification {
     type: 'success' | 'error'
@@ -102,16 +103,20 @@ export function useTeamsManagement() {
                 }
 
                 setToast({ type: 'success', message: res.message })
+                showToast.success(res.message)
             } else {
                 setToast({ type: 'error', message: res.message })
+                showToast.error(res.message)
             }
         },
         onError: (err) => {
+            const errMsg =
+                err instanceof Error ? err.message : 'Gagal memperbarui status tim.'
             setToast({
                 type: 'error',
-                message:
-                    err instanceof Error ? err.message : 'Gagal memperbarui status tim.',
+                message: errMsg,
             })
+            showToast.error(errMsg)
         },
     })
 

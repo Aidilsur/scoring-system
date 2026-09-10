@@ -1,0 +1,5 @@
+export * from './types'
+export { recordPoint } from './recordPoint'
+export { recordTiebreakPoint } from './recordTiebreakPoint'
+export { checkMatchWinner } from './checkMatchWinner'
+export { shouldStartTiebreakGame } from './shouldStartTiebreakGame'

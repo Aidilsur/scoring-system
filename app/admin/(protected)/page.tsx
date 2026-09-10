@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { Card, Badge } from '@/components/ui'
 import { LogoutButton } from '@/components/admin/LogoutButton'
+import { AdminRole } from '@/types/domain'
 import {
     Layers,
     Users,
@@ -80,13 +81,27 @@ export default async function AdminDashboardPage() {
         redirect('/admin/login')
     }
 
+    const userEmail = user.email?.toLowerCase().trim() || ''
+    const { data: adminUserData } = await supabase
+        .from('admin_users')
+        .select('role')
+        .eq('email', userEmail)
+        .maybeSingle()
+
+    const role: AdminRole = (adminUserData?.role as AdminRole) || 'admin'
+    const isReferee = role === 'referee'
+
     const adminName =
         user.user_metadata?.full_name ||
         user.user_metadata?.name ||
         user.email?.split('@')[0] ||
-        'Administrator'
+        (isReferee ? 'Wasit' : 'Administrator')
     const adminEmail = user.email || 'Email tidak tersedia'
     const adminAvatar = user.user_metadata?.avatar_url
+
+    const displayedModules = isReferee
+        ? ADMIN_MODULES.filter((m) => m.path === '/admin/scoring')
+        : ADMIN_MODULES
 
     return (
         <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col">
@@ -100,7 +115,9 @@ export default async function AdminDashboardPage() {
                         <h2 className="text-sm font-bold text-white tracking-wide uppercase">
                             Padel Scoring System
                         </h2>
-                        <p className="text-[11px] text-zinc-400">Admin Control Center</p>
+                        <p className="text-[11px] text-zinc-400">
+                            {isReferee ? 'Referee Portal' : 'Admin Control Center'}
+                        </p>
                     </div>
                 </div>
 
@@ -118,6 +135,15 @@ export default async function AdminDashboardPage() {
                             </div>
                         )}
                         <span className="font-medium max-w-[140px] truncate">{adminName}</span>
+                        <span
+                            className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded border ${
+                                isReferee
+                                    ? 'bg-amber-400/20 text-amber-300 border-amber-400/40'
+                                    : 'bg-lime-400/20 text-lime-300 border-lime-400/40'
+                            }`}
+                        >
+                            {isReferee ? 'Wasit' : 'Admin'}
+                        </span>
                     </div>
 
                     <LogoutButton variant="secondary" size="sm" />
@@ -132,8 +158,8 @@ export default async function AdminDashboardPage() {
 
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative z-10">
                         <div className="space-y-1.5">
-                            <Badge variant="success" size="sm">
-                                Authenticated Session Active
+                            <Badge variant={isReferee ? 'warning' : 'success'} size="sm">
+                                {isReferee ? 'Sesi Wasit Aktif' : 'Sesi Administrator Aktif'}
                             </Badge>
                             <h1 className="font-[family-name:var(--font-anton)] text-3xl sm:text-4xl lg:text-5xl text-white uppercase tracking-tight">
                                 Selamat Datang, {adminName}!
@@ -158,19 +184,28 @@ export default async function AdminDashboardPage() {
                 <div className="space-y-4">
                     <div className="flex items-center justify-between">
                         <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400">
-                            Modul Pengelolaan Turnamen
+                            {isReferee ? 'Modul Operasional Wasit' : 'Modul Pengelolaan Turnamen'}
                         </h3>
-                        <span className="text-[11px] text-zinc-500">Berdasarkan Spesifikasi §6.2</span>
+                        <span className="text-[11px] text-zinc-500">
+                            {isReferee ? 'Akses Khusus Pertandingan Langsung' : 'Berdasarkan Spesifikasi §6.2'}
+                        </span>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-                        {ADMIN_MODULES.map((module) => {
+                    <div
+                        className={`grid grid-cols-1 ${
+                            isReferee
+                                ? 'sm:grid-cols-1 max-w-sm'
+                                : 'sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5'
+                        } gap-4`}
+                    >
+                        {displayedModules.map((module) => {
                             const isAvailable =
                                 module.path === '/admin/categories' ||
                                 module.path === '/admin/teams' ||
                                 module.path === '/admin/tournament-setup' ||
                                 module.path === '/admin/draw' ||
-                                module.path === '/admin/schedule'
+                                module.path === '/admin/schedule' ||
+                                module.path === '/admin/scoring'
                             return (
                                 <Link
                                     key={module.path}
