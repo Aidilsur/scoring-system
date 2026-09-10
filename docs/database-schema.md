@@ -30,6 +30,9 @@ tournament_settings
 - golden_point_enabled   (boolean)
 - third_place_enabled    (boolean)
 - number_of_courts
+- match_duration_minutes (INT, default 45: estimasi durasi per match)
+- daily_start_time       (TIME, default '08:00': jam mulai operasional harian)
+- daily_end_time         (TIME, default '18:00': jam selesai operasional harian)
 - status                (enum: draft | draw_done | ongoing | completed)
 
 groups

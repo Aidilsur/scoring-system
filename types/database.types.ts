@@ -291,8 +291,11 @@ export type Database = {
       tournament_settings: {
         Row: {
           created_at: string
+          daily_end_time: string
+          daily_start_time: string
           golden_point_enabled: boolean
           id: string
+          match_duration_minutes: number
           name: string
           number_of_courts: number
           status: Database["public"]["Enums"]["tournament_status"]
@@ -302,8 +305,11 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          daily_end_time?: string
+          daily_start_time?: string
           golden_point_enabled?: boolean
           id?: string
+          match_duration_minutes?: number
           name: string
           number_of_courts?: number
           status?: Database["public"]["Enums"]["tournament_status"]
@@ -313,8 +319,11 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          daily_end_time?: string
+          daily_start_time?: string
           golden_point_enabled?: boolean
           id?: string
+          match_duration_minutes?: number
           name?: string
           number_of_courts?: number
           status?: Database["public"]["Enums"]["tournament_status"]

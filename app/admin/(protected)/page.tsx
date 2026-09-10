@@ -10,6 +10,7 @@ import {
     Users,
     SlidersHorizontal,
     Shuffle,
+    CalendarDays,
     Zap,
     ArrowRight,
     ShieldCheck,
@@ -51,6 +52,13 @@ const ADMIN_MODULES = [
         description: 'Generate & acak pembagian grup per kategori',
         badge: 'Otomatis',
         icon: Shuffle,
+    },
+    {
+        title: 'Jadwal Pertandingan',
+        path: '/admin/schedule',
+        description: 'Penjadwalan otomatis round-robin per court & jam',
+        badge: 'Multi-Court',
+        icon: CalendarDays,
     },
     {
         title: 'Live Scoring (Hari-H)',
@@ -161,7 +169,8 @@ export default async function AdminDashboardPage() {
                                 module.path === '/admin/categories' ||
                                 module.path === '/admin/teams' ||
                                 module.path === '/admin/tournament-setup' ||
-                                module.path === '/admin/draw'
+                                module.path === '/admin/draw' ||
+                                module.path === '/admin/schedule'
                             return (
                                 <Link
                                     key={module.path}

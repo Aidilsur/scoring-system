@@ -85,6 +85,9 @@ export async function saveTournamentSettingsAction(
                     golden_point_enabled: validData.golden_point_enabled,
                     third_place_enabled: validData.third_place_enabled,
                     number_of_courts: validData.number_of_courts,
+                    match_duration_minutes: validData.match_duration_minutes,
+                    daily_start_time: validData.daily_start_time,
+                    daily_end_time: validData.daily_end_time,
                     updated_at: new Date().toISOString(),
                 })
                 .eq('id', targetId)
@@ -109,6 +112,9 @@ export async function saveTournamentSettingsAction(
                     golden_point_enabled: validData.golden_point_enabled,
                     third_place_enabled: validData.third_place_enabled,
                     number_of_courts: validData.number_of_courts,
+                    match_duration_minutes: validData.match_duration_minutes,
+                    daily_start_time: validData.daily_start_time,
+                    daily_end_time: validData.daily_end_time,
                     status: 'draft',
                 })
                 .select()

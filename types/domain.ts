@@ -44,6 +44,9 @@ export interface TournamentSettings {
     golden_point_enabled: boolean
     third_place_enabled: boolean
     number_of_courts: number
+    match_duration_minutes: number
+    daily_start_time: string
+    daily_end_time: string
     status: TournamentStatus
     created_at?: string
     updated_at?: string
@@ -62,6 +65,13 @@ export interface GroupTeam {
     group_id: string
     team_id: string
     teams?: Team
+}
+
+export interface Court {
+    id: string
+    tournament_id: string
+    name: string
+    created_at?: string
 }
 
 export interface Match {
@@ -83,5 +93,8 @@ export interface Match {
     team_a?: Team | null
     team_b?: Team | null
     group?: Group | null
+    court?: Court | null
+    category?: Category | null
 }
+
 

@@ -24,6 +24,9 @@ export interface TournamentFormValues {
     golden_point_enabled: boolean
     third_place_enabled: boolean
     number_of_courts: number
+    match_duration_minutes: number
+    daily_start_time: string
+    daily_end_time: string
 }
 
 const DEFAULT_FORM_VALUES: TournamentFormValues = {
@@ -32,6 +35,9 @@ const DEFAULT_FORM_VALUES: TournamentFormValues = {
     golden_point_enabled: true,
     third_place_enabled: false,
     number_of_courts: 1,
+    match_duration_minutes: 45,
+    daily_start_time: '08:00',
+    daily_end_time: '18:00',
 }
 
 export function useTournamentSettingsForm(initialData?: TournamentSettings | null) {
@@ -56,6 +62,9 @@ export function useTournamentSettingsForm(initialData?: TournamentSettings | nul
                 golden_point_enabled: source.golden_point_enabled ?? true,
                 third_place_enabled: source.third_place_enabled ?? false,
                 number_of_courts: source.number_of_courts ?? 1,
+                match_duration_minutes: source.match_duration_minutes ?? 45,
+                daily_start_time: source.daily_start_time ? source.daily_start_time.slice(0, 5) : '08:00',
+                daily_end_time: source.daily_end_time ? source.daily_end_time.slice(0, 5) : '18:00',
             }
         }
         return DEFAULT_FORM_VALUES
@@ -75,6 +84,9 @@ export function useTournamentSettingsForm(initialData?: TournamentSettings | nul
                 golden_point_enabled: settings.golden_point_enabled ?? true,
                 third_place_enabled: settings.third_place_enabled ?? false,
                 number_of_courts: settings.number_of_courts ?? 1,
+                match_duration_minutes: settings.match_duration_minutes ?? 45,
+                daily_start_time: settings.daily_start_time ? settings.daily_start_time.slice(0, 5) : '08:00',
+                daily_end_time: settings.daily_end_time ? settings.daily_end_time.slice(0, 5) : '18:00',
             })
         }
     }, [settings])

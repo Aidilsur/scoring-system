@@ -34,6 +34,14 @@ const TOURNAMENT_SETTING_HINTS = [
         label: 'Perebutan Juara 3',
         description: 'Menambahkan bagan tanding untuk runner-up semifinal sebelum final.',
     },
+    {
+        label: 'Durasi Match',
+        description: 'Alokasi waktu per match untuk menyusun jadwal otomatis.',
+    },
+    {
+        label: 'Jam Turnamen',
+        description: 'Rentang jam operasional harian untuk slot giliran main.',
+    },
 ] as const
 
 const RELATED_MODULES = [

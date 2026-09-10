@@ -71,3 +71,6 @@ Peringkat **1 dan 2 tiap grup lolos ke Semifinal**.
 - Karena tiap match punya row unik di tabel `matches` dan diupdate lewat Server Action yang menulis ke Supabase, tidak ada race condition antar court — masing-masing match independen
 - Layar TV per court subscribe **hanya ke match yang sedang aktif di court tersebut** (Supabase Realtime channel filtered by `court_id`), sehingga update skor di Court 1 tidak memicu re-render di layar Court 2
 - Halaman klasemen & bracket subscribe ke perubahan tabel `matches`/`standings` secara keseluruhan agar auto-update begitu ada skor final masuk
+
+### Penjadwalan Pertandingan
+Setiap tim WAJIB mendapat jeda minimal 1 ronde (bukan berbasis waktu jam, karena durasi pertandingan real bisa meleset dari estimasi) sebelum bermain kembali - bahkan jika ini memperpanjang total durasi turnamen atau membuat sebagian court kosong di suatu ronde. Court adalah resource bersama lintas kategori (bukan eksklusif per kategori), sehingga penjadwalan kategori baru WAJIB memperhitungkan slot yang sudah terpakai kategori lain sebelumnya, untuk menghindari bentrok court+waktu antar kategori.

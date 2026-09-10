@@ -144,6 +144,64 @@ export function TournamentSetupForm({
                     />
                 </div>
 
+                {/* Section Baru: Jadwal & Waktu Pertandingan */}
+                <div className="pt-5 border-t border-zinc-800 space-y-4">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-lime-400">
+                        Jadwal &amp; Waktu Pertandingan
+                    </h3>
+
+                    {/* Estimasi Durasi Pertandingan (menit) */}
+                    <TextInput
+                        id="match-duration"
+                        name="match_duration_minutes"
+                        type="number"
+                        label="Estimasi Durasi Pertandingan (Menit)"
+                        required
+                        min={10}
+                        max={240}
+                        value={values.match_duration_minutes}
+                        error={fieldErrors.match_duration_minutes}
+                        helperText="Alokasi estimasi durasi per match (termasuk jeda/pemanasan) untuk generate jadwal otomatis."
+                        onChange={(e) =>
+                            onFieldChange(
+                                'match_duration_minutes',
+                                parseInt(e.target.value, 10) || 0
+                            )
+                        }
+                        disabled={isSubmitting}
+                    />
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-1">
+                        {/* Jam Mulai Turnamen */}
+                        <TextInput
+                            id="daily-start-time"
+                            name="daily_start_time"
+                            type="time"
+                            label="Jam Mulai Turnamen"
+                            required
+                            value={values.daily_start_time}
+                            error={fieldErrors.daily_start_time}
+                            helperText="Waktu dimulainya slot pertandingan pertama setiap hari."
+                            onChange={(e) => onFieldChange('daily_start_time', e.target.value)}
+                            disabled={isSubmitting}
+                        />
+
+                        {/* Jam Selesai Turnamen */}
+                        <TextInput
+                            id="daily-end-time"
+                            name="daily_end_time"
+                            type="time"
+                            label="Jam Selesai Turnamen"
+                            required
+                            value={values.daily_end_time}
+                            error={fieldErrors.daily_end_time}
+                            helperText="Batas akhir penggunaan court turnamen setiap hari."
+                            onChange={(e) => onFieldChange('daily_end_time', e.target.value)}
+                            disabled={isSubmitting}
+                        />
+                    </div>
+                </div>
+
                 <div className="pt-5 border-t border-zinc-800 space-y-5">
                     <h3 className="text-xs font-bold uppercase tracking-wider text-lime-400">
                         Aturan &amp; Format Pertandingan
