@@ -228,7 +228,7 @@ export function LiveScoringBoard({
                     <div className="w-full">
                         <Button
                             onClick={() => onRecordPoint('team_a')}
-                            disabled={isPending || isCompleted || isReadOnly}
+                            disabled={isCompleted || isReadOnly}
                             variant="primary"
                             size="lg"
                             className="w-full py-5 text-xl sm:text-2xl font-black rounded-2xl shadow-xl shadow-lime-400/20 active:scale-[0.98] transition-transform flex items-center justify-center gap-2"
@@ -285,7 +285,7 @@ export function LiveScoringBoard({
                     <div className="w-full">
                         <Button
                             onClick={() => onRecordPoint('team_b')}
-                            disabled={isPending || isCompleted || isReadOnly}
+                            disabled={isCompleted || isReadOnly}
                             variant="primary"
                             size="lg"
                             className="w-full py-5 text-xl sm:text-2xl font-black rounded-2xl shadow-xl shadow-lime-400/20 active:scale-[0.98] transition-transform flex items-center justify-center gap-2"

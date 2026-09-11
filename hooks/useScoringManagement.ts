@@ -1,19 +1,20 @@
 'use client'
 
-import { useState, useCallback, useTransition, useEffect } from 'react'
+import { useState, useCallback, useTransition, useEffect, useOptimistic } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useCourtsQuery } from './useCourtsQuery'
 import { useCourtMatchesQuery, courtMatchesQueryKey } from './useCourtMatchesQuery'
-import { useMatchDetailQuery, matchDetailQueryKey } from './useMatchDetailQuery'
+import { useMatchDetailQuery, matchDetailQueryKey, type MatchDetailData } from './useMatchDetailQuery'
 import { useRealtimeMatch } from './useRealtimeMatch'
 import {
     recordPointAction,
     undoLastPointAction,
     claimScorerSessionAction,
 } from '@/app/admin/(protected)/scoring/actions'
-import { getClientScorerSessionId } from '@/lib/scoring'
+import { getClientScorerSessionId, calculateNextMatchScore } from '@/lib/scoring'
 import { toast } from '@/lib/toast'
 import type { MatchTeam } from '@/lib/scoring'
+import type { Match } from '@/types/domain'
 
 export function useScoringManagement(
     initialCourtId?: string | null,
@@ -39,6 +40,16 @@ export function useScoringManagement(
 
     const courtMatchesQuery = useCourtMatchesQuery(selectedCourtId)
     const matchDetailQuery = useMatchDetailQuery(selectedMatchId, clientSessionId)
+
+    // 3b. Optimistic State untuk respon instan UI wasit
+    const serverMatch = matchDetailQuery.data?.match || null
+    const [optimisticMatch, setOptimisticMatch] = useOptimistic(
+        serverMatch,
+        (current: Match | null, action: { winningTeam: MatchTeam; goldenPointEnabled?: boolean }) => {
+            if (!current) return null
+            return calculateNextMatchScore(current, action.winningTeam, action.goldenPointEnabled ?? true)
+        }
+    )
 
     // 4. Klaim Sesi Scoring saat match aktif dipilih
     useEffect(() => {
@@ -139,12 +150,20 @@ export function useScoringManagement(
         }
     }, [])
 
-    // 7. Scoring Server Action Handlers (dengan CAS Client Session ID)
+    // 7. Scoring Server Action Handlers (dengan CAS Client Session ID dan Optimistic Updates)
     const recordPoint = useCallback(
         (winningTeam: MatchTeam) => {
-            if (!selectedMatchId || isPending) return
+            if (!selectedMatchId) return
+            // Device dalam mode read-only tidak melakukan optimistic update
+            if (matchDetailQuery.data?.isReadOnly) return
 
             startTransition(async () => {
+                // 1. Prediksi state berikutnya secara instan di UI wasit
+                setOptimisticMatch({
+                    winningTeam,
+                    goldenPointEnabled: true,
+                })
+
                 try {
                     const result = await recordPointAction(
                         selectedMatchId,
@@ -154,8 +173,10 @@ export function useScoringManagement(
 
                     if (!result.success) {
                         toast.error(result.message)
-                        // Refresh status match jika ditolak karena kepemilikan sesi berubah
-                        queryClient.invalidateQueries({ queryKey: matchDetailQueryKey(selectedMatchId) })
+                        // Reconcile/rollback otomatis ke state server jika action ditolak
+                        await queryClient.invalidateQueries({
+                            queryKey: matchDetailQueryKey(selectedMatchId),
+                        })
                         return
                     }
 
@@ -164,7 +185,24 @@ export function useScoringManagement(
                         toast.success('Pertandingan selesai!', result.message)
                     }
 
-                    // Refresh query cache
+                    // Reconcile cache dengan data pasti dari response server
+                    if (result.data) {
+                        queryClient.setQueryData(
+                            matchDetailQueryKey(selectedMatchId, clientSessionId),
+                            (old: unknown) => {
+                                const oldData = old as MatchDetailData | undefined
+                                if (!oldData) return oldData
+                                return {
+                                    ...oldData,
+                                    match: result.data as Match,
+                                    historyCount: (oldData.historyCount || 0) + 1,
+                                    canUndo: true,
+                                }
+                            }
+                        )
+                    }
+
+                    // Refresh query cache untuk memastikan konsistensi
                     await Promise.all([
                         queryClient.invalidateQueries({ queryKey: matchDetailQueryKey(selectedMatchId) }),
                         queryClient.invalidateQueries({ queryKey: courtMatchesQueryKey(selectedCourtId) }),
@@ -172,10 +210,14 @@ export function useScoringManagement(
                 } catch (err: unknown) {
                     const errorMsg = err instanceof Error ? err.message : 'Gagal mencatat poin.'
                     toast.error(errorMsg)
+                    // Rollback ke server state jika terjadi network exception
+                    await queryClient.invalidateQueries({
+                        queryKey: matchDetailQueryKey(selectedMatchId),
+                    })
                 }
             })
         },
-        [selectedMatchId, selectedCourtId, clientSessionId, isPending, queryClient]
+        [selectedMatchId, selectedCourtId, clientSessionId, matchDetailQuery.data?.isReadOnly, setOptimisticMatch, queryClient]
     )
 
     const undoPoint = useCallback(() => {
@@ -221,7 +263,7 @@ export function useScoringManagement(
         currentCourtMatch: courtMatchesQuery.data?.currentMatch || null,
         isMatchesLoading: courtMatchesQuery.isLoading,
 
-        currentMatch: matchDetailQuery.data?.match || null,
+        currentMatch: optimisticMatch,
         canUndo: Boolean(matchDetailQuery.data?.canUndo),
         isReadOnly: Boolean(matchDetailQuery.data?.isReadOnly),
         isClaimedByOther: Boolean(matchDetailQuery.data?.isClaimedByOther),
