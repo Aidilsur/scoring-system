@@ -98,11 +98,25 @@ export interface Match {
     current_point_b?: string | null
     scheduled_time?: string | null
     completed_at?: string | null
+    active_scorer_session_id?: string | null
+    active_scorer_claimed_at?: string | null
     team_a?: Team | null
     team_b?: Team | null
     group?: Group | null
     court?: Court | null
     category?: Category | null
+}
+
+export interface MatchScoreHistory {
+    id: string
+    match_id: string
+    point_a: string
+    point_b: string
+    games_team_a: number
+    games_team_b: number
+    status: MatchStatus
+    winner_team_id?: string | null
+    created_at: string
 }
 
 

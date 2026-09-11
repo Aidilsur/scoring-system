@@ -156,8 +156,61 @@ export type Database = {
           },
         ]
       }
+      match_score_history: {
+        Row: {
+          created_at: string
+          games_team_a: number
+          games_team_b: number
+          id: string
+          match_id: string
+          point_a: string
+          point_b: string
+          status: Database["public"]["Enums"]["match_status"]
+          winner_team_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          games_team_a: number
+          games_team_b: number
+          id?: string
+          match_id: string
+          point_a: string
+          point_b: string
+          status: Database["public"]["Enums"]["match_status"]
+          winner_team_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          games_team_a?: number
+          games_team_b?: number
+          id?: string
+          match_id?: string
+          point_a?: string
+          point_b?: string
+          status?: Database["public"]["Enums"]["match_status"]
+          winner_team_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "match_score_history_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_score_history_winner_team_id_fkey"
+            columns: ["winner_team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       matches: {
         Row: {
+          active_scorer_claimed_at: string | null
+          active_scorer_session_id: string | null
           category_id: string
           completed_at: string | null
           court_id: string | null
@@ -177,6 +230,8 @@ export type Database = {
           winner_team_id: string | null
         }
         Insert: {
+          active_scorer_claimed_at?: string | null
+          active_scorer_session_id?: string | null
           category_id: string
           completed_at?: string | null
           court_id?: string | null
@@ -196,6 +251,8 @@ export type Database = {
           winner_team_id?: string | null
         }
         Update: {
+          active_scorer_claimed_at?: string | null
+          active_scorer_session_id?: string | null
           category_id?: string
           completed_at?: string | null
           court_id?: string | null
@@ -389,6 +446,7 @@ export type Database = {
     }
     Functions: {
       is_admin_user: { Args: never; Returns: boolean }
+      is_scorer_user: { Args: never; Returns: boolean }
     }
     Enums: {
       category_level: "beginner" | "lower_bronze" | "bronze"
