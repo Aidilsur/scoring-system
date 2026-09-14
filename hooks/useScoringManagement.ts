@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useTransition, useEffect, useOptimistic } from 'react'
+import { useState, useCallback, useTransition, useEffect, useOptimistic, useRef } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useCourtsQuery } from './useCourtsQuery'
 import { useCourtMatchesQuery, courtMatchesQueryKey } from './useCourtMatchesQuery'
@@ -10,8 +10,14 @@ import {
     recordPointAction,
     undoLastPointAction,
     claimScorerSessionAction,
+    heartbeatScorerSessionAction,
+    releaseScorerSessionAction,
 } from '@/app/admin/(protected)/scoring/actions'
-import { getClientScorerSessionId, calculateNextMatchScore } from '@/lib/scoring'
+import {
+    getClientScorerSessionId,
+    calculateNextMatchScore,
+    HEARTBEAT_INTERVAL_MS,
+} from '@/lib/scoring'
 import { toast } from '@/lib/toast'
 import type { MatchTeam } from '@/lib/scoring'
 import type { Match } from '@/types/domain'
@@ -80,24 +86,92 @@ export function useScoringManagement(
         }
     }, [selectedMatchId, clientSessionId, queryClient])
 
-    // 4b. Heartbeat auto-renewal jika device ini pemegang sesi aktif (tiap 2 menit)
+    // Melacak apakah device ini adalah pemegang kendali aktif
+    const isOwner = Boolean(
+        selectedMatchId &&
+        !matchDetailQuery.data?.isReadOnly &&
+        matchDetailQuery.data?.match?.active_scorer_session_id === clientSessionId &&
+        matchDetailQuery.data?.match?.status !== 'completed'
+    )
+    const isOwnerRef = useRef(isOwner)
+    isOwnerRef.current = isOwner
+
+    // 4b. Heartbeat berkala (setiap 30 detik) saat tab visible/focused
+    // Memperpanjang active_scorer_claimed_at ke waktu sekarang.
+    // Jika tab hidden/background, interval dihentikan agar lock dapat kadaluarsa jika ditinggalkan.
     useEffect(() => {
         if (!selectedMatchId || !clientSessionId) return
         if (matchDetailQuery.data?.isReadOnly) return
         if (matchDetailQuery.data?.match?.status === 'completed') return
 
-        const intervalId = setInterval(async () => {
+        let timerId: ReturnType<typeof setInterval> | null = null
+
+        const triggerHeartbeat = async () => {
+            if (document.visibilityState !== 'visible') return
             try {
-                await claimScorerSessionAction(selectedMatchId, clientSessionId)
+                const res = await heartbeatScorerSessionAction(selectedMatchId, clientSessionId)
+                if (!res.isOwner) {
+                    // Jika kepemilikan lock sudah beralih di server, sinkronkan UI ke mode read-only
+                    queryClient.invalidateQueries({ queryKey: matchDetailQueryKey(selectedMatchId) })
+                }
             } catch {
                 // Heartbeat silent catch
             }
-        }, 2 * 60 * 1000)
+        }
+
+        const startHeartbeat = () => {
+            if (timerId) clearInterval(timerId)
+            timerId = setInterval(triggerHeartbeat, HEARTBEAT_INTERVAL_MS)
+        }
+
+        const stopHeartbeat = () => {
+            if (timerId) {
+                clearInterval(timerId)
+                timerId = null
+            }
+        }
+
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === 'visible') {
+                // Begitu tab kembali aktif, langsung kirim heartbeat dan aktifkan interval
+                triggerHeartbeat()
+                startHeartbeat()
+            } else {
+                // Hentikan heartbeat jika tab tidak visible / background
+                stopHeartbeat()
+            }
+        }
+
+        // Mulai heartbeat jika tab saat ini visible
+        if (document.visibilityState === 'visible') {
+            startHeartbeat()
+        }
+
+        document.addEventListener('visibilitychange', handleVisibilityChange)
 
         return () => {
-            clearInterval(intervalId)
+            stopHeartbeat()
+            document.removeEventListener('visibilitychange', handleVisibilityChange)
         }
-    }, [selectedMatchId, clientSessionId, matchDetailQuery.data?.isReadOnly, matchDetailQuery.data?.match?.status])
+    }, [
+        selectedMatchId,
+        clientSessionId,
+        matchDetailQuery.data?.isReadOnly,
+        matchDetailQuery.data?.match?.status,
+        queryClient,
+    ])
+
+    // 4c. Pelepasan lock otomatis saat device meninggalkan halaman scoring via navigasi normal (unmount)
+    useEffect(() => {
+        const matchIdToRelease = selectedMatchId
+        const sessionId = clientSessionId
+
+        return () => {
+            if (isOwnerRef.current && matchIdToRelease && sessionId) {
+                releaseScorerSessionAction(matchIdToRelease, sessionId).catch(() => {})
+            }
+        }
+    }, [selectedMatchId, clientSessionId])
 
     // 5. Supabase Realtime Subscription
     useRealtimeMatch({
@@ -247,6 +321,32 @@ export function useScoringManagement(
         })
     }, [selectedMatchId, selectedCourtId, clientSessionId, isPending, queryClient])
 
+    const releaseControl = useCallback(async (): Promise<boolean> => {
+        if (!selectedMatchId || !clientSessionId) return false
+        if (matchDetailQuery.data?.isReadOnly) return false
+
+        try {
+            const result = await releaseScorerSessionAction(selectedMatchId, clientSessionId)
+            if (result.success) {
+                toast.info(result.message)
+            } else {
+                toast.error(result.message)
+            }
+
+            // Invalidate query cache agar status kepemilikan lock langsung ter-update
+            await Promise.all([
+                queryClient.invalidateQueries({ queryKey: matchDetailQueryKey(selectedMatchId) }),
+                queryClient.invalidateQueries({ queryKey: courtMatchesQueryKey(selectedCourtId) }),
+            ])
+
+            return result.success
+        } catch (err: unknown) {
+            const errorMsg = err instanceof Error ? err.message : 'Gagal melepas kendali scoring.'
+            toast.error(errorMsg)
+            return false
+        }
+    }, [selectedMatchId, selectedCourtId, clientSessionId, matchDetailQuery.data?.isReadOnly, queryClient])
+
     return {
         // Selection & Session state
         selectedCourtId,
@@ -277,5 +377,6 @@ export function useScoringManagement(
         toggleServe,
         recordPoint,
         undoPoint,
+        releaseControl,
     }
 }

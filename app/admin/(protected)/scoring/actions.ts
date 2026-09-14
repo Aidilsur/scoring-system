@@ -75,10 +75,10 @@ export async function claimScorerSessionAction(
 
         // Boleh diklaim secara atomik:
         // - jika active_scorer_session_id masih null
-        // - ATAU active_scorer_claimed_at sudah lebih dari 5 menit lalu
+        // - ATAU active_scorer_claimed_at sudah lebih dari 2 menit lalu (SESSION_LOCK_TTL_MS)
         // - ATAU device pemilik (renewal / heartbeat)
         const claimedAtIso = new Date().toISOString()
-        const fiveMinutesAgoIso = new Date(now - SESSION_LOCK_TTL_MS).toISOString()
+        const lockExpiryThresholdIso = new Date(now - SESSION_LOCK_TTL_MS).toISOString()
 
         const { data: updatedMatch, error: updateError } = await supabase
             .from('matches')
@@ -87,7 +87,7 @@ export async function claimScorerSessionAction(
                 active_scorer_claimed_at: claimedAtIso,
             })
             .eq('id', matchId)
-            .or(`active_scorer_session_id.is.null,active_scorer_claimed_at.lt.${fiveMinutesAgoIso},active_scorer_session_id.eq.${clientSessionId}`)
+            .or(`active_scorer_session_id.is.null,active_scorer_claimed_at.lt.${lockExpiryThresholdIso},active_scorer_session_id.eq.${clientSessionId}`)
             .select('id, active_scorer_session_id, active_scorer_claimed_at')
             .maybeSingle()
 
@@ -115,6 +115,98 @@ export async function claimScorerSessionAction(
             success: false,
             isOwner: false,
             message: err instanceof Error ? err.message : 'Terjadi kesalahan sistem saat mengklaim sesi.',
+        }
+    }
+}
+
+/**
+ * Server Action: Heartbeat berkala (setiap 30 detik saat tab browser visible).
+ * Memperpanjang active_scorer_claimed_at menjadi waktu sekarang HANYA jika
+ * active_scorer_session_id masih cocok dengan clientSessionId.
+ */
+export async function heartbeatScorerSessionAction(
+    matchId: string,
+    clientSessionId: string
+): Promise<{ success: boolean; isOwner: boolean }> {
+    try {
+        const auth = await verifyScorerAuth()
+        if (!auth.authorized || !auth.supabase) {
+            return { success: false, isOwner: false }
+        }
+        const supabase = auth.supabase
+
+        if (!clientSessionId || !matchId) {
+            return { success: false, isOwner: false }
+        }
+
+        const claimedAtIso = new Date().toISOString()
+        const { data, error } = await supabase
+            .from('matches')
+            .update({
+                active_scorer_claimed_at: claimedAtIso,
+            })
+            .eq('id', matchId)
+            .eq('active_scorer_session_id', clientSessionId)
+            .select('id')
+            .maybeSingle()
+
+        if (error || !data) {
+            return { success: false, isOwner: false }
+        }
+
+        return { success: true, isOwner: true }
+    } catch {
+        return { success: false, isOwner: false }
+    }
+}
+
+/**
+ * Server Action: Melepas kendali scoring (Tombol Lepas Kendali atau saat navigasi keluar).
+ * Mengosongkan active_scorer_session_id dan active_scorer_claimed_at menjadi NULL
+ * jika session ID cocok dengan device pemegang klaim saat ini.
+ */
+export async function releaseScorerSessionAction(
+    matchId: string,
+    clientSessionId: string
+): Promise<{ success: boolean; message: string }> {
+    try {
+        const auth = await verifyScorerAuth()
+        if (!auth.authorized || !auth.supabase) {
+            return { success: false, message: auth.error || 'Akses ditolak.' }
+        }
+        const supabase = auth.supabase
+
+        if (!clientSessionId || !matchId) {
+            return { success: false, message: 'ID match atau session tidak valid.' }
+        }
+
+        const { data, error } = await supabase
+            .from('matches')
+            .update({
+                active_scorer_session_id: null,
+                active_scorer_claimed_at: null,
+            })
+            .eq('id', matchId)
+            .eq('active_scorer_session_id', clientSessionId)
+            .select('id, court_id')
+            .maybeSingle()
+
+        if (error) {
+            console.error('Failed to release scorer session:', error)
+            return { success: false, message: 'Gagal melepas kendali scoring.' }
+        }
+
+        if (data?.court_id) {
+            revalidatePath(`/display/court/${data.court_id}`)
+        }
+        revalidatePath('/admin/scoring')
+
+        return { success: true, message: 'Kendali scoring berhasil dilepas.' }
+    } catch (err: unknown) {
+        console.error('Release Scorer Session Error:', err)
+        return {
+            success: false,
+            message: err instanceof Error ? err.message : 'Terjadi kesalahan sistem saat melepas kendali.',
         }
     }
 }
@@ -370,7 +462,7 @@ export async function recordPointAction(
         }
 
         // 6. Update row matches dengan hasil akhir (Compare-and-swap atomik)
-        const fiveMinutesAgoIso = new Date(now - SESSION_LOCK_TTL_MS).toISOString()
+        const lockExpiryThresholdIso = new Date(now - SESSION_LOCK_TTL_MS).toISOString()
         const { data: updatedMatch, error: updateError } = await supabase
             .from('matches')
             .update({
@@ -386,7 +478,7 @@ export async function recordPointAction(
                 updated_at: new Date().toISOString(),
             })
             .eq('id', matchId)
-            .or(`active_scorer_session_id.eq.${clientSessionId},active_scorer_session_id.is.null,active_scorer_claimed_at.lt.${fiveMinutesAgoIso}`)
+            .or(`active_scorer_session_id.eq.${clientSessionId},active_scorer_session_id.is.null,active_scorer_claimed_at.lt.${lockExpiryThresholdIso}`)
             .select(`
                 *,
                 team_a:teams!matches_team_a_id_fkey(*),
@@ -486,7 +578,7 @@ export async function undoLastPointAction(
         }
 
         // 2. Kembalikan row matches ke nilai snapshot tersebut (Compare-and-swap atomik)
-        const fiveMinutesAgoIso = new Date(now - SESSION_LOCK_TTL_MS).toISOString()
+        const lockExpiryThresholdIso = new Date(now - SESSION_LOCK_TTL_MS).toISOString()
         const { data: restoredMatch, error: restoreError } = await supabase
             .from('matches')
             .update({
@@ -502,7 +594,7 @@ export async function undoLastPointAction(
                 updated_at: new Date().toISOString(),
             })
             .eq('id', matchId)
-            .or(`active_scorer_session_id.eq.${clientSessionId},active_scorer_session_id.is.null,active_scorer_claimed_at.lt.${fiveMinutesAgoIso}`)
+            .or(`active_scorer_session_id.eq.${clientSessionId},active_scorer_session_id.is.null,active_scorer_claimed_at.lt.${lockExpiryThresholdIso}`)
             .select(`
                 *,
                 team_a:teams!matches_team_a_id_fkey(*),

@@ -10,6 +10,7 @@ import {
     Flame,
     Zap,
     Lock,
+    Unlock,
 } from 'lucide-react'
 import { Button, Badge } from '@/components/ui'
 import { shouldStartTiebreakGame, type MatchTeam } from '@/lib/scoring'
@@ -22,10 +23,12 @@ export interface LiveScoringBoardProps {
     historyCount: number
     isPending: boolean
     isReadOnly?: boolean
+    isReleasing?: boolean
     onRecordPoint: (team: MatchTeam) => void
     onUndoPoint: () => void
     onToggleServe: (team?: MatchTeam) => void
     onBack: () => void
+    onReleaseControl?: () => void
 }
 
 function getRoundTitle(round: string): string {
@@ -54,10 +57,12 @@ export function LiveScoringBoard({
     historyCount,
     isPending,
     isReadOnly = false,
+    isReleasing = false,
     onRecordPoint,
     onUndoPoint,
     onToggleServe,
     onBack,
+    onReleaseControl,
 }: LiveScoringBoardProps) {
     const isCompleted = match.status === 'completed'
     const isTiebreak = shouldStartTiebreakGame(
@@ -92,6 +97,21 @@ export function LiveScoringBoard({
                         <span className="text-xs font-mono font-bold text-zinc-400 bg-zinc-900 border border-zinc-800 px-2.5 py-1 rounded-lg">
                             {match.court.name}
                         </span>
+                    )}
+
+                    {!isReadOnly && !isCompleted && onReleaseControl && (
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={onReleaseControl}
+                            disabled={isPending || isReleasing}
+                            className="text-amber-400 border-amber-500/30 hover:bg-amber-500/10 hover:border-amber-500/50 text-xs font-bold py-1 px-2.5 h-auto transition-all"
+                            title="Lepas kendali scoring agar dapat diambil alih device wasit lain"
+                        >
+                            <Unlock className="w-3.5 h-3.5 mr-1 text-amber-400" />
+                            {isReleasing ? 'Melepas...' : 'Lepas Kendali'}
+                        </Button>
                     )}
 
                     {isCompleted ? (

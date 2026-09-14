@@ -30,6 +30,7 @@ export function ScoringView({ isReferee = false, userEmail }: ScoringViewProps) 
         isMatchesLoading,
         currentMatch,
         canUndo,
+        isReadOnly,
         historyCount,
         isMatchLoading,
         selectCourt,
@@ -38,6 +39,7 @@ export function ScoringView({ isReferee = false, userEmail }: ScoringViewProps) 
         toggleServe,
         recordPoint,
         undoPoint,
+        releaseControl,
     } = useScoringManagement()
 
     const selectedCourt = courts.find((c) => c.id === selectedCourtId)
@@ -89,10 +91,15 @@ export function ScoringView({ isReferee = false, userEmail }: ScoringViewProps) 
                         canUndo={canUndo}
                         historyCount={historyCount}
                         isPending={isPending || isMatchLoading}
+                        isReadOnly={isReadOnly}
                         onRecordPoint={recordPoint}
                         onUndoPoint={undoPoint}
                         onToggleServe={toggleServe}
                         onBack={backToMatchList}
+                        onReleaseControl={async () => {
+                            await releaseControl()
+                            backToMatchList()
+                        }}
                     />
                 ) : (
                     /* MODE 2: PILIH COURT & LIHAT DAFTAR JADWAL COURT */

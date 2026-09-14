@@ -34,7 +34,22 @@ export function MatchScoringView({
         recordPoint,
         undoPoint,
         toggleServe,
+        releaseControl,
     } = useScoringManagement(courtId, matchId)
+
+    const [isReleasing, setIsReleasing] = React.useState(false)
+
+    const handleReleaseControl = async () => {
+        setIsReleasing(true)
+        try {
+            const success = await releaseControl()
+            if (success) {
+                router.push(`/admin/scoring/${courtId}`)
+            }
+        } finally {
+            setIsReleasing(false)
+        }
+    }
 
     const handleBack = () => {
         router.push(`/admin/scoring/${courtId}`)
@@ -115,10 +130,12 @@ export function MatchScoringView({
                     historyCount={historyCount}
                     isPending={isPending || isMatchLoading}
                     isReadOnly={isReadOnly}
+                    isReleasing={isReleasing}
                     onRecordPoint={recordPoint}
                     onUndoPoint={undoPoint}
                     onToggleServe={toggleServe}
                     onBack={handleBack}
+                    onReleaseControl={handleReleaseControl}
                 />
             </div>
         </div>
