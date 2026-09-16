@@ -16,7 +16,7 @@ Daftar modul diurutkan berdasarkan tingkat urgensi dan jumlah pelanggaran terban
 | **P4** | **`admin/bracket`** | 8 temuan | 1 hook (`useBracketManagement`) | **68 baris** | - | 1 |
 | **P5** | **`admin/tournament-setup`** | 6 temuan | 1 hook (`useTournamentSettingsForm`) | **62 baris** | `TOURNAMENT_STATUS_CONFIG` | 1 |
 | **P6** | **`admin/categories`** | 4 temuan | 1 hook (`useCategoriesManagement`) | **53 baris** | `CATEGORY_LEVEL_CONFIG` | 2 |
-| **P7** | **`register`** | 4 temuan | 1 hook (`useTeamRegistration`) | **13 baris** | - | 3 |
+| **P7** | **`register`** | ~~4 temuan~~ ✅ Selesai dibersihkan | 1 hook (`useTeamRegistration`) | ~~13 baris~~ ✅ 0 baris | - | ~~3~~ ✅ Dihapus |
 | **P8** | **`admin/teams`** | ~~2 temuan~~ ✅ Selesai dibersihkan | 1 hook (`useTeamsManagement`) | ~~38 baris~~ ✅ 0 baris | - | ~~1~~ ✅ Dihapus |
 | **P9** | **`admin/draw`** | ~~10 temuan~~ ✅ Selesai dibersihkan | Relatif bersih | ~~37 baris~~ ✅ 0 baris | - | ~~1~~ ✅ Dihapus |
 
@@ -111,11 +111,9 @@ Daftar modul diurutkan berdasarkan tingkat urgensi dan jumlah pelanggaran terban
     - L11, L14, L29: `CATEGORIES_WITH_GROUPS_QUERY_KEY`, `SchedulableCategoryItem`, `KnockoutReservationInfo`.
   - `hooks/useKnockoutSchedule.ts`:
     - L11, L25: `KNOCKOUT_SCHEDULE_QUERY_KEY`, `KnockoutScheduleData`.
-- **register**:
-  - `hooks/useTeamRegistration.ts`:
-    - L10: Interface `UseTeamRegistrationReturn`.
-  - `lib/validations/team-registration.ts`:
-    - L7, L8: `MAX_FILE_SIZE`, `ALLOWED_FILE_TYPES`.
+- ~~**register**~~ (✅ Selesai dibersihkan):
+  - ~~`hooks/useTeamRegistration.ts`: L10: Interface `UseTeamRegistrationReturn`.~~
+  - ~~`lib/validations/team-registration.ts`: L7, L8, L58: `MAX_FILE_SIZE`, `ALLOWED_FILE_TYPES`, `TeamRegistrationInput` (dijadikan internal konstanta/tipe).~~
 - **display**:
   - `hooks/useCourtsOverviewQuery.ts`:
     - L7: `COURTS_OVERVIEW_QUERY_KEY`.
@@ -224,11 +222,11 @@ Berikut daftar file dengan pelanggaran panjang baris terbanyak akibat JSX props 
 
 Komentar yang hanya mengulang apa yang sudah jelas dari nama method/variable/fungsi tanpa memberi informasi "kenapa":
 
-- `app/register/page.tsx:L21`: `// Fetch kategori turnamen yang sedang aktif` (tepat sebelum `supabase.from('categories').select(...)`).
-- `hooks/useTeamRegistration.ts`:
-  - L41: `// Handler pemilihan file bukti transfer` (tepat sebelum `handleFileChange`)
-  - L95: `// Handler submit formulir` (tepat sebelum `handleSubmit`)
-  - L153: `// Reset formulir setelah pendaftaran berhasil` (tepat sebelum `setValues(INITIAL_VALUES)`)
+- ~~`app/register/page.tsx:L21`: `// Fetch kategori turnamen yang sedang aktif`~~ (✅ Dihapus).
+- ~~`hooks/useTeamRegistration.ts`:~~ (✅ Dihapus)
+  - ~~L41: `// Handler pemilihan file bukti transfer`~~
+  - ~~L95: `// Handler submit formulir`~~
+  - ~~L153: `// Reset formulir setelah pendaftaran berhasil`~~
 - `hooks/useCategoriesManagement.ts`:
   - L217: `// Modal`
   - L221: `// Form`

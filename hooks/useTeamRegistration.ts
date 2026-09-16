@@ -7,7 +7,7 @@ import {
     validatePaymentProofFile,
 } from '@/lib/validations/team-registration'
 
-export interface UseTeamRegistrationReturn {
+interface UseTeamRegistrationReturn {
     isSubmitting: boolean
     response: RegisterActionResponse | null
     errors: Record<string, string>
@@ -38,7 +38,6 @@ export function useTeamRegistration(): UseTeamRegistrationReturn {
     const formRef = useRef<HTMLFormElement>(null)
     const fileInputRef = useRef<HTMLInputElement>(null)
 
-    // Handler pemilihan file bukti transfer
     const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0] || null
         if (!file) {
@@ -92,7 +91,6 @@ export function useTeamRegistration(): UseTeamRegistrationReturn {
         setFilePreview(null)
     }, [])
 
-    // Handler submit formulir
     const handleSubmit = useCallback(
         async (e: React.FormEvent<HTMLFormElement>) => {
             e.preventDefault()
@@ -102,7 +100,10 @@ export function useTeamRegistration(): UseTeamRegistrationReturn {
 
             // Fail-safe: jika browser FormData belum menangkap file tapi selectedFile ada di state
             const currentFileInForm = formData.get('payment_proof')
-            if ((!currentFileInForm || (currentFileInForm instanceof File && currentFileInForm.size === 0)) && selectedFile) {
+            const isFileEmpty =
+                !currentFileInForm ||
+                (currentFileInForm instanceof File && currentFileInForm.size === 0)
+            if (isFileEmpty && selectedFile) {
                 formData.set('payment_proof', selectedFile)
             }
 
@@ -150,7 +151,6 @@ export function useTeamRegistration(): UseTeamRegistrationReturn {
                 setResponse(res)
 
                 if (res.success) {
-                    // Reset formulir setelah pendaftaran berhasil
                     formRef.current?.reset()
                     setSelectedFile(null)
                     if (filePreview) {

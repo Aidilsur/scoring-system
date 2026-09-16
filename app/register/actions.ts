@@ -82,7 +82,8 @@ export async function registerTeamAction(
 
         // 5. Upload bukti pembayaran ke Supabase Storage (bucket: 'payment-proofs')
         const fileExt = fileToUpload.name.split('.').pop()?.toLowerCase() || 'jpg'
-        const sanitizedFileName = `${validatedData.category_id}/${Date.now()}_${crypto.randomUUID()}.${fileExt}`
+        const uniqueId = `${Date.now()}_${crypto.randomUUID()}`
+        const sanitizedFileName = `${validatedData.category_id}/${uniqueId}.${fileExt}`
 
         const { data: uploadData, error: uploadError } = await supabase.storage
             .from('payment-proofs')
@@ -96,7 +97,9 @@ export async function registerTeamAction(
             console.error('Storage Upload Error:', uploadError)
             return {
                 success: false,
-                message: `Gagal mengunggah bukti pembayaran: ${uploadError.message}. Pastikan bucket 'payment-proofs' sudah dibuat di Supabase Storage.`,
+                message:
+                    `Gagal mengunggah bukti pembayaran: ${uploadError.message}. ` +
+                    `Pastikan bucket 'payment-proofs' sudah dibuat di Supabase Storage.`,
             }
         }
 
@@ -129,7 +132,8 @@ export async function registerTeamAction(
         return {
             success: true,
             message:
-                'Pendaftaran berhasil dikirim! Data tim Anda telah tercatat dengan status pending. Panitia akan segera memverifikasi bukti pembayaran Anda.',
+                'Pendaftaran berhasil dikirim! Data tim Anda telah tercatat dengan status ' +
+                'pending. Panitia akan segera memverifikasi bukti pembayaran Anda.',
         }
     } catch (err: unknown) {
         console.error('Unexpected Register Action Error:', err)

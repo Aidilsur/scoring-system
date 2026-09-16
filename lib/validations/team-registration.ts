@@ -4,8 +4,8 @@ import { z } from 'zod'
 // Dimulai dengan 08, 628, atau +628, diikuti 7-12 digit angka
 const INDONESIA_PHONE_REGEX = /^(\+62|62|0)8[1-9][0-9]{6,11}$/
 
-export const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5 Megabytes
-export const ALLOWED_FILE_TYPES = [
+const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5 Megabytes
+const ALLOWED_FILE_TYPES = [
     'image/jpeg',
     'image/png',
     'image/webp',
@@ -55,7 +55,7 @@ export const teamRegistrationSchema = z.object({
         .max(50, { message: 'Akun Reclub maksimal 50 karakter' }),
 })
 
-export type TeamRegistrationInput = z.infer<typeof teamRegistrationSchema>
+type TeamRegistrationInput = z.infer<typeof teamRegistrationSchema>
 
 /**
  * Helper validator untuk file bukti pembayaran
@@ -82,7 +82,9 @@ export function validatePaymentProofFile(file: unknown): {
     if (!ALLOWED_FILE_TYPES.includes(file.type)) {
         return {
             success: false,
-            error: 'Format file tidak didukung. Harap unggah gambar (JPG, PNG, WEBP) atau dokumen PDF',
+            error:
+                'Format file tidak didukung. Harap unggah gambar ' +
+                '(JPG, PNG, WEBP) atau dokumen PDF',
         }
     }
 
