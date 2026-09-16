@@ -11,7 +11,7 @@ Daftar modul diurutkan berdasarkan tingkat urgensi dan jumlah pelanggaran terban
 | Prioritas | Modul | Dead Code | God Hooks | Baris >100 Karakter | Refactor Record Lookup | Komentar Redundant |
 | :---: | :--- | :---: | :---: | :---: | :---: | :---: |
 | **P1** | **`admin/schedule`** | 18 temuan | 2 hooks (`useScheduleManagement`, `useKnockoutSchedule`) | **226 baris** (7 file) | Status match badge (Grid & Knockout) | 2 |
-| **P2** | **`display`** | 14 temuan | 1 hook (`useCourtLiveDisplay`) | **232 baris** (6 file) | `getRoundLabel` & `formatLevel` | 3 |
+| **P2** | **`display`** | ~~14 temuan~~ ✅ Selesai dibersihkan | 1 hook (`useCourtLiveDisplay`) | ~~232 baris~~ ✅ Selesai di-wrap | ~~`ROUND_LABELS` & dead code `formatLevel`~~ ✅ Selesai | ~~3~~ ✅ Dihapus |
 | **P3** | **`admin/scoring`** | ~~12 temuan~~ ✅ Selesai dibersihkan | 1 hook (`useScoringManagement` 375 baris) | ~~132 baris~~ ✅ Selesai di-wrap | ~~Status badge & `ROUND_LABELS`~~ ✅ Selesai di-refactor | ~~2~~ ✅ Dihapus |
 | **P4** | **`admin/bracket`** | ~~8 temuan~~ ✅ Selesai dibersihkan | 1 hook (`useBracketManagement`) | ~~68 baris~~ ✅ Selesai di-wrap | - | ~~1~~ ✅ Dihapus |
 | **P5** | **`admin/tournament-setup`** | ~~6 temuan~~ ✅ Selesai dibersihkan | 1 hook (`useTournamentSettingsForm`) | ~~62 baris~~ ✅ Selesai di-wrap | ~~`TOURNAMENT_STATUS_CONFIG`~~ ✅ Selesai di-refactor | ~~1~~ ✅ Dihapus |
@@ -62,21 +62,21 @@ Daftar modul diurutkan berdasarkan tingkat urgensi dan jumlah pelanggaran terban
     - ~~L32, L33: Query state `isCategoriesError` dan `categoriesError` tidak dipakai.~~
   - `hooks/useBracketManagement.ts`:
     - ~~L9: Variable `BRACKET_CATEGORIES_QUERY_KEY` tidak terpakai.~~
-- **display**:
+- ~~**display**~~ (✅ Selesai dibersihkan):
   - `components/display/CategoryStandingsView.tsx`:
-    - L25, L31: Fungsi `formatPartnerType` dan `formatLevel` dideklarasikan lokal tapi tidak pernah dipanggil.
+    - ~~L25, L31: Fungsi `formatPartnerType` dan `formatLevel` dideklarasikan lokal tapi tidak pernah dipanggil~~ (dihapus).
   - `components/display/CourtLiveDisplay.tsx`:
-    - L16: Import type `Match` tidak terpakai.
+    - ~~L16: Import type `Match` tidak terpakai~~ (dihapus).
   - `components/display/CourtOverviewCard.tsx`:
-    - L9: Import `Maximize2` tidak terpakai.
+    - ~~L9: Import `Maximize2` tidak terpakai~~ (dihapus).
   - `components/display/CourtsOverviewGrid.tsx`:
-    - L10, L16: Import `Calendar` dan `Badge` tidak terpakai.
+    - ~~L10, L16: Import `Calendar` dan `Badge` tidak terpakai~~ (dihapus).
   - `components/display/StandingsOverviewCard.tsx`:
-    - L12: Import `Calendar` tidak terpakai.
+    - ~~L12: Import `Calendar` tidak terpakai~~ (dihapus).
   - `components/display/StandingsOverviewGrid.tsx`:
-    - L16: Import `Badge` tidak terpakai.
+    - ~~L16: Import `Badge` tidak terpakai~~ (dihapus).
   - `hooks/useCourtLiveDisplay.ts`:
-    - L62: Variable `matches` dari query result tidak terpakai.
+    - ~~L62: Variable `matches` dari query result tidak terpakai~~ (dihapus).
 - **admin/tournament-setup (✅ Selesai)**:
   - `hooks/useTournamentSettingsForm.ts`:
     - ~~L7: Import type `TournamentSettingsInput` tidak terpakai.~~
@@ -143,15 +143,15 @@ Daftar modul diurutkan berdasarkan tingkat urgensi dan jumlah pelanggaran terban
 - ~~**register**~~ (✅ Selesai dibersihkan):
   - ~~`hooks/useTeamRegistration.ts`: L10: Interface `UseTeamRegistrationReturn`.~~
   - ~~`lib/validations/team-registration.ts`: L7, L8, L58: `MAX_FILE_SIZE`, `ALLOWED_FILE_TYPES`, `TeamRegistrationInput` (dijadikan internal konstanta/tipe).~~
-- **display**:
+- ~~**display**~~ (✅ Selesai dibersihkan):
   - `hooks/useCourtsOverviewQuery.ts`:
-    - L7: `COURTS_OVERVIEW_QUERY_KEY`.
+    - ~~L7: `COURTS_OVERVIEW_QUERY_KEY`~~ (dijadikan konstanta internal).
   - `hooks/useCategoryStandingsQuery.ts`:
-    - L8: `categoryStandingsQueryKey`.
+    - ~~L8: `categoryStandingsQueryKey`~~ (dijadikan konstanta internal).
   - `hooks/useStandingsOverviewQuery.ts`:
-    - L9, L11: `STANDINGS_OVERVIEW_QUERY_KEY`, `GroupLeaderPreview`.
+    - ~~L9, L11: `STANDINGS_OVERVIEW_QUERY_KEY`, `GroupLeaderPreview`~~ (dijadikan internal).
 - **Props interface lokal yang diekspor tanpa consumer luar**:
-  - `BracketManagementViewProps`, `CategoryTableProps`, `CourtLiveDisplayProps`, `ScheduleManagementViewProps`, dll.
+  - ~~`CategoryStandingsViewProps`, `CourtOverviewCardProps`, `StandingsOverviewCardProps`, `GroupStandingsTableProps`, `CourtLiveDisplayProps`~~ (dijadikan internal).
 
 ---
 
@@ -178,21 +178,21 @@ Berikut daftar file dengan pelanggaran panjang baris terbanyak akibat JSX props 
 
 | Nama File | Jumlah Baris >100 Karakter | Total Baris |
 | :--- | :---: | :---: |
-| `components/display/CourtLiveDisplay.tsx` | **68** | 440 |
+| `components/display/CourtLiveDisplay.tsx` | ~~68~~ ✅ Selesai di-wrap & dipecah | 240 |
 | `components/schedule/KnockoutScheduleTab.tsx` | **56** | 359 |
-| `components/display/CourtOverviewCard.tsx` | **46** | 334 |
+| `components/display/CourtOverviewCard.tsx` | ~~46~~ ✅ Selesai di-wrap | 334 |
 | `components/schedule/ScheduleManagementView.tsx` | **44** | 439 |
 | `components/scoring/LiveScoringBoard.tsx` | ~~38~~ ✅ Selesai di-wrap | 384 |
 | `components/bracket/BracketManagementView.tsx` | ~~37~~ ✅ Selesai di-wrap | 438 |
-| `components/display/StandingsOverviewGrid.tsx` | **36** | 246 |
+| `components/display/StandingsOverviewGrid.tsx` | ~~36~~ ✅ Selesai di-wrap | 246 |
 | `components/schedule/ScheduleGridView.tsx` | **33** | 323 |
 | `app/admin/(protected)/scoring/actions.ts` | ~~29~~ ✅ Selesai di-wrap | 651 |
 | `components/scoring/CourtMatchList.tsx` | ~~28~~ ✅ Selesai di-wrap | 222 |
 | `app/admin/(protected)/schedule/actions.ts` | **27** | 717 |
-| `components/display/CourtsOverviewGrid.tsx` | **27** | 208 |
-| `components/display/CategoryStandingsView.tsx` | **25** | 250 |
+| `components/display/CourtsOverviewGrid.tsx` | ~~27~~ ✅ Selesai di-wrap | 208 |
+| `components/display/CategoryStandingsView.tsx` | ~~25~~ ✅ Selesai di-wrap | 250 |
 | `components/categories/CategoriesManagementView.tsx` | **24** | 265 |
-| `components/display/GroupStandingsTable.tsx` | **24** | 211 |
+| `components/display/GroupStandingsTable.tsx` | ~~24~~ ✅ Selesai di-wrap | 211 |
 | `components/categories/CategoryTable.tsx` | **21** | 294 |
 | `components/schedule/SchedulePreviewCard.tsx` | **21** | 257 |
 | `components/teams/TeamDetailModal.tsx` | **20** | 226 |
@@ -211,8 +211,8 @@ Berikut daftar file dengan pelanggaran panjang baris terbanyak akibat JSX props 
 1. **Label & Judul Ronde Pertandingan (`round`)**:
    - Terduplikasi di 4 komponen:
      - ~~`components/scoring/CourtMatchList.tsx:L28`~~ ✅ Selesai di-refactor menggunakan `ROUND_LABELS` di `lib/scoring/constants.ts`
-     - `components/display/CourtLiveDisplay.tsx:L35`
-     - `components/display/CourtOverviewCard.tsx:L36`
+     - ~~`components/display/CourtLiveDisplay.tsx:L35`~~ ✅ Selesai di-refactor menggunakan `ROUND_LABELS` di `lib/scoring/constants.ts`
+     - ~~`components/display/CourtOverviewCard.tsx:L36`~~ ✅ Selesai di-refactor menggunakan `ROUND_LABELS` di `lib/scoring/constants.ts`
      - ~~`components/scoring/LiveScoringBoard.tsx:L36`~~ ✅ Selesai di-refactor menggunakan `ROUND_LABELS` di `lib/scoring/constants.ts`
    - *Solusi refactor*: Buat record terpusat di `types/domain.ts` atau `lib/scoring/constants.ts`:
      ```ts
@@ -220,6 +220,7 @@ Berikut daftar file dengan pelanggaran panjang baris terbanyak akibat JSX props 
        group: 'Penyisihan Grup',
        semifinal: 'Semifinal',
        final: 'Final',
+       third_place: 'Perebutan Juara 3',
      }
      ```
 
@@ -242,7 +243,7 @@ Berikut daftar file dengan pelanggaran panjang baris terbanyak akibat JSX props 
 
 4. **Format Level Kategori (`beginner` / `intermediate` / `advanced`)**:
    - `components/categories/CategoryTable.tsx:L45-L56`: ~~`switch (level)`~~ ✅ Selesai di-refactor menggunakan `CATEGORY_LEVEL_CONFIG` record lookup.
-   - `components/display/CategoryStandingsView.tsx:L32-L41`: `switch (level)`.
+   - `components/display/CategoryStandingsView.tsx:L32-L41`: ~~`switch (level)`~~ ✅ Dihapus (dead code yang tidak pernah dipanggil).
    - *Solusi refactor*: `const CATEGORY_LEVEL_CONFIG: Record<CategoryLevel, { label: string; badgeVariant: BadgeVariant }>`.
 
 ---
@@ -265,6 +266,7 @@ Komentar yang hanya mengulang apa yang sudah jelas dari nama method/variable/fun
 - ~~`app/admin/(protected)/tournament-setup/page.tsx:L26`: `// Ambil data pengaturan turnamen yang aktif jika sudah ada (mode edit)`~~ (✅ Dihapus).
 - ~~`app/admin/(protected)/bracket/actions.ts:L172`: `// Ambil data tim untuk pasangan nama pemain`~~ (✅ Dihapus).
 - ~~`app/admin/(protected)/scoring/actions.ts:L343`: `// Ambil pengaturan golden point dari tournament_settings`~~ (✅ Dihapus).
+- ~~`components/display/CourtsOverviewGrid.tsx`, `StandingsOverviewGrid.tsx`, `CategoryStandingsView.tsx`~~: Komentar seksi nomor berulang (`// 1. Data Query...`, `// 2. Realtime Subscription...`, `// 3. Jam Digital Broadcast...`) (✅ Dihapus).
 
 ---
 

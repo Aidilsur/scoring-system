@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
 import type { Match, Court } from '@/types/domain'
 
-export const COURTS_OVERVIEW_QUERY_KEY = ['courts_overview']
+const COURTS_OVERVIEW_QUERY_KEY = ['courts_overview']
 
 export interface CourtOverviewItem {
     court: Court

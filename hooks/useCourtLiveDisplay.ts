@@ -23,7 +23,8 @@ const AUTO_ADVANCE_DELAY_SECONDS = 20
 
 /**
  * Custom hook untuk TV Display Lapangan Padel (/display/court/[courtId]).
- * Menyediakan sinkronisasi Supabase Realtime, pemilihan match otomatis (live -> scheduled -> completed),
+ * Menyediakan sinkronisasi Supabase Realtime,
+ * pemilihan match otomatis (live -> scheduled -> completed),
  * rotasi servis, auto-advance countdown setelah match selesai, dan jam digital broadcast.
  */
 export function useCourtLiveDisplay(courtId: string): UseCourtLiveDisplayResult {
@@ -59,7 +60,6 @@ export function useCourtLiveDisplay(courtId: string): UseCourtLiveDisplayResult 
 
     const {
         court,
-        matches,
         liveMatch,
         scheduledMatches,
         completedMatches,
@@ -67,7 +67,6 @@ export function useCourtLiveDisplay(courtId: string): UseCourtLiveDisplayResult 
         const data = courtMatchesQuery.data
         return {
             court: data?.court || null,
-            matches: data?.matches || [],
             liveMatch: data?.liveMatch || null,
             scheduledMatches: data?.scheduledMatches || [],
             completedMatches: data?.completedMatches || [],

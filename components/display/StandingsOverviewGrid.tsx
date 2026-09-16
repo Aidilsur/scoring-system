@@ -13,22 +13,19 @@ import {
     Activity,
     Shield,
 } from 'lucide-react'
-import { Badge, Button } from '@/components/ui'
+import { Button } from '@/components/ui'
 import { PadelCourtGeometry } from './PadelCourtGeometry'
 import { StandingsOverviewCard } from './StandingsOverviewCard'
 import { useStandingsOverviewQuery } from '@/hooks/useStandingsOverviewQuery'
 import { useRealtimeMatch } from '@/hooks/useRealtimeMatch'
 
 export function StandingsOverviewGrid() {
-    // 1. Data Query Standings Overview
     const { data, isLoading, error, refetch, isRefetching } = useStandingsOverviewQuery()
 
-    // 2. Realtime Subscription untuk semua perubahan pada tabel matches
     useRealtimeMatch({
         allMatches: true,
     })
 
-    // 3. Jam Digital Broadcast Realtime (HH:mm:ss WIB)
     const [currentTime, setCurrentTime] = useState<string>('')
 
     useEffect(() => {
@@ -62,9 +59,13 @@ export function StandingsOverviewGrid() {
 
             <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
                 {/* Top Header Broadcast Bar */}
-                <header className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 border-b border-zinc-800/80">
+                <header
+                    className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 border-b border-zinc-800/80"
+                >
                     <div className="space-y-2">
-                        <div className="flex items-center gap-2 text-xs font-mono tracking-widest text-lime-400 uppercase font-semibold">
+                        <div
+                            className="flex items-center gap-2 text-xs font-mono tracking-widest text-lime-400 uppercase font-semibold"
+                        >
                             <Link
                                 href="/"
                                 className="inline-flex items-center gap-1.5 text-zinc-400 hover:text-white transition-colors"
@@ -78,7 +79,9 @@ export function StandingsOverviewGrid() {
                             <span className="text-white">Standings Hub</span>
                         </div>
 
-                        <h1 className="font-[family-name:var(--font-anton)] text-4xl sm:text-5xl md:text-6xl text-white uppercase tracking-tight flex items-center gap-3">
+                        <h1
+                            className="font-[family-name:var(--font-anton)] text-4xl sm:text-5xl md:text-6xl text-white uppercase tracking-tight flex items-center gap-3"
+                        >
                             <Trophy className="w-8 h-8 sm:w-10 sm:h-10 text-lime-400" />
                             Klasemen Turnamen
                         </h1>
@@ -91,13 +94,17 @@ export function StandingsOverviewGrid() {
                     {/* Quick Stats & Live Indicator */}
                     <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
                         {/* Digital Clock */}
-                        <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-zinc-900/90 border border-zinc-800 text-xs font-mono font-bold text-zinc-200">
+                        <div
+                            className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-zinc-900/90 border border-zinc-800 text-xs font-mono font-bold text-zinc-200"
+                        >
                             <Clock className="w-4 h-4 text-lime-400" />
                             <span>{currentTime || '00:00:00 WIB'}</span>
                         </div>
 
                         {/* Realtime Live Pulse */}
-                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-lime-400/10 border border-lime-400/30 text-xs font-mono font-bold text-lime-400">
+                        <div
+                            className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-lime-400/10 border border-lime-400/30 text-xs font-mono font-bold text-lime-400"
+                        >
                             <span className="w-2 h-2 rounded-full bg-lime-400 animate-ping" />
                             <span>LIVE SYNC</span>
                         </div>
@@ -124,7 +131,11 @@ export function StandingsOverviewGrid() {
                             <Shield className="w-5 h-5" />
                         </div>
                         <div>
-                            <div className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">Kategori Aktif</div>
+                            <div
+                                className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider"
+                            >
+                                Kategori Aktif
+                            </div>
                             <div className="text-xl font-black text-white font-mono">{totalCategories}</div>
                         </div>
                     </div>
@@ -134,7 +145,11 @@ export function StandingsOverviewGrid() {
                             <Layers className="w-5 h-5" />
                         </div>
                         <div>
-                            <div className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">Total Grup</div>
+                            <div
+                                className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider"
+                            >
+                                Total Grup
+                            </div>
                             <div className="text-xl font-black text-white font-mono">{totalGroups}</div>
                         </div>
                     </div>
@@ -144,7 +159,11 @@ export function StandingsOverviewGrid() {
                             <Users className="w-5 h-5" />
                         </div>
                         <div>
-                            <div className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">Total Tim</div>
+                            <div
+                                className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider"
+                            >
+                                Total Tim
+                            </div>
                             <div className="text-xl font-black text-white font-mono">{totalTeams}</div>
                         </div>
                     </div>
@@ -154,7 +173,11 @@ export function StandingsOverviewGrid() {
                             <Activity className="w-5 h-5" />
                         </div>
                         <div>
-                            <div className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">Match Selesai</div>
+                            <div
+                                className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider"
+                            >
+                                Match Selesai
+                            </div>
                             <div className="text-xl font-black text-lime-400 font-mono">
                                 {totalCompletedMatches}
                                 <span className="text-xs text-zinc-500 font-normal"> / {totalMatches}</span>
@@ -184,7 +207,9 @@ export function StandingsOverviewGrid() {
                         ))}
                     </div>
                 ) : error ? (
-                    <div className="p-8 rounded-2xl bg-rose-950/20 border border-rose-900/40 text-center max-w-lg mx-auto space-y-3">
+                    <div
+                        className="p-8 rounded-2xl bg-rose-950/20 border border-rose-900/40 text-center max-w-lg mx-auto space-y-3"
+                    >
                         <AlertCircle className="w-10 h-10 text-rose-400 mx-auto" />
                         <h2 className="text-lg font-bold text-white">Gagal Memuat Klasemen</h2>
                         <p className="text-xs text-rose-300/80">
@@ -200,7 +225,9 @@ export function StandingsOverviewGrid() {
                         </Button>
                     </div>
                 ) : categories.length === 0 ? (
-                    <div className="p-12 rounded-2xl bg-zinc-900/40 border border-zinc-800 text-center max-w-lg mx-auto space-y-4">
+                    <div
+                        className="p-12 rounded-2xl bg-zinc-900/40 border border-zinc-800 text-center max-w-lg mx-auto space-y-4"
+                    >
                         <div className="w-12 h-12 rounded-2xl bg-zinc-800 text-zinc-400 flex items-center justify-center mx-auto">
                             <Layers className="w-6 h-6" />
                         </div>
@@ -223,7 +250,9 @@ export function StandingsOverviewGrid() {
                 )}
 
                 {/* Footer Notice */}
-                <footer className="pt-6 border-t border-zinc-800/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-zinc-500">
+                <footer
+                    className="pt-6 border-t border-zinc-800/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-zinc-500"
+                >
                     <div className="flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-lime-400" />
                         <span>Sistem Klasemen Padel Tournament — Update Otomatis Real-Time</span>

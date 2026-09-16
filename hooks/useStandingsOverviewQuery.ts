@@ -6,9 +6,9 @@ import { sortGroupStandings } from '@/lib/scoring'
 import { checkGroupStageComplete } from '@/lib/bracket'
 import type { Category, Group, Team, Match, StandingRow } from '@/types/domain'
 
-export const STANDINGS_OVERVIEW_QUERY_KEY = ['standings_overview']
+const STANDINGS_OVERVIEW_QUERY_KEY = ['standings_overview']
 
-export interface GroupLeaderPreview {
+interface GroupLeaderPreview {
     groupId: string
     groupName: string
     team: {
@@ -171,7 +171,9 @@ export function useStandingsOverviewQuery() {
                 const teamCount =
                     catGroupTeamIds.size > 0
                         ? catGroupTeamIds.size
-                        : teams.filter((t) => t.category_id === category.id && t.status === 'confirmed').length
+                        : teams.filter(
+                              (t) => t.category_id === category.id && t.status === 'confirmed'
+                          ).length
 
                 const catMatches = allGroupMatches.filter((m) => m.category_id === category.id)
                 const totalGroupMatches = catMatches.length

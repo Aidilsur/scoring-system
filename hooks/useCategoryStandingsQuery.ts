@@ -5,7 +5,10 @@ import { createClient } from '@/lib/supabase/client'
 import { sortGroupStandings } from '@/lib/scoring'
 import type { Category, Group, Team, Match, GroupWithStandings, StandingRow } from '@/types/domain'
 
-export const categoryStandingsQueryKey = (categoryId: string | null) => ['category_standings', categoryId]
+const categoryStandingsQueryKey = (categoryId: string | null) => [
+    'category_standings',
+    categoryId,
+]
 
 export interface CategoryStandingsData {
     category: Category | null
