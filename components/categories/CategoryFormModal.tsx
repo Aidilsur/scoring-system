@@ -4,7 +4,7 @@ import { TextInput, SelectInput, Switch, Button } from '@/components/ui'
 import { CategoryFormValues } from '@/hooks/useCategoriesManagement'
 import { PartnerType, CategoryLevel } from '@/types/domain'
 
-export interface CategoryFormModalProps {
+interface CategoryFormModalProps {
     isOpen: boolean
     onClose: () => void
     values: CategoryFormValues
@@ -48,12 +48,18 @@ export function CategoryFormModal({
     if (!isOpen) return null
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md overflow-y-auto animate-fade-in">
-            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-lg w-full p-6 space-y-6 shadow-2xl shadow-black/80 my-8 text-white">
+        <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md overflow-y-auto animate-fade-in"
+        >
+            <div
+                className="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-lg w-full p-6 space-y-6 shadow-2xl shadow-black/80 my-8 text-white"
+            >
                 {/* Modal Header */}
                 <div className="flex items-start justify-between pb-3 border-b border-zinc-800">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-lime-400/15 border border-lime-400/30 text-lime-400 flex items-center justify-center">
+                        <div
+                            className="w-10 h-10 rounded-xl bg-lime-400/15 border border-lime-400/30 text-lime-400 flex items-center justify-center"
+                        >
                             <FolderPlus className="w-5 h-5" />
                         </div>
                         <div>
@@ -157,7 +163,9 @@ export function CategoryFormModal({
                     </div>
 
                     {/* Actions */}
-                    <div className="flex items-center justify-end gap-3 pt-4 border-t border-zinc-800">
+                    <div
+                        className="flex items-center justify-end gap-3 pt-4 border-t border-zinc-800"
+                    >
                         <Button
                             type="button"
                             variant="secondary"

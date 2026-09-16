@@ -15,7 +15,7 @@ Daftar modul diurutkan berdasarkan tingkat urgensi dan jumlah pelanggaran terban
 | **P3** | **`admin/scoring`** | 12 temuan (termasuk action `getScoreHistoryCountAction`) | 1 hook (`useScoringManagement` 375 baris) | **132 baris** | Status badge & `getRoundTitle` | 2 |
 | **P4** | **`admin/bracket`** | 8 temuan | 1 hook (`useBracketManagement`) | **68 baris** | - | 1 |
 | **P5** | **`admin/tournament-setup`** | 6 temuan | 1 hook (`useTournamentSettingsForm`) | **62 baris** | `TOURNAMENT_STATUS_CONFIG` | 1 |
-| **P6** | **`admin/categories`** | 4 temuan | 1 hook (`useCategoriesManagement`) | **53 baris** | `CATEGORY_LEVEL_CONFIG` | 2 |
+| **P6** | **`admin/categories`** | ~~4 temuan~~ ✅ Selesai dibersihkan | 1 hook (`useCategoriesManagement`) | ~~53 baris~~ ✅ Selesai di-wrap | ~~`CATEGORY_LEVEL_CONFIG`~~ ✅ Selesai di-refactor | ~~2~~ ✅ Dihapus |
 | **P7** | **`register`** | ~~4 temuan~~ ✅ Selesai dibersihkan | 1 hook (`useTeamRegistration`) | ~~13 baris~~ ✅ 0 baris | - | ~~3~~ ✅ Dihapus |
 | **P8** | **`admin/teams`** | ~~2 temuan~~ ✅ Selesai dibersihkan | 1 hook (`useTeamsManagement`) | ~~38 baris~~ ✅ 0 baris | - | ~~1~~ ✅ Dihapus |
 | **P9** | **`admin/draw`** | ~~10 temuan~~ ✅ Selesai dibersihkan | Relatif bersih | ~~37 baris~~ ✅ 0 baris | - | ~~1~~ ✅ Dihapus |
@@ -102,6 +102,15 @@ Daftar modul diurutkan berdasarkan tingkat urgensi dan jumlah pelanggaran terban
     - ~~L6: Interface `ActionResponse`~~ (dijadikan interface internal).
   - `hooks/useTeamsQuery.ts`:
     - ~~L7: Interface `TeamsQueryFilters`~~ (dijadikan interface internal).
+- **admin/categories (✅ Selesai)**:
+  - `app/admin/(protected)/categories/actions.ts`:
+    - ~~L12: Interface `CategoryActionResponse`~~ (dijadikan interface internal).
+  - `hooks/useCategoriesManagement.ts`:
+    - ~~L11: Interface `ToastNotification`~~ (dijadikan interface internal).
+  - `components/categories/CategoryFormModal.tsx`:
+    - ~~L27: Interface `CategoryFormModalProps`~~ (dijadikan interface internal).
+  - `components/categories/CategoryTable.tsx`:
+    - ~~L47: Interface `CategoryTableProps`~~ (dijadikan interface internal).
 - **admin/schedule**:
   - `lib/schedule/generateMatchSchedule.ts`:
     - L24, L30, L34, L60: Type `ScheduledMatchItem`, `UnscheduledMatchItem`, `ScheduleResult`, `GenerateScheduleOptions`.
@@ -212,7 +221,7 @@ Berikut daftar file dengan pelanggaran panjang baris terbanyak akibat JSX props 
    - *Solusi refactor*: `const TOURNAMENT_STATUS_CONFIG: Record<TournamentStatus, { label: string; variant: BadgeVariant; description: string }>`.
 
 4. **Format Level Kategori (`beginner` / `intermediate` / `advanced`)**:
-   - `components/categories/CategoryTable.tsx:L45-L56`: `switch (level)`.
+   - `components/categories/CategoryTable.tsx:L45-L56`: ~~`switch (level)`~~ ✅ Selesai di-refactor menggunakan `CATEGORY_LEVEL_CONFIG` record lookup.
    - `components/display/CategoryStandingsView.tsx:L32-L41`: `switch (level)`.
    - *Solusi refactor*: `const CATEGORY_LEVEL_CONFIG: Record<CategoryLevel, { label: string; badgeVariant: BadgeVariant }>`.
 
@@ -227,9 +236,9 @@ Komentar yang hanya mengulang apa yang sudah jelas dari nama method/variable/fun
   - ~~L41: `// Handler pemilihan file bukti transfer`~~
   - ~~L95: `// Handler submit formulir`~~
   - ~~L153: `// Reset formulir setelah pendaftaran berhasil`~~
-- `hooks/useCategoriesManagement.ts`:
-  - L217: `// Modal`
-  - L221: `// Form`
+- ~~`hooks/useCategoriesManagement.ts`:~~ (✅ Dihapus)
+  - ~~L217: `// Modal`~~
+  - ~~L221: `// Form`~~
 - ~~`hooks/useDrawManagement.ts:L112`: `// Buka modal konfirmasi`~~ (✅ Dihapus).
 - ~~`hooks/useTeamsManagement.ts:L98`: `// Update selected team status jika modal sedang terbuka`~~ (✅ Dihapus).
 - `hooks/useScoringManagement.ts:L365`: `// Handlers` (tepat sebelum return object `selectCourt, ...`).

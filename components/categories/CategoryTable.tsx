@@ -9,9 +9,10 @@ import {
     Tag,
 } from 'lucide-react'
 import { Badge, Switch, Button, Card } from '@/components/ui'
+import { cn } from '@/lib/utils'
 import { CategoryWithTeamCount, PartnerType, CategoryLevel } from '@/types/domain'
 
-export interface CategoryTableProps {
+interface CategoryTableProps {
     categories: CategoryWithTeamCount[]
     isLoading: boolean
     togglingCategoryId: string | null
@@ -28,29 +29,34 @@ const TABLE_HEADERS = [
     { label: 'Status & Pendaftaran', align: 'right' },
 ] as const
 
-function formatPartnerType(type: PartnerType | string): {
-    label: string
-    variant: 'neutral' | 'success' | 'warning'
-} {
-    if (type === 'fix') {
-        return { label: 'Fix Partner', variant: 'neutral' }
-    }
-    return { label: 'Mix Partner', variant: 'warning' }
+const PARTNER_TYPE_CONFIG: Record<
+    PartnerType,
+    { label: string; variant: 'neutral' | 'success' | 'warning' }
+> = {
+    fix: { label: 'Fix Partner', variant: 'neutral' },
+    mix: { label: 'Mix Partner', variant: 'warning' },
 }
 
-function formatCategoryLevel(level: CategoryLevel | string): {
-    label: string
-    variant: 'neutral' | 'success' | 'warning'
-} {
-    switch (level) {
-        case 'beginner':
-            return { label: 'Beginner', variant: 'neutral' }
-        case 'lower_bronze':
-            return { label: 'Lower Bronze', variant: 'warning' }
-        case 'bronze':
-            return { label: 'Bronze', variant: 'success' }
-        default:
-            return { label: String(level), variant: 'neutral' }
+const CATEGORY_LEVEL_CONFIG: Record<
+    CategoryLevel,
+    { label: string; variant: 'neutral' | 'success' | 'warning' }
+> = {
+    beginner: { label: 'Beginner', variant: 'neutral' },
+    lower_bronze: { label: 'Lower Bronze', variant: 'warning' },
+    bronze: { label: 'Bronze', variant: 'success' },
+}
+
+function formatPartnerType(type: PartnerType | string) {
+    return PARTNER_TYPE_CONFIG[type as PartnerType] ?? {
+        label: String(type),
+        variant: 'neutral' as const,
+    }
+}
+
+function formatCategoryLevel(level: CategoryLevel | string) {
+    return CATEGORY_LEVEL_CONFIG[level as CategoryLevel] ?? {
+        label: String(level),
+        variant: 'neutral' as const,
     }
 }
 
@@ -69,7 +75,10 @@ export function CategoryTable({
 }: CategoryTableProps) {
     if (isLoading) {
         return (
-            <Card variant="bordered" className="bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 p-8">
+            <Card
+                variant="bordered"
+                className="bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 p-8"
+            >
                 <div className="flex flex-col items-center justify-center py-12 text-zinc-500 space-y-3">
                     <Loader2 className="w-8 h-8 animate-spin text-emerald-500" />
                     <p className="text-sm font-medium">Memuat data kategori turnamen...</p>
@@ -80,8 +89,13 @@ export function CategoryTable({
 
     if (categories.length === 0) {
         return (
-            <Card variant="bordered" className="bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 p-8 sm:p-12 text-center space-y-4">
-                <div className="w-14 h-14 mx-auto rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 flex items-center justify-center">
+            <Card
+                variant="bordered"
+                className="bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 p-8 sm:p-12 text-center space-y-4"
+            >
+                <div
+                    className="w-14 h-14 mx-auto rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 flex items-center justify-center"
+                >
                     <Tag className="w-7 h-7" />
                 </div>
                 <div className="max-w-md mx-auto space-y-1.5">
@@ -105,20 +119,23 @@ export function CategoryTable({
     return (
         <div className="space-y-4">
             {/* Desktop Table View */}
-            <div className="hidden md:block overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/80 shadow-xl shadow-black/30">
+            <div
+                className="hidden md:block overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/80 shadow-xl shadow-black/30"
+            >
                 <table className="w-full text-left border-collapse">
                     <thead>
-                        <tr className="border-b border-zinc-800 bg-zinc-950/80 text-[11px] font-bold uppercase tracking-wider text-zinc-400">
+                        <tr
+                            className="border-b border-zinc-800 bg-zinc-950/80 text-[11px] font-bold uppercase tracking-wider text-zinc-400"
+                        >
                             {TABLE_HEADERS.map((header) => (
                                 <th
                                     key={header.label}
-                                    className={`px-5 py-3.5 ${
-                                        header.align === 'center'
-                                            ? 'text-center'
-                                            : header.align === 'right'
-                                            ? 'text-right'
-                                            : 'text-left'
-                                    }`}
+                                    className={cn(
+                                        'px-5 py-3.5',
+                                        header.align === 'center' && 'text-center',
+                                        header.align === 'right' && 'text-right',
+                                        header.align === 'left' && 'text-left'
+                                    )}
                                 >
                                     {header.label}
                                 </th>
@@ -141,11 +158,12 @@ export function CategoryTable({
                                     <td className="px-5 py-4">
                                         <div className="flex items-center gap-3">
                                             <div
-                                                className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs border ${
+                                                className={cn(
+                                                    'w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs border',
                                                     isActive
                                                         ? 'bg-lime-400/15 border-lime-400/30 text-lime-400'
                                                         : 'bg-zinc-800 border-zinc-700 text-zinc-400'
-                                                }`}
+                                                )}
                                             >
                                                 <Layers className="w-4 h-4" />
                                             </div>
@@ -176,7 +194,9 @@ export function CategoryTable({
 
                                     {/* Tim Terdaftar */}
                                     <td className="px-5 py-4 text-center">
-                                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-800 border border-zinc-700 font-mono font-bold text-xs text-zinc-200">
+                                        <span
+                                            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-800 border border-zinc-700 font-mono font-bold text-xs text-zinc-200"
+                                        >
                                             <Users className="w-3.5 h-3.5 text-zinc-400" />
                                             {category.team_count} Tim
                                         </span>
@@ -187,11 +207,12 @@ export function CategoryTable({
                                         <div className="flex items-center justify-end gap-3">
                                             <div className="text-right">
                                                 <span
-                                                    className={`text-xs font-bold flex items-center justify-end gap-1 ${
+                                                    className={cn(
+                                                        'text-xs font-bold flex items-center justify-end gap-1',
                                                         isActive
                                                             ? 'text-lime-400'
                                                             : 'text-zinc-500'
-                                                    }`}
+                                                    )}
                                                 >
                                                     {isActive ? (
                                                         <>
@@ -220,7 +241,9 @@ export function CategoryTable({
                                                     }
                                                 />
                                                 {isToggling && (
-                                                    <div className="absolute inset-0 flex items-center justify-center bg-zinc-900/50 rounded-full">
+                                                    <div
+                                                        className="absolute inset-0 flex items-center justify-center bg-zinc-900/50 rounded-full"
+                                                    >
                                                         <Loader2 className="w-3.5 h-3.5 animate-spin text-lime-400" />
                                                     </div>
                                                 )}
@@ -262,13 +285,17 @@ export function CategoryTable({
                                         </Badge>
                                     </div>
                                 </div>
-                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-zinc-800 border border-zinc-700 font-mono font-bold text-xs text-zinc-300">
+                                <span
+                                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-zinc-800 border border-zinc-700 font-mono font-bold text-xs text-zinc-300"
+                                >
                                     <Users className="w-3 h-3 text-zinc-400" />
                                     {category.team_count}
                                 </span>
                             </div>
 
-                            <div className="flex items-center justify-between pt-3 border-t border-zinc-800">
+                            <div
+                                className="flex items-center justify-between pt-3 border-t border-zinc-800"
+                            >
                                 <span className="text-xs text-zinc-400 font-medium">
                                     {isActive ? 'Pendaftaran Dibuka' : 'Pendaftaran Ditutup'}
                                 </span>

@@ -17,7 +17,7 @@ export interface CategoryFormValues {
     is_active: boolean
 }
 
-export interface ToastNotification {
+interface ToastNotification {
     type: 'success' | 'error'
     message: string
 }
@@ -214,21 +214,17 @@ export function useCategoriesManagement() {
         isError,
         error,
         refetch,
-        // Modal
         isAddModalOpen,
         openAddModal,
         closeAddModal,
-        // Form
         values,
         fieldErrors,
         isSubmitting,
         onFieldChange,
         applySuggestedName,
         handleSubmit,
-        // Toggle
         toggleActive,
         togglingCategoryId,
-        // Toast
         toast,
         clearToast,
     }

@@ -18,6 +18,7 @@ import { useCategoriesManagement } from '@/hooks/useCategoriesManagement'
 import { CategoryTable } from './CategoryTable'
 import { CategoryFormModal } from './CategoryFormModal'
 import { Button, Card } from '@/components/ui'
+import { cn } from '@/lib/utils'
 
 // Module-level constants sesuai docs/component-architecture.md §G & §H
 const CATEGORY_RULES_INFO = [
@@ -77,7 +78,9 @@ export function CategoriesManagementView() {
     return (
         <div className="space-y-6">
             {/* Top Navigation & Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-zinc-800">
+            <div
+                className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-zinc-800"
+            >
                 <div>
                     <div className="flex items-center gap-2 text-xs text-zinc-400 mb-1">
                         <Link href="/admin" className="hover:text-lime-400 transition-colors">
@@ -88,7 +91,9 @@ export function CategoriesManagementView() {
                             Kategori Turnamen
                         </span>
                     </div>
-                    <h1 className="font-[family-name:var(--font-anton)] text-3xl sm:text-4xl text-white uppercase tracking-tight">
+                    <h1
+                        className="font-[family-name:var(--font-anton)] text-3xl sm:text-4xl text-white uppercase tracking-tight"
+                    >
                         Kelola Kategori Turnamen
                     </h1>
                     <p className="text-xs text-zinc-400 mt-1">
@@ -105,7 +110,10 @@ export function CategoriesManagementView() {
                         disabled={isLoading}
                     >
                         <RefreshCw
-                            className={`w-4 h-4 mr-1.5 ${isLoading ? 'animate-spin text-lime-400' : ''}`}
+                            className={cn(
+                                'w-4 h-4 mr-1.5',
+                                isLoading && 'animate-spin text-lime-400'
+                            )}
                         />
                         Refresh
                     </Button>
@@ -124,11 +132,12 @@ export function CategoriesManagementView() {
             {/* Toast Feedback Notification */}
             {toast && (
                 <div
-                    className={`p-4 rounded-xl border flex items-center justify-between text-xs transition-all shadow-sm ${
+                    className={cn(
+                        'p-4 rounded-xl border flex items-center justify-between text-xs transition-all shadow-sm',
                         toast.type === 'success'
                             ? 'bg-lime-400/10 border-lime-400/30 text-lime-300'
                             : 'bg-rose-500/10 border-rose-500/30 text-rose-300'
-                    }`}
+                    )}
                 >
                     <div className="flex items-center gap-2.5 font-medium">
                         {toast.type === 'success' ? (
@@ -150,11 +159,14 @@ export function CategoriesManagementView() {
 
             {/* Error State */}
             {isError && (
-                <div className="p-4 rounded-xl border border-rose-500/30 bg-rose-500/10 text-rose-300 text-xs flex items-center justify-between">
+                <div
+                    className="p-4 rounded-xl border border-rose-500/30 bg-rose-500/10 text-rose-300 text-xs flex items-center justify-between"
+                >
                     <div className="flex items-center gap-2">
                         <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
                         <span>
-                            Gagal memuat data kategori: {error instanceof Error ? error.message : 'Unknown error'}
+                            Gagal memuat data kategori:{' '}
+                            {error instanceof Error ? error.message : 'Unknown error'}
                         </span>
                     </div>
                     <Button type="button" variant="ghost" size="sm" onClick={() => refetch()}>
@@ -168,12 +180,16 @@ export function CategoriesManagementView() {
                 <Card variant="bordered" className="bg-zinc-900/80 border-zinc-800 p-4">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-xs text-zinc-400 font-bold uppercase tracking-wider">Total Kategori</p>
+                            <p className="text-xs text-zinc-400 font-bold uppercase tracking-wider">
+                                Total Kategori
+                            </p>
                             <h3 className="font-[family-name:var(--font-anton)] text-3xl text-white mt-1">
                                 {totalCategories}
                             </h3>
                         </div>
-                        <div className="w-10 h-10 rounded-xl bg-zinc-800 text-zinc-300 flex items-center justify-center">
+                        <div
+                            className="w-10 h-10 rounded-xl bg-zinc-800 text-zinc-300 flex items-center justify-center"
+                        >
                             <Layers className="w-5 h-5 text-lime-400" />
                         </div>
                     </div>
@@ -182,12 +198,16 @@ export function CategoriesManagementView() {
                 <Card variant="bordered" className="bg-zinc-900/80 border-zinc-800 p-4">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-xs text-zinc-400 font-bold uppercase tracking-wider">Kategori Aktif (Buka)</p>
+                            <p className="text-xs text-zinc-400 font-bold uppercase tracking-wider">
+                                Kategori Aktif (Buka)
+                            </p>
                             <h3 className="font-[family-name:var(--font-anton)] text-3xl text-lime-400 mt-1">
                                 {activeCategories}
                             </h3>
                         </div>
-                        <div className="w-10 h-10 rounded-xl bg-lime-400/15 border border-lime-400/30 text-lime-400 flex items-center justify-center">
+                        <div
+                            className="w-10 h-10 rounded-xl bg-lime-400/15 border border-lime-400/30 text-lime-400 flex items-center justify-center"
+                        >
                             <Sliders className="w-5 h-5" />
                         </div>
                     </div>
@@ -196,12 +216,16 @@ export function CategoriesManagementView() {
                 <Card variant="bordered" className="bg-zinc-900/80 border-zinc-800 p-4">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-xs text-zinc-400 font-bold uppercase tracking-wider">Total Tim Terdaftar</p>
+                            <p className="text-xs text-zinc-400 font-bold uppercase tracking-wider">
+                                Total Tim Terdaftar
+                            </p>
                             <h3 className="font-[family-name:var(--font-anton)] text-3xl text-white mt-1">
                                 {totalTeams}
                             </h3>
                         </div>
-                        <div className="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/20 text-sky-400 flex items-center justify-center">
+                        <div
+                            className="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/20 text-sky-400 flex items-center justify-center"
+                        >
                             <Users className="w-5 h-5" />
                         </div>
                     </div>
@@ -221,7 +245,9 @@ export function CategoriesManagementView() {
             <Card variant="bordered" className="bg-zinc-900/80 border-zinc-800 p-6 space-y-4">
                 <div className="flex items-center gap-2 text-white font-bold text-sm">
                     <Info className="w-4 h-4 text-lime-400" />
-                    <h4 className="uppercase tracking-wide">Panduan Aturan Kategori Turnamen (docs/business-rules.md §4.1)</h4>
+                    <h4 className="uppercase tracking-wide">
+                        Panduan Aturan Kategori Turnamen (docs/business-rules.md §4.1)
+                    </h4>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
@@ -240,7 +266,9 @@ export function CategoriesManagementView() {
                     ))}
                 </div>
 
-                <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex items-start gap-2.5">
+                <div
+                    className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex items-start gap-2.5"
+                >
                     <ShieldAlert className="w-4 h-4 shrink-0 mt-0.5 text-amber-400" />
                     <p className="leading-relaxed">
                         <strong className="text-amber-200">Perhatian:</strong> Menutup status aktif kategori akan langsung menyembunyikan kategori tersebut dari halaman pendaftaran publik (<code className="bg-amber-500/20 px-1 py-0.5 rounded font-mono text-amber-200">/register</code>), namun seluruh tim yang sudah terdaftar sebelumnya tetap aman dan dapat diverifikasi maupun diikutsertakan dalam drawing.

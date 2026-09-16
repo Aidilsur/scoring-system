@@ -9,7 +9,7 @@ import {
 } from '@/lib/validations/category'
 import { Category } from '@/types/domain'
 
-export interface CategoryActionResponse {
+interface CategoryActionResponse {
     success: boolean
     message: string
     data?: Category
