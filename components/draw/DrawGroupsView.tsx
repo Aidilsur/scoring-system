@@ -10,7 +10,6 @@ import {
   Phone,
 } from 'lucide-react'
 import { Card, Badge } from '@/components/ui'
-import { cn } from '@/lib/utils'
 import { DrawnGroupDetail } from '@/hooks/useDrawQuery'
 import { Match } from '@/types/domain'
 
@@ -26,10 +25,7 @@ export function DrawGroupsView({ groups, matches }: DrawGroupsViewProps) {
     return (
       <Card variant="bordered" className="text-center py-12">
         <div
-          className={cn(
-            'w-12 h-12 mx-auto rounded-2xl bg-zinc-100 dark:bg-zinc-800',
-            'flex items-center justify-center text-zinc-400 mb-3'
-          )}
+          className="w-12 h-12 mx-auto rounded-2xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-400 mb-3"
         >
           <Users className="w-6 h-6" />
         </div>
@@ -81,10 +77,7 @@ export function DrawGroupsView({ groups, matches }: DrawGroupsViewProps) {
               <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
                 <div className="flex items-center gap-2.5">
                   <div
-                    className={cn(
-                      'w-8 h-8 rounded-xl bg-lime-400/15 border border-lime-400/30',
-                      'text-lime-400 flex items-center justify-center font-bold text-sm'
-                    )}
+                    className="w-8 h-8 rounded-xl bg-lime-400/15 border border-lime-400/30 text-lime-400 flex items-center justify-center font-bold text-sm"
                   >
                     {String.fromCharCode(65 + groupIdx)}
                   </div>
@@ -107,18 +100,11 @@ export function DrawGroupsView({ groups, matches }: DrawGroupsViewProps) {
                 {group.teams.map((team, teamIdx) => (
                   <div
                     key={team.id}
-                    className={cn(
-                      'p-3 rounded-xl bg-zinc-900/60 border border-zinc-800',
-                      'flex items-center justify-between gap-3',
-                      'hover:border-lime-400/40 transition'
-                    )}
+                    className="p-3 rounded-xl bg-zinc-900/60 border border-zinc-800 flex items-center justify-between gap-3 hover:border-lime-400/40 transition"
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <span
-                        className={cn(
-                          'w-6 h-6 rounded-lg bg-zinc-800 text-zinc-300 font-mono',
-                          'flex items-center justify-center text-xs font-bold shrink-0'
-                        )}
+                        className="w-6 h-6 rounded-lg bg-zinc-800 text-zinc-300 font-mono flex items-center justify-center text-xs font-bold shrink-0"
                       >
                         {teamIdx + 1}
                       </span>
@@ -127,10 +113,7 @@ export function DrawGroupsView({ groups, matches }: DrawGroupsViewProps) {
                           {team.player1_name} &amp; {team.player2_name}
                         </p>
                         <div
-                          className={cn(
-                            'flex items-center gap-3 text-[11px]',
-                            'text-zinc-400 mt-0.5 font-mono'
-                          )}
+                          className="flex items-center gap-3 text-[11px] text-zinc-400 mt-0.5 font-mono"
                         >
                           <span className="flex items-center gap-1 truncate">
                             <Phone className="w-3 h-3 text-zinc-500" />
@@ -155,11 +138,7 @@ export function DrawGroupsView({ groups, matches }: DrawGroupsViewProps) {
                   <button
                     type="button"
                     onClick={() => toggleMatches(group.id)}
-                    className={cn(
-                      'w-full flex items-center justify-between text-xs',
-                      'font-bold uppercase tracking-wider text-zinc-400',
-                      'hover:text-white py-1.5 transition cursor-pointer'
-                    )}
+                    className="w-full flex items-center justify-between text-xs font-bold uppercase tracking-wider text-zinc-400 hover:text-white py-1.5 transition cursor-pointer"
                   >
                     <span className="flex items-center gap-1.5">
                       <Swords className="w-3.5 h-3.5 text-lime-400" />
@@ -182,11 +161,7 @@ export function DrawGroupsView({ groups, matches }: DrawGroupsViewProps) {
                         return (
                           <div
                             key={m.id || `match-${mIdx}`}
-                            className={cn(
-                              'p-2.5 rounded-xl bg-zinc-950/80 border',
-                              'border-zinc-800 flex items-center',
-                              'justify-between text-xs'
-                            )}
+                            className="p-2.5 rounded-xl bg-zinc-950/80 border border-zinc-800 flex items-center justify-between text-xs"
                           >
                             <div className="flex items-center gap-2 min-w-0">
                               <span className="text-[10px] font-mono text-zinc-500">

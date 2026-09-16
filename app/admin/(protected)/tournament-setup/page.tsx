@@ -23,7 +23,6 @@ export default async function TournamentSetupPage() {
         redirect('/admin/login')
     }
 
-    // Ambil data pengaturan turnamen yang aktif jika sudah ada (mode edit)
     const { data: initialSettings } = await supabase
         .from('tournament_settings')
         .select('*')

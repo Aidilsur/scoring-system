@@ -2,10 +2,7 @@
 
 import { useState, useEffect, useCallback, FormEvent } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
-import {
-    tournamentSettingsSchema,
-    TournamentSettingsInput,
-} from '@/lib/validations/tournament-settings'
+import { tournamentSettingsSchema } from '@/lib/validations/tournament-settings'
 import {
     useTournamentSettingsQuery,
     TOURNAMENT_SETTINGS_QUERY_KEY,
@@ -14,7 +11,7 @@ import { saveTournamentSettingsAction } from '@/app/admin/(protected)/tournament
 import { TournamentSettings } from '@/types/domain'
 import { toast } from '@/lib/toast'
 
-export interface ToastFeedback {
+interface ToastFeedback {
     type: 'success' | 'error'
     message: string
 }
@@ -64,8 +61,12 @@ export function useTournamentSettingsForm(initialData?: TournamentSettings | nul
                 third_place_enabled: source.third_place_enabled ?? false,
                 number_of_courts: source.number_of_courts ?? 1,
                 match_duration_minutes: source.match_duration_minutes ?? 45,
-                daily_start_time: source.daily_start_time ? source.daily_start_time.slice(0, 5) : '08:00',
-                daily_end_time: source.daily_end_time ? source.daily_end_time.slice(0, 5) : '18:00',
+                daily_start_time: source.daily_start_time
+                    ? source.daily_start_time.slice(0, 5)
+                    : '08:00',
+                daily_end_time: source.daily_end_time
+                    ? source.daily_end_time.slice(0, 5)
+                    : '18:00',
             }
         }
         return DEFAULT_FORM_VALUES
@@ -86,8 +87,12 @@ export function useTournamentSettingsForm(initialData?: TournamentSettings | nul
                 third_place_enabled: settings.third_place_enabled ?? false,
                 number_of_courts: settings.number_of_courts ?? 1,
                 match_duration_minutes: settings.match_duration_minutes ?? 45,
-                daily_start_time: settings.daily_start_time ? settings.daily_start_time.slice(0, 5) : '08:00',
-                daily_end_time: settings.daily_end_time ? settings.daily_end_time.slice(0, 5) : '18:00',
+                daily_start_time: settings.daily_start_time
+                    ? settings.daily_start_time.slice(0, 5)
+                    : '08:00',
+                daily_end_time: settings.daily_end_time
+                    ? settings.daily_end_time.slice(0, 5)
+                    : '18:00',
             })
         }
     }, [settings])
@@ -125,7 +130,8 @@ export function useTournamentSettingsForm(initialData?: TournamentSettings | nul
                 errors[key] = issue.message
             }
             setFieldErrors(errors)
-            const errorMsg = validation.error.issues[0]?.message || 'Periksa kembali isian formulir.'
+            const errorMsg =
+                validation.error.issues[0]?.message || 'Periksa kembali isian formulir.'
             setFeedback({
                 type: 'error',
                 message: errorMsg,
@@ -168,8 +174,12 @@ export function useTournamentSettingsForm(initialData?: TournamentSettings | nul
                         third_place_enabled: rollbackData.third_place_enabled ?? false,
                         number_of_courts: rollbackData.number_of_courts ?? 1,
                         match_duration_minutes: rollbackData.match_duration_minutes ?? 45,
-                        daily_start_time: rollbackData.daily_start_time ? rollbackData.daily_start_time.slice(0, 5) : '08:00',
-                        daily_end_time: rollbackData.daily_end_time ? rollbackData.daily_end_time.slice(0, 5) : '18:00',
+                        daily_start_time: rollbackData.daily_start_time
+                            ? rollbackData.daily_start_time.slice(0, 5)
+                            : '08:00',
+                        daily_end_time: rollbackData.daily_end_time
+                            ? rollbackData.daily_end_time.slice(0, 5)
+                            : '18:00',
                     })
                     queryClient.setQueryData(TOURNAMENT_SETTINGS_QUERY_KEY, rollbackData)
                 }
@@ -197,8 +207,12 @@ export function useTournamentSettingsForm(initialData?: TournamentSettings | nul
                     third_place_enabled: result.data.third_place_enabled ?? false,
                     number_of_courts: result.data.number_of_courts ?? 1,
                     match_duration_minutes: result.data.match_duration_minutes ?? 45,
-                    daily_start_time: result.data.daily_start_time ? result.data.daily_start_time.slice(0, 5) : '08:00',
-                    daily_end_time: result.data.daily_end_time ? result.data.daily_end_time.slice(0, 5) : '18:00',
+                    daily_start_time: result.data.daily_start_time
+                        ? result.data.daily_start_time.slice(0, 5)
+                        : '08:00',
+                    daily_end_time: result.data.daily_end_time
+                        ? result.data.daily_end_time.slice(0, 5)
+                        : '18:00',
                 })
                 queryClient.setQueryData(TOURNAMENT_SETTINGS_QUERY_KEY, result.data)
             }
@@ -225,8 +239,12 @@ export function useTournamentSettingsForm(initialData?: TournamentSettings | nul
                     third_place_enabled: rollbackData.third_place_enabled ?? false,
                     number_of_courts: rollbackData.number_of_courts ?? 1,
                     match_duration_minutes: rollbackData.match_duration_minutes ?? 45,
-                    daily_start_time: rollbackData.daily_start_time ? rollbackData.daily_start_time.slice(0, 5) : '08:00',
-                    daily_end_time: rollbackData.daily_end_time ? rollbackData.daily_end_time.slice(0, 5) : '18:00',
+                    daily_start_time: rollbackData.daily_start_time
+                        ? rollbackData.daily_start_time.slice(0, 5)
+                        : '08:00',
+                    daily_end_time: rollbackData.daily_end_time
+                        ? rollbackData.daily_end_time.slice(0, 5)
+                        : '18:00',
                 })
                 queryClient.setQueryData(TOURNAMENT_SETTINGS_QUERY_KEY, rollbackData)
             }

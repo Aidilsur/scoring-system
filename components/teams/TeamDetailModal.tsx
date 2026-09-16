@@ -4,8 +4,6 @@ import { Team } from '@/types/domain'
 import { TeamStatusBadge } from './TeamStatusBadge'
 import { formatCategoryBadge, formatPhoneNumber } from '@/utils/format'
 import { Button } from '@/components/ui'
-import { cn } from '@/lib/utils'
-
 interface TeamDetailModalProps {
     isOpen: boolean
     team: Team | null
@@ -46,16 +44,10 @@ export function TeamDetailModal({
 
     return (
         <div
-            className={cn(
-                'fixed inset-0 z-50 flex items-center justify-center p-4',
-                'bg-black/80 backdrop-blur-md overflow-y-auto'
-            )}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md overflow-y-auto"
         >
             <div
-                className={cn(
-                    'bg-zinc-900 border border-zinc-800 rounded-2xl max-w-xl w-full',
-                    'p-6 space-y-6 shadow-2xl shadow-black/80 my-8 text-white'
-                )}
+                className="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-xl w-full p-6 space-y-6 shadow-2xl shadow-black/80 my-8 text-white"
             >
                 {/* Modal Header */}
                 <div className="flex items-start justify-between pb-3 border-b border-zinc-800">
@@ -81,17 +73,11 @@ export function TeamDetailModal({
 
                 {/* Status & Kategori */}
                 <div
-                    className={cn(
-                        'flex flex-wrap items-center justify-between gap-3',
-                        'p-3.5 bg-zinc-950/80 border border-zinc-800 rounded-xl'
-                    )}
+                    className="flex flex-wrap items-center justify-between gap-3 p-3.5 bg-zinc-950/80 border border-zinc-800 rounded-xl"
                 >
                     <div>
                         <span
-                            className={cn(
-                                'text-xs font-bold uppercase tracking-wider',
-                                'text-zinc-400 block'
-                            )}
+                            className="text-xs font-bold uppercase tracking-wider text-zinc-400 block"
                         >
                             Kategori Kelas
                         </span>
@@ -111,10 +97,7 @@ export function TeamDetailModal({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                     <div className="p-3 bg-zinc-950/60 border border-zinc-800 rounded-xl space-y-1">
                         <span
-                            className={cn(
-                                'text-xs text-zinc-400 font-bold',
-                                'uppercase tracking-wider'
-                            )}
+                            className="text-xs text-zinc-400 font-bold uppercase tracking-wider"
                         >
                             Pemain 1
                         </span>
@@ -125,10 +108,7 @@ export function TeamDetailModal({
 
                     <div className="p-3 bg-zinc-950/60 border border-zinc-800 rounded-xl space-y-1">
                         <span
-                            className={cn(
-                                'text-xs text-zinc-400 font-bold',
-                                'uppercase tracking-wider'
-                            )}
+                            className="text-xs text-zinc-400 font-bold uppercase tracking-wider"
                         >
                             Pemain 2 (Partner)
                         </span>
@@ -139,10 +119,7 @@ export function TeamDetailModal({
 
                     <div className="p-3 bg-zinc-950/60 border border-zinc-800 rounded-xl space-y-1">
                         <span
-                            className={cn(
-                                'text-xs text-zinc-400 font-bold',
-                                'uppercase tracking-wider'
-                            )}
+                            className="text-xs text-zinc-400 font-bold uppercase tracking-wider"
                         >
                             WhatsApp / Telepon
                         </span>
@@ -160,10 +137,7 @@ export function TeamDetailModal({
 
                     <div className="p-3 bg-zinc-950/60 border border-zinc-800 rounded-xl space-y-1">
                         <span
-                            className={cn(
-                                'text-xs text-zinc-400 font-bold',
-                                'uppercase tracking-wider'
-                            )}
+                            className="text-xs text-zinc-400 font-bold uppercase tracking-wider"
                         >
                             Media Sosial
                         </span>
@@ -194,16 +168,10 @@ export function TeamDetailModal({
 
                     {isLoadingSignedUrl ? (
                         <div
-                            className={cn(
-                                'p-8 text-center text-xs text-zinc-400 border border-dashed',
-                                'border-zinc-800 rounded-xl flex items-center justify-center gap-2'
-                            )}
+                            className="p-8 text-center text-xs text-zinc-400 border border-dashed border-zinc-800 rounded-xl flex items-center justify-center gap-2"
                         >
                             <div
-                                className={cn(
-                                    'w-4 h-4 border-2 border-lime-400',
-                                    'border-t-transparent rounded-full animate-spin'
-                                )}
+                                className="w-4 h-4 border-2 border-lime-400 border-t-transparent rounded-full animate-spin"
                             />
                             <span>Membuat secure signed URL...</span>
                         </div>
@@ -211,11 +179,7 @@ export function TeamDetailModal({
                         <div className="space-y-3">
                             {!isPdf ? (
                                 <div
-                                    className={cn(
-                                        'border border-zinc-200 dark:border-zinc-700 rounded-xl',
-                                        'overflow-hidden max-h-72 flex items-center justify-center',
-                                        'bg-zinc-950'
-                                    )}
+                                    className="border border-zinc-200 dark:border-zinc-700 rounded-xl overflow-hidden max-h-72 flex items-center justify-center bg-zinc-950"
                                 >
                                     <img
                                         src={signedPaymentUrl}
@@ -225,27 +189,16 @@ export function TeamDetailModal({
                                 </div>
                             ) : (
                                 <div
-                                    className={cn(
-                                        'p-4 border border-zinc-200 dark:border-zinc-700',
-                                        'rounded-xl flex items-center gap-3 bg-zinc-50',
-                                        'dark:bg-zinc-800/40'
-                                    )}
+                                    className="p-4 border border-zinc-200 dark:border-zinc-700 rounded-xl flex items-center gap-3 bg-zinc-50 dark:bg-zinc-800/40"
                                 >
                                     <div
-                                        className={cn(
-                                            'w-10 h-10 bg-rose-100 dark:bg-rose-950/60',
-                                            'text-rose-600 rounded-lg flex items-center',
-                                            'justify-center font-bold text-xs shrink-0'
-                                        )}
+                                        className="w-10 h-10 bg-rose-100 dark:bg-rose-950/60 text-rose-600 rounded-lg flex items-center justify-center font-bold text-xs shrink-0"
                                     >
                                         PDF
                                     </div>
                                     <div className="min-w-0 flex-1">
                                         <p
-                                            className={cn(
-                                                'text-xs font-semibold text-zinc-900',
-                                                'dark:text-white truncate'
-                                            )}
+                                            className="text-xs font-semibold text-zinc-900 dark:text-white truncate"
                                         >
                                             {team.payment_proof_url.split('/').pop()}
                                         </p>
@@ -261,11 +214,7 @@ export function TeamDetailModal({
                                     href={signedPaymentUrl}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className={cn(
-                                        'text-xs text-emerald-600 dark:text-emerald-400',
-                                        'font-semibold hover:underline inline-flex',
-                                        'items-center gap-1'
-                                    )}
+                                    className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold hover:underline inline-flex items-center gap-1"
                                 >
                                     <span>Buka Dokumen di Tab Baru</span>
                                     <ExternalLink className="w-3.5 h-3.5" />
@@ -274,10 +223,7 @@ export function TeamDetailModal({
                         </div>
                     ) : (
                         <p
-                            className={cn(
-                                'text-xs text-rose-500 p-3 bg-rose-50',
-                                'dark:bg-rose-950/30 rounded-lg'
-                            )}
+                            className="text-xs text-rose-500 p-3 bg-rose-50 dark:bg-rose-950/30 rounded-lg"
                         >
                             Bukti pembayaran tidak dapat dimuat atau path berkas tidak ditemukan.
                         </p>
@@ -286,10 +232,7 @@ export function TeamDetailModal({
 
                 {/* Modal Footer Actions */}
                 <div
-                    className={cn(
-                        'flex flex-wrap items-center justify-between gap-3',
-                        'pt-4 border-t border-zinc-800'
-                    )}
+                    className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-zinc-800"
                 >
                     <Button
                         type="button"

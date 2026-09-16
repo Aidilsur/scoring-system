@@ -85,10 +85,7 @@ export function DrawManagementView({
     <div className="space-y-8">
       {/* Top Header & Breadcrumbs */}
       <div
-        className={cn(
-          'flex flex-col sm:flex-row sm:items-center justify-between',
-          'gap-4 pb-4 border-b border-zinc-800'
-        )}
+        className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-zinc-800"
       >
         <div>
           <div className="flex items-center gap-2 text-xs text-zinc-400 mb-1">
@@ -101,10 +98,7 @@ export function DrawManagementView({
             </span>
           </div>
           <h1
-            className={cn(
-              'font-[family-name:var(--font-anton)] text-3xl sm:text-4xl',
-              'text-white uppercase tracking-tight'
-            )}
+            className="font-[family-name:var(--font-anton)] text-3xl sm:text-4xl text-white uppercase tracking-tight"
           >
             Drawing Grup &amp; Jadwal
           </h1>
@@ -119,12 +113,7 @@ export function DrawManagementView({
           type="button"
           onClick={() => refetchDraw()}
           disabled={isLoadingDraw || isRefetchingDraw}
-          className={cn(
-            'inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold',
-            'rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300',
-            'hover:text-white hover:border-zinc-700 transition cursor-pointer',
-            'disabled:opacity-50'
-          )}
+          className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white hover:border-zinc-700 transition cursor-pointer disabled:opacity-50"
         >
           <RotateCw
             className={`w-3.5 h-3.5 ${

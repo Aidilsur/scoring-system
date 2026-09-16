@@ -8,7 +8,7 @@ import {
 } from '@/lib/validations/tournament-settings'
 import { TournamentSettings } from '@/types/domain'
 
-export interface TournamentActionResponse {
+interface TournamentActionResponse {
     success: boolean
     message: string
     warning?: string
@@ -91,8 +91,12 @@ export async function saveTournamentSettingsAction(
                 .maybeSingle()
 
             if (currentSettings) {
-                const currentStart = currentSettings.daily_start_time ? currentSettings.daily_start_time.slice(0, 5) : ''
-                const currentEnd = currentSettings.daily_end_time ? currentSettings.daily_end_time.slice(0, 5) : ''
+                const currentStart = currentSettings.daily_start_time
+                    ? currentSettings.daily_start_time.slice(0, 5)
+                    : ''
+                const currentEnd = currentSettings.daily_end_time
+                    ? currentSettings.daily_end_time.slice(0, 5)
+                    : ''
                 const newStart = validData.daily_start_time.slice(0, 5)
                 const newEnd = validData.daily_end_time.slice(0, 5)
 
@@ -145,7 +149,8 @@ export async function saveTournamentSettingsAction(
                 const courtsToDelete = sortedCourtsDesc.slice(0, diff)
                 const courtsToDeleteIds = courtsToDelete.map((c) => c.id)
 
-                // Cek pertandingan aktif (status 'scheduled' atau 'live') di court yang akan dihapus
+                // Cek pertandingan aktif (status 'scheduled' atau 'live')
+                // di court yang akan dihapus
                 const { data: conflictingMatches, error: matchCheckErr } = await supabase
                     .from('matches')
                     .select('id, court_id, status')

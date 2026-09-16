@@ -4,11 +4,12 @@ import {
     Switch,
     Button,
     Card,
+    Badge,
 } from '@/components/ui'
 import { TournamentStatus } from '@/types/domain'
 import { TournamentFormValues } from '@/hooks/useTournamentSettingsForm'
 
-export interface TournamentSetupFormProps {
+interface TournamentSetupFormProps {
     values: TournamentFormValues
     fieldErrors: Record<string, string>
     isSubmitting: boolean
@@ -21,35 +22,44 @@ export interface TournamentSetupFormProps {
     onSubmit: (e: React.FormEvent<HTMLFormElement>) => void
 }
 
+type BadgeVariant = 'success' | 'warning' | 'danger' | 'neutral'
+
+const TOURNAMENT_STATUS_CONFIG: Record<
+    TournamentStatus,
+    { label: string; variant: BadgeVariant; description: string }
+> = {
+    draft: {
+        label: 'Draft (Pendaftaran)',
+        variant: 'neutral',
+        description: 'Konfigurasi turnamen masih dalam tahap draf dan dapat disesuaikan.',
+    },
+    draw_done: {
+        label: 'Drawing Selesai',
+        variant: 'warning',
+        description: 'Drawing grup telah selesai dilakukan.',
+    },
+    ongoing: {
+        label: 'Turnamen Berlangsung',
+        variant: 'success',
+        description: 'Pertandingan turnamen sedang berlangsung.',
+    },
+    completed: {
+        label: 'Selesai',
+        variant: 'neutral',
+        description: 'Seluruh pertandingan turnamen telah selesai.',
+    },
+}
+
 function renderStatusBadge(status?: TournamentStatus) {
-    switch (status) {
-        case 'ongoing':
-            return (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-lime-400/15 border border-lime-400/30 text-lime-400 shadow-sm shadow-lime-400/20">
-                    <span className="w-1.5 h-1.5 rounded-full bg-lime-400 animate-pulse" />
-                    Turnamen Berlangsung
-                </span>
-            )
-        case 'completed':
-            return (
-                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-emerald-950 border border-emerald-700 text-emerald-300">
-                    Selesai
-                </span>
-            )
-        case 'draw_done':
-            return (
-                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-medium uppercase tracking-wider bg-zinc-800 border border-zinc-700 text-zinc-400">
-                    Drawing Selesai
-                </span>
-            )
-        case 'draft':
-        default:
-            return (
-                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-medium uppercase tracking-wider bg-zinc-800 border border-zinc-700 text-zinc-400">
-                    Draft (Pendaftaran)
-                </span>
-            )
-    }
+    const config = TOURNAMENT_STATUS_CONFIG[status || 'draft']
+    return (
+        <Badge variant={config.variant} size="sm">
+            {status === 'ongoing' && (
+                <span className="w-1.5 h-1.5 rounded-full bg-lime-400 animate-pulse" />
+            )}
+            {config.label}
+        </Badge>
+    )
 }
 
 /**
@@ -68,8 +78,12 @@ export function TournamentSetupForm({
 }: TournamentSetupFormProps) {
     return (
         <form onSubmit={onSubmit} className="space-y-6">
-            <Card className="p-6 sm:p-8 space-y-6 bg-zinc-900/80 border border-zinc-800 rounded-2xl shadow-xl text-white">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-zinc-800">
+            <Card
+                className="p-6 sm:p-8 space-y-6 bg-zinc-900/80 border border-zinc-800 rounded-2xl shadow-xl text-white"
+            >
+                <div
+                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-zinc-800"
+                >
                     <div>
                         <h2 className="text-xl font-black text-white tracking-tight uppercase">
                             {isEditMode ? 'Edit Konfigurasi Turnamen' : 'Buat Turnamen Baru'}
@@ -208,7 +222,9 @@ export function TournamentSetupForm({
                     </h3>
 
                     {/* Field 4: Toggle Golden Point */}
-                    <div className="rounded-xl p-4 bg-zinc-950/70 border border-zinc-800 transition-all hover:border-zinc-700">
+                    <div
+                        className="rounded-xl p-4 bg-zinc-950/70 border border-zinc-800 transition-all hover:border-zinc-700"
+                    >
                         <Switch
                             id="golden-point-enabled"
                             name="golden_point_enabled"
@@ -223,7 +239,9 @@ export function TournamentSetupForm({
                     </div>
 
                     {/* Field 5: Toggle Perebutan Juara 3 */}
-                    <div className="rounded-xl p-4 bg-zinc-950/70 border border-zinc-800 transition-all hover:border-zinc-700">
+                    <div
+                        className="rounded-xl p-4 bg-zinc-950/70 border border-zinc-800 transition-all hover:border-zinc-700"
+                    >
                         <Switch
                             id="third-place-enabled"
                             name="third_place_enabled"

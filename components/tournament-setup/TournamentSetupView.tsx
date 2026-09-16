@@ -8,8 +8,9 @@ import { TournamentSetupForm } from './TournamentSetupForm'
 import { ShareRegistrationCard } from './ShareRegistrationCard'
 import { Card, Button } from '@/components/ui'
 import { TournamentSettings } from '@/types/domain'
+import { cn } from '@/lib/utils'
 
-export interface TournamentSetupViewProps {
+interface TournamentSetupViewProps {
     initialData?: TournamentSettings | null
 }
 
@@ -80,7 +81,9 @@ export function TournamentSetupView({ initialData }: TournamentSetupViewProps) {
     return (
         <div className="space-y-6">
             {/* Top Navigation & Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-zinc-800">
+            <div
+                className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-zinc-800"
+            >
                 <div>
                     <div className="flex items-center gap-2 text-xs text-zinc-400 mb-1">
                         <Link href="/admin" className="hover:text-lime-400 transition-colors">
@@ -91,7 +94,9 @@ export function TournamentSetupView({ initialData }: TournamentSetupViewProps) {
                             Setup Turnamen
                         </span>
                     </div>
-                    <h1 className="font-[family-name:var(--font-anton)] text-3xl sm:text-4xl text-white uppercase tracking-tight">
+                    <h1
+                        className="font-[family-name:var(--font-anton)] text-3xl sm:text-4xl text-white uppercase tracking-tight"
+                    >
                         Konfigurasi Turnamen
                     </h1>
                     <p className="text-xs sm:text-sm text-zinc-400 mt-1">
@@ -116,11 +121,12 @@ export function TournamentSetupView({ initialData }: TournamentSetupViewProps) {
             {/* Alert / Feedback Notification */}
             {feedback && (
                 <div
-                    className={`p-4 rounded-xl text-sm flex items-start justify-between gap-3 transition shadow-lg ${
+                    className={cn(
+                        'p-4 rounded-xl text-sm flex items-start justify-between gap-3 transition shadow-lg bg-zinc-900 shadow-black/40',
                         feedback.type === 'success'
-                            ? 'bg-zinc-900 border border-lime-400/50 text-lime-300 shadow-black/40'
-                            : 'bg-zinc-900 border border-red-500/50 text-red-200 shadow-black/40'
-                    }`}
+                            ? 'border border-lime-400/50 text-lime-300'
+                            : 'border border-red-500/50 text-red-200'
+                    )}
                 >
                     <div className="flex items-center gap-2.5">
                         {feedback.type === 'success' ? (
@@ -143,7 +149,9 @@ export function TournamentSetupView({ initialData }: TournamentSetupViewProps) {
 
             {/* Query Error State */}
             {isQueryError && (
-                <div className="p-4 rounded-xl bg-zinc-900 border border-red-500/50 text-red-200 text-sm flex items-center justify-between shadow-lg">
+                <div
+                    className="p-4 rounded-xl bg-zinc-900 border border-red-500/50 text-red-200 text-sm flex items-center justify-between shadow-lg"
+                >
                     <div>Gagal memuat pengaturan: {queryError?.message}</div>
                     <Button
                         variant="secondary"
@@ -161,8 +169,12 @@ export function TournamentSetupView({ initialData }: TournamentSetupViewProps) {
                 {/* Form & Share Column */}
                 <div className="lg:col-span-2 space-y-6">
                     {isQueryLoading && !settings ? (
-                        <Card className="p-12 text-center bg-zinc-900/70 border border-zinc-800 rounded-2xl">
-                            <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-lime-400 border-t-transparent mb-3" />
+                        <Card
+                            className="p-12 text-center bg-zinc-900/70 border border-zinc-800 rounded-2xl"
+                        >
+                            <div
+                                className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-lime-400 border-t-transparent mb-3"
+                            />
                             <p className="text-sm text-zinc-400 font-medium">Memuat konfigurasi turnamen...</p>
                         </Card>
                     ) : (
@@ -187,8 +199,12 @@ export function TournamentSetupView({ initialData }: TournamentSetupViewProps) {
 
                 {/* Information / Guidelines Sidebar */}
                 <div className="space-y-6">
-                    <Card className="p-6 bg-zinc-900/80 border border-zinc-800 rounded-2xl space-y-4 shadow-xl">
-                        <div className="flex items-center gap-2 text-lime-400 font-bold text-xs uppercase tracking-wider">
+                    <Card
+                        className="p-6 bg-zinc-900/80 border border-zinc-800 rounded-2xl space-y-4 shadow-xl"
+                    >
+                        <div
+                            className="flex items-center gap-2 text-lime-400 font-bold text-xs uppercase tracking-wider"
+                        >
                             <Info className="w-4 h-4 text-lime-400 shrink-0" />
                             Petunjuk Konfigurasi
                         </div>
@@ -204,7 +220,9 @@ export function TournamentSetupView({ initialData }: TournamentSetupViewProps) {
                         </ul>
                     </Card>
 
-                    <Card className="p-6 bg-zinc-900/50 border border-zinc-800 rounded-2xl space-y-3 shadow-md">
+                    <Card
+                        className="p-6 bg-zinc-900/50 border border-zinc-800 rounded-2xl space-y-3 shadow-md"
+                    >
                         <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-400">
                             Modul Terkait Selanjutnya
                         </h4>

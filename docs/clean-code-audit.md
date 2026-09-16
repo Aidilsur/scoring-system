@@ -14,7 +14,7 @@ Daftar modul diurutkan berdasarkan tingkat urgensi dan jumlah pelanggaran terban
 | **P2** | **`display`** | 14 temuan | 1 hook (`useCourtLiveDisplay`) | **232 baris** (6 file) | `getRoundLabel` & `formatLevel` | 3 |
 | **P3** | **`admin/scoring`** | 12 temuan (termasuk action `getScoreHistoryCountAction`) | 1 hook (`useScoringManagement` 375 baris) | **132 baris** | Status badge & `getRoundTitle` | 2 |
 | **P4** | **`admin/bracket`** | 8 temuan | 1 hook (`useBracketManagement`) | **68 baris** | - | 1 |
-| **P5** | **`admin/tournament-setup`** | 6 temuan | 1 hook (`useTournamentSettingsForm`) | **62 baris** | `TOURNAMENT_STATUS_CONFIG` | 1 |
+| **P5** | **`admin/tournament-setup`** | ~~6 temuan~~ ✅ Selesai dibersihkan | 1 hook (`useTournamentSettingsForm`) | ~~62 baris~~ ✅ Selesai di-wrap | ~~`TOURNAMENT_STATUS_CONFIG`~~ ✅ Selesai di-refactor | ~~1~~ ✅ Dihapus |
 | **P6** | **`admin/categories`** | ~~4 temuan~~ ✅ Selesai dibersihkan | 1 hook (`useCategoriesManagement`) | ~~53 baris~~ ✅ Selesai di-wrap | ~~`CATEGORY_LEVEL_CONFIG`~~ ✅ Selesai di-refactor | ~~2~~ ✅ Dihapus |
 | **P7** | **`register`** | ~~4 temuan~~ ✅ Selesai dibersihkan | 1 hook (`useTeamRegistration`) | ~~13 baris~~ ✅ 0 baris | - | ~~3~~ ✅ Dihapus |
 | **P8** | **`admin/teams`** | ~~2 temuan~~ ✅ Selesai dibersihkan | 1 hook (`useTeamsManagement`) | ~~38 baris~~ ✅ 0 baris | - | ~~1~~ ✅ Dihapus |
@@ -77,9 +77,9 @@ Daftar modul diurutkan berdasarkan tingkat urgensi dan jumlah pelanggaran terban
     - L16: Import `Badge` tidak terpakai.
   - `hooks/useCourtLiveDisplay.ts`:
     - L62: Variable `matches` dari query result tidak terpakai.
-- **admin/tournament-setup**:
+- **admin/tournament-setup (✅ Selesai)**:
   - `hooks/useTournamentSettingsForm.ts`:
-    - L7: Import type `TournamentSettingsInput` tidak terpakai.
+    - ~~L7: Import type `TournamentSettingsInput` tidak terpakai.~~
 
 #### B. Unused Exported Functions & Types (Export tanpa consumer luar)
 - **admin/scoring**:
@@ -111,6 +111,17 @@ Daftar modul diurutkan berdasarkan tingkat urgensi dan jumlah pelanggaran terban
     - ~~L27: Interface `CategoryFormModalProps`~~ (dijadikan interface internal).
   - `components/categories/CategoryTable.tsx`:
     - ~~L47: Interface `CategoryTableProps`~~ (dijadikan interface internal).
+- **admin/tournament-setup (✅ Selesai)**:
+  - `hooks/useTournamentSettingsForm.ts`:
+    - ~~L17: Interface `ToastFeedback`~~ (dijadikan interface internal).
+  - `app/admin/(protected)/tournament-setup/actions.ts`:
+    - ~~L11: Interface `TournamentActionResponse`~~ (dijadikan interface internal).
+  - `components/tournament-setup/TournamentSetupView.tsx`:
+    - ~~L12: Interface `TournamentSetupViewProps`~~ (dijadikan interface internal).
+  - `components/tournament-setup/TournamentSetupForm.tsx`:
+    - ~~L11: Interface `TournamentSetupFormProps`~~ (dijadikan interface internal).
+  - `components/tournament-setup/ShareRegistrationCard.tsx`:
+    - ~~L8: Interface `ShareRegistrationCardProps`~~ (dijadikan interface internal).
 - **admin/schedule**:
   - `lib/schedule/generateMatchSchedule.ts`:
     - L24, L30, L34, L60: Type `ScheduledMatchItem`, `UnscheduledMatchItem`, `ScheduleResult`, `GenerateScheduleOptions`.
@@ -217,7 +228,7 @@ Berikut daftar file dengan pelanggaran panjang baris terbanyak akibat JSX props 
      ```
 
 3. **Status Badge Tournament Settings (`draft` / `registration_open` / `ongoing` / `completed`)**:
-   - `components/tournament-setup/TournamentSetupForm.tsx:L25-L48`: `switch (status)` panjang untuk menentukan text label, badge color, dan sub-keterangan.
+   - `components/tournament-setup/TournamentSetupForm.tsx:L25-L48`: ~~`switch (status)` panjang~~ ✅ Selesai di-refactor menggunakan `TOURNAMENT_STATUS_CONFIG` record lookup.
    - *Solusi refactor*: `const TOURNAMENT_STATUS_CONFIG: Record<TournamentStatus, { label: string; variant: BadgeVariant; description: string }>`.
 
 4. **Format Level Kategori (`beginner` / `intermediate` / `advanced`)**:
@@ -242,7 +253,7 @@ Komentar yang hanya mengulang apa yang sudah jelas dari nama method/variable/fun
 - ~~`hooks/useDrawManagement.ts:L112`: `// Buka modal konfirmasi`~~ (✅ Dihapus).
 - ~~`hooks/useTeamsManagement.ts:L98`: `// Update selected team status jika modal sedang terbuka`~~ (✅ Dihapus).
 - `hooks/useScoringManagement.ts:L365`: `// Handlers` (tepat sebelum return object `selectCourt, ...`).
-- `app/admin/(protected)/tournament-setup/page.tsx:L26`: `// Ambil data pengaturan turnamen yang aktif jika sudah ada (mode edit)`.
+- ~~`app/admin/(protected)/tournament-setup/page.tsx:L26`: `// Ambil data pengaturan turnamen yang aktif jika sudah ada (mode edit)`~~ (✅ Dihapus).
 - `app/admin/(protected)/bracket/actions.ts:L172`: `// Ambil data tim untuk pasangan nama pemain`.
 - `app/admin/(protected)/scoring/actions.ts:L343`: `// Ambil pengaturan golden point dari tournament_settings`.
 

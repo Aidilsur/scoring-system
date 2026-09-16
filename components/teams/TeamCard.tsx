@@ -3,8 +3,6 @@ import { Team } from '@/types/domain'
 import { TeamStatusBadge } from './TeamStatusBadge'
 import { formatCategoryBadge, formatPhoneNumber } from '@/utils/format'
 import { Button } from '@/components/ui'
-import { cn } from '@/lib/utils'
-
 interface TeamCardProps {
     team: Team
     onOpenDetail: (team: Team) => void
@@ -41,10 +39,7 @@ export function TeamCard({
 
     return (
         <div
-            className={cn(
-                'bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 sm:p-5',
-                'shadow-lg shadow-black/30 space-y-4 hover:border-zinc-700 transition'
-            )}
+            className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 sm:p-5 shadow-lg shadow-black/30 space-y-4 hover:border-zinc-700 transition"
         >
             {/* Header: Kategori & Status */}
             <div className="flex items-start justify-between gap-2">
@@ -61,10 +56,7 @@ export function TeamCard({
 
             {/* Info baris: WhatsApp & Tanggal */}
             <div
-                className={cn(
-                    'grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-zinc-400',
-                    'pt-2 border-t border-zinc-800'
-                )}
+                className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-zinc-400 pt-2 border-t border-zinc-800"
             >
                 <div className="flex items-center gap-1.5">
                     <span className="font-medium text-zinc-500">WhatsApp:</span>
@@ -85,10 +77,7 @@ export function TeamCard({
 
             {/* Tombol Aksi */}
             <div
-                className={cn(
-                    'flex flex-wrap items-center justify-between gap-2',
-                    'pt-2 border-t border-zinc-800'
-                )}
+                className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-zinc-800"
             >
                 <Button
                     type="button"

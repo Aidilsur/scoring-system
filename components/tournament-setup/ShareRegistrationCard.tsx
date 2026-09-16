@@ -5,7 +5,7 @@ import { QRCodeCanvas } from 'qrcode.react'
 import { Copy, Check, Download, ExternalLink, QrCode, Share2 } from 'lucide-react'
 import { Card, Button } from '@/components/ui'
 
-export interface ShareRegistrationCardProps {
+interface ShareRegistrationCardProps {
     tournamentName?: string
 }
 
@@ -53,11 +53,17 @@ export function ShareRegistrationCard({ tournamentName }: ShareRegistrationCardP
     }
 
     return (
-        <Card className="p-6 sm:p-8 space-y-6 bg-zinc-900/80 border border-zinc-800 rounded-2xl shadow-xl text-white">
+        <Card
+            className="p-6 sm:p-8 space-y-6 bg-zinc-900/80 border border-zinc-800 rounded-2xl shadow-xl text-white"
+        >
             {/* Header Section */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-zinc-800">
+            <div
+                className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-zinc-800"
+            >
                 <div className="space-y-1">
-                    <div className="inline-flex items-center gap-2 text-xs font-mono font-bold text-lime-400 uppercase tracking-wider">
+                    <div
+                        className="inline-flex items-center gap-2 text-xs font-mono font-bold text-lime-400 uppercase tracking-wider"
+                    >
                         <Share2 className="w-3.5 h-3.5 text-lime-400" />
                         <span>Akses Publik Peserta</span>
                     </div>
@@ -80,7 +86,9 @@ export function ShareRegistrationCard({ tournamentName }: ShareRegistrationCardP
                         <ExternalLink className="w-3.5 h-3.5" />
                     </a>
                 ) : (
-                    <div className="inline-flex items-center gap-1.5 text-xs text-zinc-500 py-1.5 px-3 rounded-lg border border-zinc-800 bg-zinc-950/40">
+                    <div
+                        className="inline-flex items-center gap-1.5 text-xs text-zinc-500 py-1.5 px-3 rounded-lg border border-zinc-800 bg-zinc-950/40"
+                    >
                         <span className="w-20 h-3 bg-zinc-800 animate-pulse rounded" />
                     </div>
                 )}
@@ -90,7 +98,9 @@ export function ShareRegistrationCard({ tournamentName }: ShareRegistrationCardP
             <div className="flex flex-col md:flex-row items-center gap-6 sm:gap-8">
                 {/* QR Code Container with High Contrast White Background for Easy Phone Scanning */}
                 <div className="shrink-0 flex flex-col items-center">
-                    <div className="bg-white p-3.5 rounded-2xl shadow-xl shadow-black/50 ring-4 ring-white/10 flex items-center justify-center min-w-[194px] min-h-[194px]">
+                    <div
+                        className="bg-white p-3.5 rounded-2xl shadow-xl shadow-black/50 ring-4 ring-white/10 flex items-center justify-center min-w-[194px] min-h-[194px]"
+                    >
                         {registrationUrl ? (
                             <QRCodeCanvas
                                 id="registration-qr-canvas"
@@ -102,13 +112,19 @@ export function ShareRegistrationCard({ tournamentName }: ShareRegistrationCardP
                                 includeMargin={true}
                             />
                         ) : (
-                            <div className="w-[180px] h-[180px] flex flex-col items-center justify-center bg-zinc-100 rounded-xl text-zinc-500 text-xs font-mono gap-2">
-                                <div className="w-6 h-6 border-2 border-zinc-400 border-t-zinc-900 rounded-full animate-spin" />
+                            <div
+                                className="w-[180px] h-[180px] flex flex-col items-center justify-center bg-zinc-100 rounded-xl text-zinc-500 text-xs font-mono gap-2"
+                            >
+                                <div
+                                    className="w-6 h-6 border-2 border-zinc-400 border-t-zinc-900 rounded-full animate-spin"
+                                />
                                 <span>Menyiapkan QR...</span>
                             </div>
                         )}
                     </div>
-                    <p className="text-[11px] text-zinc-400 font-mono mt-2.5 flex items-center gap-1">
+                    <p
+                        className="text-[11px] text-zinc-400 font-mono mt-2.5 flex items-center gap-1"
+                    >
                         <QrCode className="w-3 h-3 text-lime-400" />
                         Scan via Kamera HP
                     </p>
@@ -117,15 +133,21 @@ export function ShareRegistrationCard({ tournamentName }: ShareRegistrationCardP
                 {/* Details and Actions Column */}
                 <div className="flex-1 space-y-4 w-full">
                     <div className="space-y-1.5">
-                        <label className="block text-xs font-bold uppercase tracking-wider text-zinc-300">
+                        <label
+                            className="block text-xs font-bold uppercase tracking-wider text-zinc-300"
+                        >
                             Tautan Formulir Pendaftaran
                         </label>
                         {/* URL Display Box */}
-                        <div className="flex items-center justify-between gap-2 px-3.5 py-3 rounded-xl bg-zinc-950/90 border border-zinc-800 font-mono text-xs text-zinc-200 break-all select-all shadow-inner">
+                        <div
+                            className="flex items-center justify-between gap-2 px-3.5 py-3 rounded-xl bg-zinc-950/90 border border-zinc-800 font-mono text-xs text-zinc-200 break-all select-all shadow-inner"
+                        >
                             {registrationUrl ? (
                                 <span className="truncate">{registrationUrl}</span>
                             ) : (
-                                <span className="inline-block w-48 h-3.5 bg-zinc-800 animate-pulse rounded" />
+                                <span
+                                    className="inline-block w-48 h-3.5 bg-zinc-800 animate-pulse rounded"
+                                />
                             )}
                         </div>
                         <p className="text-[11px] text-zinc-500">

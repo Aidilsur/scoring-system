@@ -44,18 +44,11 @@ export function TeamFilters({
 
     return (
         <div
-            className={cn(
-                'flex flex-col md:flex-row md:items-center justify-between',
-                'gap-4 bg-zinc-50 dark:bg-zinc-900/60 p-3 sm:p-4 rounded-xl',
-                'border border-zinc-200 dark:border-zinc-800'
-            )}
+            className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-zinc-50 dark:bg-zinc-900/60 p-3 sm:p-4 rounded-xl border border-zinc-200 dark:border-zinc-800"
         >
             {/* Status Tabs */}
             <div
-                className={cn(
-                    'flex flex-wrap items-center gap-1',
-                    'bg-zinc-200/60 dark:bg-zinc-800/80 p-1 rounded-lg'
-                )}
+                className="flex flex-wrap items-center gap-1 bg-zinc-200/60 dark:bg-zinc-800/80 p-1 rounded-lg"
             >
                 {STATUS_TABS.map((tab) => {
                     const isActive = statusFilter === tab.id
