@@ -15,6 +15,7 @@ import {
     Zap,
     ArrowRight,
     ShieldCheck,
+    Trophy,
 } from 'lucide-react'
 
 export const metadata: Metadata = {
@@ -67,6 +68,13 @@ const ADMIN_MODULES = [
         description: 'Pilih court aktif dan input skor poin langsung',
         badge: 'Prioritas Utama',
         icon: Zap,
+    },
+    {
+        title: 'Bracket Knockout',
+        path: '/admin/bracket',
+        description: 'Generate & pantau bagan semifinal sistem gugur',
+        badge: 'Fase Knockout',
+        icon: Trophy,
     },
 ]
 

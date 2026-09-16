@@ -109,7 +109,6 @@ export function useDrawManagement(initialCategoryId?: string) {
     }
 
     if (drawData?.hasExistingDraw) {
-      // Buka modal konfirmasi
       setIsConfirmModalOpen(true)
       return
     }

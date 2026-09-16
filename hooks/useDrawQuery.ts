@@ -6,7 +6,7 @@ import { Category, Team, Match } from '@/types/domain'
 import { distributeTeamsToGroups } from '@/lib/draw'
 import { useTournamentSettingsQuery } from './useTournamentSettingsQuery'
 
-export const ACTIVE_CATEGORIES_QUERY_KEY = ['categories', 'active']
+const ACTIVE_CATEGORIES_QUERY_KEY = ['categories', 'active']
 export const CATEGORY_DRAW_QUERY_KEY = ['draw', 'category']
 
 export interface DrawnGroupDetail {

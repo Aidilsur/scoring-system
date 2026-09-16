@@ -23,6 +23,7 @@ export function ScoringView({ isReferee = false, userEmail }: ScoringViewProps) 
         selectedMatchId,
         servingTeam,
         isPending,
+        pendingTeam,
         courts,
         isCourtsLoading,
         courtMatches,
@@ -40,7 +41,7 @@ export function ScoringView({ isReferee = false, userEmail }: ScoringViewProps) 
         recordPoint,
         undoPoint,
         releaseControl,
-    } = useScoringManagement()
+    } = useScoringManagement(undefined, undefined, userEmail)
 
     const selectedCourt = courts.find((c) => c.id === selectedCourtId)
 
@@ -91,6 +92,7 @@ export function ScoringView({ isReferee = false, userEmail }: ScoringViewProps) 
                         canUndo={canUndo}
                         historyCount={historyCount}
                         isPending={isPending || isMatchLoading}
+                        pendingTeam={pendingTeam}
                         isReadOnly={isReadOnly}
                         onRecordPoint={recordPoint}
                         onUndoPoint={undoPoint}

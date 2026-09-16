@@ -29,23 +29,22 @@ export interface SessionClaimResponse {
 
 /**
  * Server Action: Mengklaim atau memperbarui sesi scoring wasit pada suatu match.
- * Jika match sudah diklaim device lain dan claimed_at masih dalam 5 menit terakhir,
- * permintaan ditolak (isOwner: false) dan device lain masuk mode read-only.
+ * Basis identifikasi menggunakan email user yang terautentikasi (admin_users).
+ * Jika match sudah diklaim akun lain dan claimed_at masih dalam TTL (2 menit),
+ * permintaan ditolak (isOwner: false) dan akun/device lain masuk mode read-only.
+ * Jika akun yang login SAMA, klaim diperbarui dan user dapat melanjutkan scoring di tab/device manapun.
  */
 export async function claimScorerSessionAction(
     matchId: string,
-    clientSessionId: string
+    _userIdentifier?: string
 ): Promise<SessionClaimResponse> {
     try {
         const auth = await verifyScorerAuth()
-        if (!auth.authorized || !auth.supabase) {
+        if (!auth.authorized || !auth.supabase || !auth.email) {
             return { success: false, isOwner: false, message: auth.error || 'Akses ditolak.' }
         }
         const supabase = auth.supabase
-
-        if (!clientSessionId) {
-            return { success: false, isOwner: false, message: 'Session ID device tidak valid.' }
-        }
+        const userEmail = auth.email
 
         const { data: match, error: matchError } = await supabase
             .from('matches')
@@ -60,14 +59,14 @@ export async function claimScorerSessionAction(
         const now = Date.now()
         const claimedAtTime = match.active_scorer_claimed_at ? new Date(match.active_scorer_claimed_at).getTime() : 0
         const isExpired = !match.active_scorer_claimed_at || (now - claimedAtTime > SESSION_LOCK_TTL_MS)
-        const isCurrentOwner = match.active_scorer_session_id === clientSessionId
+        const isCurrentOwner = match.active_scorer_session_id?.toLowerCase().trim() === userEmail
 
-        // Jika sudah diklaim device lain dan belum kedaluwarsa (<= 5 menit)
+        // Jika sudah diklaim akun lain dan belum kedaluwarsa (<= 2 menit)
         if (match.active_scorer_session_id && !isCurrentOwner && !isExpired) {
             return {
                 success: false,
                 isOwner: false,
-                message: 'Match ini sedang di-score oleh device lain',
+                message: `Match ini sedang di-score oleh akun wasit lain (${match.active_scorer_session_id}).`,
                 activeSessionId: match.active_scorer_session_id,
                 claimedAt: match.active_scorer_claimed_at,
             }
@@ -76,27 +75,26 @@ export async function claimScorerSessionAction(
         // Boleh diklaim secara atomik:
         // - jika active_scorer_session_id masih null
         // - ATAU active_scorer_claimed_at sudah lebih dari 2 menit lalu (SESSION_LOCK_TTL_MS)
-        // - ATAU device pemilik (renewal / heartbeat)
+        // - ATAU akun pemilik yang sama (renewal / heartbeat / multi-tab)
         const claimedAtIso = new Date().toISOString()
         const lockExpiryThresholdIso = new Date(now - SESSION_LOCK_TTL_MS).toISOString()
 
         const { data: updatedMatch, error: updateError } = await supabase
             .from('matches')
             .update({
-                active_scorer_session_id: clientSessionId,
+                active_scorer_session_id: userEmail,
                 active_scorer_claimed_at: claimedAtIso,
             })
             .eq('id', matchId)
-            .or(`active_scorer_session_id.is.null,active_scorer_claimed_at.lt.${lockExpiryThresholdIso},active_scorer_session_id.eq.${clientSessionId}`)
+            .or(`active_scorer_session_id.is.null,active_scorer_claimed_at.lt.${lockExpiryThresholdIso},active_scorer_session_id.eq.${userEmail}`)
             .select('id, active_scorer_session_id, active_scorer_claimed_at')
             .maybeSingle()
 
         if (updateError || !updatedMatch) {
-            // Jika row gagal di-update karena race condition (baru diklaim device lain)
             return {
                 success: false,
                 isOwner: false,
-                message: 'Match ini sedang di-score oleh device lain',
+                message: 'Match ini sedang di-score oleh akun wasit lain.',
                 activeSessionId: match.active_scorer_session_id,
                 claimedAt: match.active_scorer_claimed_at,
             }
@@ -106,7 +104,7 @@ export async function claimScorerSessionAction(
             success: true,
             isOwner: true,
             message: 'Sesi scoring aktif.',
-            activeSessionId: clientSessionId,
+            activeSessionId: userEmail,
             claimedAt: claimedAtIso,
         }
     } catch (err: unknown) {
@@ -122,20 +120,21 @@ export async function claimScorerSessionAction(
 /**
  * Server Action: Heartbeat berkala (setiap 30 detik saat tab browser visible).
  * Memperpanjang active_scorer_claimed_at menjadi waktu sekarang HANYA jika
- * active_scorer_session_id masih cocok dengan clientSessionId.
+ * active_scorer_session_id masih cocok dengan email user yang login.
  */
 export async function heartbeatScorerSessionAction(
     matchId: string,
-    clientSessionId: string
+    _userIdentifier?: string
 ): Promise<{ success: boolean; isOwner: boolean }> {
     try {
         const auth = await verifyScorerAuth()
-        if (!auth.authorized || !auth.supabase) {
+        if (!auth.authorized || !auth.supabase || !auth.email) {
             return { success: false, isOwner: false }
         }
         const supabase = auth.supabase
+        const userEmail = auth.email
 
-        if (!clientSessionId || !matchId) {
+        if (!matchId) {
             return { success: false, isOwner: false }
         }
 
@@ -146,7 +145,7 @@ export async function heartbeatScorerSessionAction(
                 active_scorer_claimed_at: claimedAtIso,
             })
             .eq('id', matchId)
-            .eq('active_scorer_session_id', clientSessionId)
+            .eq('active_scorer_session_id', userEmail)
             .select('id')
             .maybeSingle()
 
@@ -161,23 +160,24 @@ export async function heartbeatScorerSessionAction(
 }
 
 /**
- * Server Action: Melepas kendali scoring (Tombol Lepas Kendali atau saat navigasi keluar).
+ * Server Action: Melepas kendali scoring (Tombol Lepas Kendali).
  * Mengosongkan active_scorer_session_id dan active_scorer_claimed_at menjadi NULL
- * jika session ID cocok dengan device pemegang klaim saat ini.
+ * jika email user yang login cocok dengan pemilik klaim saat ini.
  */
 export async function releaseScorerSessionAction(
     matchId: string,
-    clientSessionId: string
+    _userIdentifier?: string
 ): Promise<{ success: boolean; message: string }> {
     try {
         const auth = await verifyScorerAuth()
-        if (!auth.authorized || !auth.supabase) {
+        if (!auth.authorized || !auth.supabase || !auth.email) {
             return { success: false, message: auth.error || 'Akses ditolak.' }
         }
         const supabase = auth.supabase
+        const userEmail = auth.email
 
-        if (!clientSessionId || !matchId) {
-            return { success: false, message: 'ID match atau session tidak valid.' }
+        if (!matchId) {
+            return { success: false, message: 'ID match tidak valid.' }
         }
 
         const { data, error } = await supabase
@@ -187,7 +187,7 @@ export async function releaseScorerSessionAction(
                 active_scorer_claimed_at: null,
             })
             .eq('id', matchId)
-            .eq('active_scorer_session_id', clientSessionId)
+            .eq('active_scorer_session_id', userEmail)
             .select('id, court_id')
             .maybeSingle()
 
@@ -236,13 +236,13 @@ async function verifyScorerAuth() {
         return { authorized: false, error: 'Akses ditolak. Anda tidak memiliki wewenang wasit atau admin.' }
     }
 
-    return { authorized: true, user, supabase }
+    return { authorized: true, user, email, supabase }
 }
 
 /**
  * Server Action: Mencatat penambahan poin pada pertandingan
  * 1. Ambil match & setting golden_point
- * 2. Cek compare-and-swap concurrency lock session
+ * 2. Cek compare-and-swap concurrency lock session berbasis user email
  * 3. Simpan snapshot kondisi sebelum diubah ke match_score_history
  * 4. Tentukan mode tiebreak / regular dan hitung progres poin
  * 5. Jika game selesai: tambah game, cek pemenang match (selesai jika tercapai target)
@@ -252,14 +252,15 @@ async function verifyScorerAuth() {
 export async function recordPointAction(
     matchId: string,
     winningTeam: MatchTeam,
-    clientSessionId?: string
+    _userIdentifier?: string
 ): Promise<ScoringActionResponse> {
     try {
         const auth = await verifyScorerAuth()
-        if (!auth.authorized || !auth.supabase) {
+        if (!auth.authorized || !auth.supabase || !auth.email) {
             return { success: false, message: auth.error || 'Akses ditolak.' }
         }
         const supabase = auth.supabase
+        const userEmail = auth.email
 
         // 1. Ambil match saat ini dari database
         const { data: currentMatch, error: matchError } = await supabase
@@ -294,14 +295,7 @@ export async function recordPointAction(
             return { success: false, message: 'Pertandingan sudah selesai. Gunakan Undo jika ingin mengubah poin.' }
         }
 
-        if (!clientSessionId) {
-            return {
-                success: false,
-                message: 'Akses ditolak: Device session ID tidak valid atau tidak ditemukan.',
-            }
-        }
-
-        // Compare-and-swap: verifikasi active_scorer_session_id di database masih sama dengan session ID milik device yang melakukan request
+        // Compare-and-swap: verifikasi active_scorer_session_id di database masih sama dengan user email yang melakukan request
         const now = Date.now()
         const claimedAtTime = currentMatch.active_scorer_claimed_at
             ? new Date(currentMatch.active_scorer_claimed_at).getTime()
@@ -310,12 +304,12 @@ export async function recordPointAction(
 
         if (
             currentMatch.active_scorer_session_id &&
-            currentMatch.active_scorer_session_id !== clientSessionId &&
+            currentMatch.active_scorer_session_id.toLowerCase().trim() !== userEmail &&
             !isClaimExpired
         ) {
             return {
                 success: false,
-                message: 'Akses ditolak: Match ini sedang di-score oleh device lain. Sesi Anda tidak valid atau telah diambil alih.',
+                message: `Akses ditolak: Match ini sedang di-score oleh akun wasit lain (${currentMatch.active_scorer_session_id}). Sesi Anda tidak valid atau telah diambil alih.`,
             }
         }
 
@@ -349,19 +343,19 @@ export async function recordPointAction(
         // Ambil pengaturan golden point dari tournament_settings
         const { data: settings } = await supabase
             .from('tournament_settings')
-            .select('golden_point_enabled')
+            .select('golden_point')
             .limit(1)
             .maybeSingle()
 
-        const goldenPointEnabled = settings?.golden_point_enabled ?? true
+        const goldenPointEnabled = settings?.golden_point ?? true
 
-        // 2. SIMPAN SNAPSHOT kondisi SEBELUM diubah ke match_score_history
+        // 2. Simpan snapshot kondisi sebelum poin dicatat ke match_score_history untuk fitur Undo
         const { error: historyError } = await supabase
             .from('match_score_history')
             .insert({
-                match_id: currentMatch.id,
-                point_a: currentMatch.current_point_a ?? '0',
-                point_b: currentMatch.current_point_b ?? '0',
+                match_id: matchId,
+                point_a: currentMatch.current_point_a || '0',
+                point_b: currentMatch.current_point_b || '0',
                 games_team_a: currentMatch.games_team_a,
                 games_team_b: currentMatch.games_team_b,
                 status: currentMatch.status,
@@ -369,34 +363,37 @@ export async function recordPointAction(
             })
 
         if (historyError) {
-            console.error('Failed to save score history snapshot:', historyError)
-            // Lanjutkan jika history table belum ada di remote, tapi log error
+            console.error('Save Score History Error:', historyError)
+            return { success: false, message: 'Gagal membuat snapshot riwayat poin untuk undo.' }
         }
 
-        // 3. Tentukan mode: tiebreak / golden game atau regular game
-        const round = currentMatch.round as MatchRound
+        // 3. Tentukan apakah saat ini sedang dalam mode Tiebreak / Golden Game
         const isTiebreak = shouldStartTiebreakGame(
             currentMatch.games_team_a,
             currentMatch.games_team_b,
-            round
+            currentMatch.round as MatchRound
         )
 
-        let finalPointA: string = '0'
-        let finalPointB: string = '0'
-        let finalGamesA: number = currentMatch.games_team_a
-        let finalGamesB: number = currentMatch.games_team_b
+        let finalPointA = currentMatch.current_point_a || '0'
+        let finalPointB = currentMatch.current_point_b || '0'
+        let finalGamesA = currentMatch.games_team_a
+        let finalGamesB = currentMatch.games_team_b
         let finalStatus: MatchStatus = currentMatch.status as MatchStatus
         let finalWinnerId: string | null = currentMatch.winner_team_id
         let finalCompletedAt: string | null = currentMatch.completed_at
+        const round = currentMatch.round as MatchRound
 
+        // 4. Hitung skor baru menggunakan pure function domain padel
         if (isTiebreak) {
-            // Tiebreak / Golden Game logic
+            // Mode Tiebreak (Grup: skor 2-2 selisih 2 / Knockout: skor 5-5 sudden death)
+            const currentTbPointA = parseInt(finalPointA, 10) || 0
+            const currentTbPointB = parseInt(finalPointB, 10) || 0
             const requireWinBy2 = round === 'group'
-            const currentPointANum = parseInt(currentMatch.current_point_a || '0', 10) || 0
-            const currentPointBNum = parseInt(currentMatch.current_point_b || '0', 10) || 0
-
             const tiebreakResult = recordTiebreakPoint(
-                { pointA: currentPointANum, pointB: currentPointBNum },
+                {
+                    pointA: currentTbPointA,
+                    pointB: currentTbPointB,
+                },
                 winningTeam,
                 requireWinBy2
             )
@@ -473,12 +470,12 @@ export async function recordPointAction(
                 status: finalStatus,
                 winner_team_id: finalWinnerId,
                 completed_at: finalCompletedAt,
-                active_scorer_session_id: clientSessionId,
+                active_scorer_session_id: userEmail,
                 active_scorer_claimed_at: new Date().toISOString(),
                 updated_at: new Date().toISOString(),
             })
             .eq('id', matchId)
-            .or(`active_scorer_session_id.eq.${clientSessionId},active_scorer_session_id.is.null,active_scorer_claimed_at.lt.${lockExpiryThresholdIso}`)
+            .or(`active_scorer_session_id.eq.${userEmail},active_scorer_session_id.is.null,active_scorer_claimed_at.lt.${lockExpiryThresholdIso}`)
             .select(`
                 *,
                 team_a:teams!matches_team_a_id_fkey(*),
@@ -491,17 +488,23 @@ export async function recordPointAction(
             console.error('Update Match Score Error:', updateError)
             return {
                 success: false,
-                message: 'Gagal mencatat poin: Sesi scoring Anda telah kedaluwarsa atau pertandingan diambil alih oleh device lain.',
+                message: 'Gagal mencatat poin: Sesi scoring Anda telah kedaluwarsa atau pertandingan diambil alih oleh akun lain.',
             }
         }
 
-        revalidatePath('/admin/scoring')
-        revalidatePath(`/display/court/${currentMatch.court_id}`)
+        // Revalidate rute publik display court & list court agar realtime display sinkron
+        if (currentMatch.court_id) {
+            revalidatePath(`/display/court/${currentMatch.court_id}`)
+        }
         revalidatePath('/display/courts')
+        revalidatePath('/admin/scoring')
 
+        const winnerLabel = winningTeam === 'team_a' ? 'Tim A' : 'Tim B'
         return {
             success: true,
-            message: finalStatus === 'completed' ? 'Pertandingan telah selesai!' : 'Poin berhasil dicatat.',
+            message: finalStatus === 'completed'
+                ? `Pertandingan selesai! Dimenangkan oleh ${winnerLabel}.`
+                : `Poin untuk ${winnerLabel} berhasil dicatat.`,
             data: updatedMatch as unknown as Match,
         }
     } catch (err: unknown) {
@@ -514,30 +517,21 @@ export async function recordPointAction(
 }
 
 /**
- * Server Action: Undo poin terakhir yang tercatat
- * 1. Verifikasi sesi scoring aktif (compare-and-swap)
- * 2. Ambil snapshot terakhir dari match_score_history
- * 3. Kembalikan kondisi row matches ke snapshot tersebut
- * 4. Hapus snapshot yang sudah dipakai
+ * Server Action: Melakukan Undo 1 poin terakhir
+ * Mengambil snapshot riwayat terbaru dari `match_score_history`, mengembalikan
+ * state row matches ke snapshot tersebut, dan menghapus snapshot tersebut dari database.
  */
 export async function undoLastPointAction(
     matchId: string,
-    clientSessionId?: string
+    _userIdentifier?: string
 ): Promise<ScoringActionResponse> {
     try {
         const auth = await verifyScorerAuth()
-        if (!auth.authorized || !auth.supabase) {
+        if (!auth.authorized || !auth.supabase || !auth.email) {
             return { success: false, message: auth.error || 'Akses ditolak.' }
         }
         const supabase = auth.supabase
-
-        // Verifikasi kepemilikan sesi (compare-and-swap)
-        if (!clientSessionId) {
-            return {
-                success: false,
-                message: 'Akses ditolak: Device session ID tidak valid atau tidak ditemukan.',
-            }
-        }
+        const userEmail = auth.email
 
         const { data: currentMatch } = await supabase
             .from('matches')
@@ -554,12 +548,12 @@ export async function undoLastPointAction(
 
             if (
                 currentMatch.active_scorer_session_id &&
-                currentMatch.active_scorer_session_id !== clientSessionId &&
+                currentMatch.active_scorer_session_id.toLowerCase().trim() !== userEmail &&
                 !isClaimExpired
             ) {
                 return {
                     success: false,
-                    message: 'Akses ditolak: Match ini sedang di-score oleh device lain. Sesi Anda tidak valid atau telah diambil alih.',
+                    message: `Akses ditolak: Match ini sedang di-score oleh akun wasit lain (${currentMatch.active_scorer_session_id}). Sesi Anda tidak valid atau telah diambil alih.`,
                 }
             }
         }
@@ -589,12 +583,12 @@ export async function undoLastPointAction(
                 status: lastSnapshot.status,
                 winner_team_id: lastSnapshot.winner_team_id,
                 completed_at: lastSnapshot.status === 'completed' ? new Date().toISOString() : null,
-                active_scorer_session_id: clientSessionId,
+                active_scorer_session_id: userEmail,
                 active_scorer_claimed_at: new Date().toISOString(),
                 updated_at: new Date().toISOString(),
             })
             .eq('id', matchId)
-            .or(`active_scorer_session_id.eq.${clientSessionId},active_scorer_session_id.is.null,active_scorer_claimed_at.lt.${lockExpiryThresholdIso}`)
+            .or(`active_scorer_session_id.eq.${userEmail},active_scorer_session_id.is.null,active_scorer_claimed_at.lt.${lockExpiryThresholdIso}`)
             .select(`
                 *,
                 team_a:teams!matches_team_a_id_fkey(*),
@@ -607,7 +601,7 @@ export async function undoLastPointAction(
             console.error('Restore Match Error:', restoreError)
             return {
                 success: false,
-                message: 'Gagal melakukan undo poin: Sesi scoring Anda tidak valid atau pertandingan diambil alih oleh device lain.',
+                message: 'Gagal melakukan undo poin: Sesi scoring Anda tidak valid atau pertandingan diambil alih oleh akun lain.',
             }
         }
 

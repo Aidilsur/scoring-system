@@ -209,11 +209,11 @@ async function seedDatabase() {
 
         // ----------------------------------------------------------------------
         // 3.4. Insert Teams
-        // Kategori 1: 8 tim (Player 1A/1B s.d. 8A/8B)
-        // Kategori 2: 6 tim (Player 9A/9B s.d. 14A/14B)
+        // Kategori 1: 8 tim (2 grup @ 4 tim) -> Player 1A/1B s.d. 8A/8B
+        // Kategori 2: 8 tim (2 grup @ 4 tim) -> Player 9A/9B s.d. 16A/16B
         // Status: 'confirmed', payment_proof_url: placeholder
         // ----------------------------------------------------------------------
-        console.log('4️⃣ Memasukkan 8 tim untuk Kategori 1 dan 6 tim untuk Kategori 2...')
+        console.log('4️⃣ Memasukkan 8 tim untuk Kategori 1 dan 8 tim untuk Kategori 2 (total 16 tim)...')
 
         const placeholderProof = 'https://placehold.co/600x400/png?text=Payment+Proof'
 
@@ -232,8 +232,8 @@ async function seedDatabase() {
                     status: 'confirmed' as const,
                 }
             }),
-            // Kategori 2: 6 Tim
-            ...Array.from({ length: 6 }, (_, i) => {
+            // Kategori 2: 8 Tim
+            ...Array.from({ length: 8 }, (_, i) => {
                 const teamNum = i + 9
                 return {
                     category_id: category2.id,
@@ -269,7 +269,7 @@ async function seedDatabase() {
         console.log(`- 1 Tournament: "${tournamentData.name}" (${tournamentData.match_duration_minutes}m/match, ${tournamentData.daily_start_time}-${tournamentData.daily_end_time})`)
         console.log(`- 2 Courts: Court 1 & Court 2`)
         console.log(`- 2 Kategori: "${category1.name}" & "${category2.name}"`)
-        console.log(`- 14 Tim: Status 'confirmed' siap untuk uji coba Drawing & Penjadwalan.\n`)
+        console.log(`- 16 Tim: Status 'confirmed' (masing-masing 8 tim / 2 grup @ 4 tim), siap untuk uji coba alur turnamen lengkap.\n`)
     } catch (err: unknown) {
         console.error('\n❌ Terjadi kesalahan saat seeding:', err instanceof Error ? err.message : err)
         process.exit(1)

@@ -44,7 +44,12 @@ export function DrawPreviewCard({
 
   return (
     <Card variant="elevated" className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-zinc-800">
+      <div
+        className={[
+          'flex flex-col sm:flex-row sm:items-center justify-between',
+          'gap-3 pb-4 border-b border-zinc-800',
+        ].join(' ')}
+      >
         <div>
           <div className="flex items-center gap-2">
             <h2 className="text-lg font-bold text-white uppercase tracking-tight">
@@ -93,24 +98,43 @@ export function DrawPreviewCard({
 
       {/* Warning/Alert Messages */}
       {hasStartedMatches && (
-        <div className="flex items-start gap-3 p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs">
+        <div
+          className={[
+            'flex items-start gap-3 p-3.5 rounded-xl bg-rose-500/10',
+            'border border-rose-500/30 text-rose-300 text-xs',
+          ].join(' ')}
+        >
           <Lock className="w-4 h-4 mt-0.5 shrink-0 text-rose-400" />
           <div>
-            <p className="font-bold uppercase tracking-wider text-rose-400">Drawing Terkunci</p>
+            <p className="font-bold uppercase tracking-wider text-rose-400">
+              Drawing Terkunci
+            </p>
             <p className="mt-0.5 text-rose-300/90 leading-relaxed">
-              Terdapat pertandingan yang berstatus <span className="font-bold text-rose-200">Live</span> atau <span className="font-bold text-rose-200">Completed</span> pada kategori ini. Sesuai aturan turnamen, drawing grup tidak dapat di-regenerate setelah pertandingan dimulai.
+              Terdapat pertandingan yang berstatus{' '}
+              <span className="font-bold text-rose-200">Live</span> atau{' '}
+              <span className="font-bold text-rose-200">Completed</span> pada
+              kategori ini. Sesuai aturan turnamen, drawing grup tidak dapat
+              di-regenerate setelah pertandingan dimulai.
             </p>
           </div>
         </div>
       )}
 
       {isNotEnoughTeams && !hasStartedMatches && (
-        <div className="flex items-start gap-3 p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs">
+        <div
+          className={[
+            'flex items-start gap-3 p-3.5 rounded-xl bg-amber-500/10',
+            'border border-amber-500/30 text-amber-300 text-xs',
+          ].join(' ')}
+        >
           <AlertCircle className="w-4 h-4 mt-0.5 shrink-0 text-amber-400" />
           <div>
-            <p className="font-bold uppercase tracking-wider text-amber-400">Jumlah Tim Belum Mencukupi</p>
+            <p className="font-bold uppercase tracking-wider text-amber-400">
+              Jumlah Tim Belum Mencukupi
+            </p>
             <p className="mt-0.5 text-amber-300/90 leading-relaxed">
-              Kategori ini baru memiliki {confirmedCount} tim berstatus confirmed. Minimal dibutuhkan 2 tim terkonfirmasi untuk membuat drawing grup.
+              Kategori ini baru memiliki {confirmedCount} tim berstatus confirmed.
+              Minimal dibutuhkan 2 tim terkonfirmasi untuk membuat drawing grup.
             </p>
           </div>
         </div>
@@ -119,7 +143,12 @@ export function DrawPreviewCard({
       {/* Grid Informasi Simulasi */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {/* Confirmed Teams */}
-        <div className="p-4 rounded-2xl bg-zinc-900/60 border border-zinc-800 flex items-center gap-3.5">
+        <div
+          className={[
+            'p-4 rounded-2xl bg-zinc-900/60 border border-zinc-800',
+            'flex items-center gap-3.5',
+          ].join(' ')}
+        >
           <div className="p-3 rounded-xl bg-lime-400/10 border border-lime-400/20 text-lime-400">
             <Users className="w-5 h-5" />
           </div>
@@ -135,8 +164,18 @@ export function DrawPreviewCard({
         </div>
 
         {/* Groups Distribution */}
-        <div className="p-4 rounded-2xl bg-zinc-900/60 border border-zinc-800 flex items-center gap-3.5">
-          <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+        <div
+          className={[
+            'p-4 rounded-2xl bg-zinc-900/60 border border-zinc-800',
+            'flex items-center gap-3.5',
+          ].join(' ')}
+        >
+          <div
+            className={[
+              'p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20',
+              'text-emerald-400',
+            ].join(' ')}
+          >
             <Layers className="w-5 h-5" />
           </div>
           <div>
@@ -153,7 +192,12 @@ export function DrawPreviewCard({
         </div>
 
         {/* Round Robin Matches */}
-        <div className="p-4 rounded-2xl bg-zinc-900/60 border border-zinc-800 flex items-center gap-3.5">
+        <div
+          className={[
+            'p-4 rounded-2xl bg-zinc-900/60 border border-zinc-800',
+            'flex items-center gap-3.5',
+          ].join(' ')}
+        >
           <div className="p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
             <CalendarCheck className="w-5 h-5" />
           </div>

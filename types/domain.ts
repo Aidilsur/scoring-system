@@ -119,4 +119,31 @@ export interface MatchScoreHistory {
     created_at: string
 }
 
+export interface StandingRow {
+    group_id: string
+    team_id: string
+    played: number
+    won: number
+    drawn: number
+    lost: number
+    games_for: number
+    games_against: number
+    game_diff: number
+    points: number
+    team?: Team | null
+    group?: Group | null
+}
 
+export interface GroupStandingItem extends StandingRow {
+    rank: number
+    isQualified: boolean
+    isWinner: boolean
+    isRunnerUp: boolean
+    needsManualDecision?: boolean
+}
+
+export interface GroupWithStandings {
+    group: Group
+    standings: GroupStandingItem[]
+    hasTieRequiringManualDecision: boolean
+}

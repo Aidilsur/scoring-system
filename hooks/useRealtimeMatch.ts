@@ -9,6 +9,7 @@ import { courtMatchesQueryKey } from './useCourtMatchesQuery'
 interface UseRealtimeMatchProps {
     matchId?: string | null
     courtId?: string | null
+    categoryId?: string | null
     allMatches?: boolean
     onMatchUpdate?: (newRecord: unknown) => void
 }
@@ -18,20 +19,22 @@ interface UseRealtimeMatchProps {
  * Mendukung:
  * 1. Subscription per-match (matchId)
  * 2. Subscription per-court (courtId)
- * 3. Subscription seluruh matches (allMatches: true) untuk halaman overview multi-court /display/courts
+ * 3. Subscription per-category (categoryId) untuk klasemen / bracket
+ * 4. Subscription seluruh matches (allMatches: true) untuk halaman overview multi-court /display/courts
  *
- * Memastikan tampilan wasit, TV court display, dan overview lobby selalu sinkron tanpa refresh.
+ * Memastikan tampilan wasit, TV court display, klasemen, dan overview lobby selalu sinkron tanpa refresh.
  */
 export function useRealtimeMatch({
     matchId,
     courtId,
+    categoryId,
     allMatches,
     onMatchUpdate,
 }: UseRealtimeMatchProps) {
     const queryClient = useQueryClient()
 
     useEffect(() => {
-        if (!matchId && !courtId && !allMatches) return
+        if (!matchId && !courtId && !categoryId && !allMatches) return
 
         const supabase = createClient()
         let channelName = 'realtime-all-matches'
@@ -39,9 +42,20 @@ export function useRealtimeMatch({
             channelName = `realtime-match-${matchId}`
         } else if (courtId) {
             channelName = `realtime-court-${courtId}`
+        } else if (categoryId) {
+            channelName = `realtime-category-${categoryId}`
         }
 
-        const channelConfig = allMatches
+        let filter: string | undefined = undefined
+        if (matchId) {
+            filter = `id=eq.${matchId}`
+        } else if (courtId) {
+            filter = `court_id=eq.${courtId}`
+        } else if (categoryId) {
+            filter = `category_id=eq.${categoryId}`
+        }
+
+        const channelConfig = allMatches || !filter
             ? {
                   event: '*' as const,
                   schema: 'public',
@@ -51,7 +65,7 @@ export function useRealtimeMatch({
                   event: '*' as const,
                   schema: 'public',
                   table: 'matches',
-                  filter: matchId ? `id=eq.${matchId}` : `court_id=eq.${courtId}`,
+                  filter,
               }
 
         const channel = supabase
@@ -65,12 +79,18 @@ export function useRealtimeMatch({
                         queryClient.invalidateQueries({ queryKey: ['courts_overview'] })
                         queryClient.invalidateQueries({ queryKey: ['courts'] })
                         queryClient.invalidateQueries({ queryKey: ['court_matches'] })
+                        queryClient.invalidateQueries({ queryKey: ['category_standings'] })
+                        queryClient.invalidateQueries({ queryKey: ['standings_overview'] })
                     } else {
                         if (matchId) {
                             queryClient.invalidateQueries({ queryKey: matchDetailQueryKey(matchId) })
                         }
                         if (courtId) {
                             queryClient.invalidateQueries({ queryKey: courtMatchesQueryKey(courtId) })
+                        }
+                        if (categoryId) {
+                            queryClient.invalidateQueries({ queryKey: ['category_standings', categoryId] })
+                            queryClient.invalidateQueries({ queryKey: ['category_standings'] })
                         }
                     }
 
@@ -85,5 +105,5 @@ export function useRealtimeMatch({
         return () => {
             supabase.removeChannel(channel)
         }
-    }, [matchId, courtId, allMatches, queryClient, onMatchUpdate])
+    }, [matchId, courtId, categoryId, allMatches, queryClient, onMatchUpdate])
 }

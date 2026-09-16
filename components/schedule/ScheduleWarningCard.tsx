@@ -86,6 +86,9 @@ export function ScheduleWarningCard({
                         <strong>Tambah Jumlah Court:</strong> Tambahkan slot court aktif agar lebih banyak pertandingan dapat dimainkan secara paralel.
                     </li>
                     <li>
+                        <strong>Periksa Alokasi Knockout atau Nonaktifkan Kategori:</strong> Jika turnamen memiliki banyak kategori, sistem secara otomatis mencadangkan ronde di akhir jadwal untuk semifinal &amp; final. Anda dapat menonaktifkan sementara kategori yang belum perlu dijadwalkan agar slot fase grup lebih lega.
+                    </li>
+                    <li>
                         <strong>Kurangi Durasi Estimasi per Match:</strong> Sesuaikan estimasi alokasi waktu per match (misal dari 45 menit ke 35 menit).
                     </li>
                 </ul>

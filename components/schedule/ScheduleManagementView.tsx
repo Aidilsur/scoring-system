@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
 import {
     Calendar,
@@ -13,6 +13,7 @@ import {
     Zap,
     Trash2,
     ShieldAlert,
+    Trophy,
 } from 'lucide-react'
 import { useScheduleManagement } from '@/hooks/useScheduleManagement'
 import { SelectInput, Card } from '@/components/ui'
@@ -20,6 +21,7 @@ import { SchedulePreviewCard } from './SchedulePreviewCard'
 import { ScheduleGridView } from './ScheduleGridView'
 import { ScheduleWarningCard } from './ScheduleWarningCard'
 import { ScheduleRegenerateConfirmModal } from './ScheduleRegenerateConfirmModal'
+import { KnockoutScheduleTab } from './KnockoutScheduleTab'
 
 const SCHEDULE_RULE_HINTS = [
     {
@@ -56,6 +58,8 @@ export interface ScheduleManagementViewProps {
 export function ScheduleManagementView({
     initialCategoryId,
 }: ScheduleManagementViewProps) {
+    const [mainTab, setMainTab] = useState<'group' | 'knockout'>('group')
+
     const {
         scheduleMode,
         setScheduleMode,
@@ -89,7 +93,7 @@ export function ScheduleManagementView({
 
     const categoryOptions = categories.map((cat) => ({
         value: cat.id,
-        label: `${cat.name} (${cat.partner_type.toUpperCase()} - ${cat.level.toUpperCase()})`,
+        label: (cat as any).displayLabel || `${cat.name} (${cat.partner_type.toUpperCase()} - ${cat.level.toUpperCase()})`,
     }))
 
     const hasStartedMatchesGlobal = Boolean(scheduleData?.hasAnyStartedGroupMatches)
@@ -113,32 +117,34 @@ export function ScheduleManagementView({
                         Penjadwalan Pertandingan
                     </h1>
                     <p className="text-xs text-zinc-400 mt-1">
-                        Atur pembagian waktu &amp; court round-robin secara bertahap per kategori atau serentak (paralel) dengan jaminan jeda istirahat 1 ronde.
+                        Atur pembagian waktu &amp; court pertandingan babak grup dan babak knockout dengan jaminan jeda istirahat 1 ronde.
                     </p>
                 </div>
 
-                {/* Top Action Controls: Reset Semua Jadwal & Refresh */}
+                {/* Top Action Controls: Refresh & Reset (Hanya di Tab Grup) */}
                 <div className="flex items-center gap-2.5">
-                    <button
-                        type="button"
-                        onClick={handleTriggerReset}
-                        disabled={
-                            isGenerating ||
-                            hasStartedMatchesGlobal ||
-                            !hasScheduledMatchesGlobal
-                        }
-                        title={
-                            hasStartedMatchesGlobal
-                                ? 'Reset dinonaktifkan: terdapat pertandingan babak grup yang sedang live atau selesai'
-                                : !hasScheduledMatchesGlobal
-                                ? 'Belum ada jadwal pertandingan babak grup yang tersimpan'
-                                : 'Kosongkan lapangan dan waktu pertandingan untuk SEMUA match babak grup di seluruh kategori'
-                        }
-                        className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-bold uppercase tracking-wider rounded-xl bg-zinc-900 border border-rose-500/40 text-rose-300 hover:bg-rose-950/40 hover:border-rose-500 hover:text-rose-200 transition cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed shadow-md shadow-black/40"
-                    >
-                        <Trash2 className={`w-3.5 h-3.5 text-rose-400 ${isResetting ? 'animate-spin' : ''}`} />
-                        <span>Reset Semua Jadwal</span>
-                    </button>
+                    {mainTab === 'group' && (
+                        <button
+                            type="button"
+                            onClick={handleTriggerReset}
+                            disabled={
+                                isGenerating ||
+                                hasStartedMatchesGlobal ||
+                                !hasScheduledMatchesGlobal
+                            }
+                            title={
+                                hasStartedMatchesGlobal
+                                    ? 'Reset dinonaktifkan: terdapat pertandingan babak grup yang sedang live atau selesai'
+                                    : !hasScheduledMatchesGlobal
+                                    ? 'Belum ada jadwal pertandingan babak grup yang tersimpan'
+                                    : 'Kosongkan lapangan dan waktu pertandingan untuk SEMUA match babak grup di seluruh kategori'
+                            }
+                            className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-bold uppercase tracking-wider rounded-xl bg-zinc-900 border border-rose-500/40 text-rose-300 hover:bg-rose-950/40 hover:border-rose-500 hover:text-rose-200 transition cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed shadow-md shadow-black/40"
+                        >
+                            <Trash2 className={`w-3.5 h-3.5 text-rose-400 ${isResetting ? 'animate-spin' : ''}`} />
+                            <span>Reset Semua Jadwal</span>
+                        </button>
+                    )}
 
                     <button
                         type="button"
@@ -157,61 +163,93 @@ export function ScheduleManagementView({
                 </div>
             </div>
 
-            {/* Mode Switcher Toggle (Bertahap vs Paralel) */}
-            <div className="p-3 sm:p-4 rounded-2xl bg-zinc-900/90 border border-zinc-800 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xl">
-                <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                    <span className="text-xs font-bold uppercase tracking-wider text-zinc-400 mr-2">
-                        Pilih Mode Penjadwalan:
-                    </span>
-                    <div className="inline-flex p-1 rounded-xl bg-zinc-950 border border-zinc-800 self-start">
-                        <button
-                            type="button"
-                            onClick={() => setScheduleMode('step_by_step')}
-                            disabled={isGenerating}
-                            className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition cursor-pointer ${
-                                scheduleMode === 'step_by_step'
-                                    ? 'bg-lime-400 text-zinc-950 shadow-md shadow-lime-400/20'
-                                    : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
-                            }`}
-                        >
-                            <Calendar className="w-3.5 h-3.5" />
-                            <span>Generate Bertahap</span>
-                            <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-900/60 text-zinc-300 font-mono">
-                                Default
-                            </span>
-                        </button>
+            {/* 2 TAB BESAR: FASE GRUP vs BABAK KNOCKOUT */}
+            <div className="flex border-b border-zinc-800 gap-2 sm:gap-6">
+                <button
+                    type="button"
+                    onClick={() => setMainTab('group')}
+                    className={`pb-3.5 px-1 sm:px-2 text-sm sm:text-base font-bold uppercase tracking-wider flex items-center gap-2 border-b-2 transition cursor-pointer ${
+                        mainTab === 'group'
+                            ? 'border-lime-400 text-lime-400'
+                            : 'border-transparent text-zinc-400 hover:text-zinc-200'
+                    }`}
+                >
+                    <Calendar className="w-4 h-4" />
+                    <span>Fase Grup</span>
+                </button>
 
-                        <button
-                            type="button"
-                            onClick={() => setScheduleMode('parallel')}
-                            disabled={isGenerating}
-                            className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition cursor-pointer ${
-                                scheduleMode === 'parallel'
-                                    ? 'bg-lime-400 text-zinc-950 shadow-md shadow-lime-400/20'
-                                    : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
-                            }`}
-                        >
-                            <Zap className="w-3.5 h-3.5" />
-                            <span>Generate Paralel</span>
-                        </button>
-                    </div>
-                </div>
-
-                <div className="text-xs text-zinc-400 flex items-center gap-2">
-                    <Layers className="w-4 h-4 text-lime-400 shrink-0" />
-                    <span>
-                        {scheduleMode === 'step_by_step' ? (
-                            <>
-                                Mode Bertahap: <strong className="text-lime-300">{selectedCategory?.name || 'Pilih Kategori'}</strong>
-                            </>
-                        ) : (
-                            <>
-                                Mode Paralel: <strong className="text-lime-300">Semua Kategori ({categories.length})</strong>
-                            </>
-                        )}
-                    </span>
-                </div>
+                <button
+                    type="button"
+                    onClick={() => setMainTab('knockout')}
+                    className={`pb-3.5 px-1 sm:px-2 text-sm sm:text-base font-bold uppercase tracking-wider flex items-center gap-2 border-b-2 transition cursor-pointer ${
+                        mainTab === 'knockout'
+                            ? 'border-lime-400 text-lime-400'
+                            : 'border-transparent text-zinc-400 hover:text-zinc-200'
+                    }`}
+                >
+                    <Trophy className="w-4 h-4" />
+                    <span>Babak Knockout</span>
+                </button>
             </div>
+
+            {/* TAB 1: KONTEN FASE GRUP */}
+            {mainTab === 'group' ? (
+                <>
+                    {/* Mode Switcher Toggle (Bertahap vs Paralel) */}
+                    <div className="p-3 sm:p-4 rounded-2xl bg-zinc-900/90 border border-zinc-800 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xl">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                            <span className="text-xs font-bold uppercase tracking-wider text-zinc-400 mr-2">
+                                Pilih Mode Penjadwalan:
+                            </span>
+                            <div className="inline-flex p-1 rounded-xl bg-zinc-950 border border-zinc-800 self-start">
+                                <button
+                                    type="button"
+                                    onClick={() => setScheduleMode('step_by_step')}
+                                    disabled={isGenerating}
+                                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition cursor-pointer ${
+                                        scheduleMode === 'step_by_step'
+                                            ? 'bg-lime-400 text-zinc-950 shadow-md shadow-lime-400/20'
+                                            : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
+                                    }`}
+                                >
+                                    <Calendar className="w-3.5 h-3.5" />
+                                    <span>Generate Bertahap</span>
+                                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-900/60 text-zinc-300 font-mono">
+                                        Default
+                                    </span>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={() => setScheduleMode('parallel')}
+                                    disabled={isGenerating}
+                                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition cursor-pointer ${
+                                        scheduleMode === 'parallel'
+                                            ? 'bg-lime-400 text-zinc-950 shadow-md shadow-lime-400/20'
+                                            : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
+                                    }`}
+                                >
+                                    <Zap className="w-3.5 h-3.5" />
+                                    <span>Generate Paralel</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="text-xs text-zinc-400 flex items-center gap-2">
+                            <Layers className="w-4 h-4 text-lime-400 shrink-0" />
+                            <span>
+                                {scheduleMode === 'step_by_step' ? (
+                                    <>
+                                        Target Penjadwalan: <strong className="text-lime-300">{(selectedCategory as any)?.displayLabel || selectedCategory?.name || 'Pilih Kategori'}</strong>
+                                    </>
+                                ) : (
+                                    <>
+                                        Mode Paralel: <strong className="text-lime-300">Semua Kategori ({categories.length})</strong>
+                                    </>
+                                )}
+                            </span>
+                        </div>
+                    </div>
 
             {/* Category Selector (HANYA MUNCUL DI MODE BERTAHAP) */}
             {scheduleMode === 'step_by_step' && (
@@ -381,6 +419,10 @@ export function ScheduleManagementView({
                     </Card>
                 </div>
             </div>
+                </>
+            ) : (
+                <KnockoutScheduleTab initialCategoryId={singleCategoryId} />
+            )}
 
             {/* Confirm Regenerate / Reset Dialog Modal */}
             <ScheduleRegenerateConfirmModal

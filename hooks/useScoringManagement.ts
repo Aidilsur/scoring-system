@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useCallback, useTransition, useEffect, useOptimistic, useRef } from 'react'
+import { useState, useCallback, useTransition, useEffect, useRef } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
+import { createClient } from '@/lib/supabase/client'
 import { useCourtsQuery } from './useCourtsQuery'
 import { useCourtMatchesQuery, courtMatchesQueryKey } from './useCourtMatchesQuery'
 import { useMatchDetailQuery, matchDetailQueryKey, type MatchDetailData } from './useMatchDetailQuery'
@@ -13,24 +14,37 @@ import {
     heartbeatScorerSessionAction,
     releaseScorerSessionAction,
 } from '@/app/admin/(protected)/scoring/actions'
-import {
-    getClientScorerSessionId,
-    calculateNextMatchScore,
-    HEARTBEAT_INTERVAL_MS,
-} from '@/lib/scoring'
+import { HEARTBEAT_INTERVAL_MS } from '@/lib/scoring'
 import { toast } from '@/lib/toast'
 import type { MatchTeam } from '@/lib/scoring'
 import type { Match } from '@/types/domain'
 
 export function useScoringManagement(
     initialCourtId?: string | null,
-    initialMatchId?: string | null
+    initialMatchId?: string | null,
+    initialUserEmail?: string | null
 ) {
     const queryClient = useQueryClient()
     const [isPending, startTransition] = useTransition()
+    const [pendingTeam, setPendingTeam] = useState<MatchTeam | null>(null)
 
-    // 1. Session State (per browser device/tab)
-    const [clientSessionId] = useState<string>(() => getClientScorerSessionId())
+    // 1. Identitas User (Email dari Supabase Auth / admin_users)
+    const [userEmail, setUserEmail] = useState<string | null>(
+        initialUserEmail?.toLowerCase().trim() || null
+    )
+
+    useEffect(() => {
+        if (initialUserEmail) {
+            setUserEmail(initialUserEmail.toLowerCase().trim())
+            return
+        }
+        const supabase = createClient()
+        supabase.auth.getUser().then(({ data }) => {
+            if (data?.user?.email) {
+                setUserEmail(data.user.email.toLowerCase().trim())
+            }
+        })
+    }, [initialUserEmail])
 
     // 2. Selection State
     const [internalCourtId, setInternalCourtId] = useState<string | null>(initialCourtId || null)
@@ -45,31 +59,24 @@ export function useScoringManagement(
     const selectedMatchId = initialMatchId ?? internalMatchId
 
     const courtMatchesQuery = useCourtMatchesQuery(selectedCourtId)
-    const matchDetailQuery = useMatchDetailQuery(selectedMatchId, clientSessionId)
+    const matchDetailQuery = useMatchDetailQuery(selectedMatchId, userEmail || undefined)
 
-    // 3b. Optimistic State untuk respon instan UI wasit
-    const serverMatch = matchDetailQuery.data?.match || null
-    const [optimisticMatch, setOptimisticMatch] = useOptimistic(
-        serverMatch,
-        (current: Match | null, action: { winningTeam: MatchTeam; goldenPointEnabled?: boolean }) => {
-            if (!current) return null
-            return calculateNextMatchScore(current, action.winningTeam, action.goldenPointEnabled ?? true)
-        }
-    )
+    // Match data langsung dari server (tidak menggunakan optimistic update)
+    const currentMatch = matchDetailQuery.data?.match || null
 
     // 4. Klaim Sesi Scoring saat match aktif dipilih
     useEffect(() => {
-        if (!selectedMatchId || !clientSessionId) return
+        if (!selectedMatchId) return
 
         let isCancelled = false
 
         async function claimSession() {
             try {
-                const res = await claimScorerSessionAction(selectedMatchId!, clientSessionId)
+                const res = await claimScorerSessionAction(selectedMatchId!, userEmail || undefined)
                 if (isCancelled) return
 
                 if (!res.isOwner) {
-                    toast.warning('Match ini sedang di-score oleh device lain. Mode Read-Only diaktifkan.')
+                    toast.warning(res.message || 'Match ini sedang di-score oleh akun lain. Mode Read-Only diaktifkan.')
                 }
 
                 // Invalidate query agar UI langsung sinkron dengan status kepemilikan sesi
@@ -84,13 +91,14 @@ export function useScoringManagement(
         return () => {
             isCancelled = true
         }
-    }, [selectedMatchId, clientSessionId, queryClient])
+    }, [selectedMatchId, userEmail, queryClient])
 
-    // Melacak apakah device ini adalah pemegang kendali aktif
+    // Melacak apakah user ini adalah pemegang kendali aktif
     const isOwner = Boolean(
         selectedMatchId &&
         !matchDetailQuery.data?.isReadOnly &&
-        matchDetailQuery.data?.match?.active_scorer_session_id === clientSessionId &&
+        userEmail &&
+        matchDetailQuery.data?.match?.active_scorer_session_id?.toLowerCase().trim() === userEmail &&
         matchDetailQuery.data?.match?.status !== 'completed'
     )
     const isOwnerRef = useRef(isOwner)
@@ -100,7 +108,7 @@ export function useScoringManagement(
     // Memperpanjang active_scorer_claimed_at ke waktu sekarang.
     // Jika tab hidden/background, interval dihentikan agar lock dapat kadaluarsa jika ditinggalkan.
     useEffect(() => {
-        if (!selectedMatchId || !clientSessionId) return
+        if (!selectedMatchId) return
         if (matchDetailQuery.data?.isReadOnly) return
         if (matchDetailQuery.data?.match?.status === 'completed') return
 
@@ -109,7 +117,7 @@ export function useScoringManagement(
         const triggerHeartbeat = async () => {
             if (document.visibilityState !== 'visible') return
             try {
-                const res = await heartbeatScorerSessionAction(selectedMatchId, clientSessionId)
+                const res = await heartbeatScorerSessionAction(selectedMatchId, userEmail || undefined)
                 if (!res.isOwner) {
                     // Jika kepemilikan lock sudah beralih di server, sinkronkan UI ke mode read-only
                     queryClient.invalidateQueries({ queryKey: matchDetailQueryKey(selectedMatchId) })
@@ -155,23 +163,11 @@ export function useScoringManagement(
         }
     }, [
         selectedMatchId,
-        clientSessionId,
+        userEmail,
         matchDetailQuery.data?.isReadOnly,
         matchDetailQuery.data?.match?.status,
         queryClient,
     ])
-
-    // 4c. Pelepasan lock otomatis saat device meninggalkan halaman scoring via navigasi normal (unmount)
-    useEffect(() => {
-        const matchIdToRelease = selectedMatchId
-        const sessionId = clientSessionId
-
-        return () => {
-            if (isOwnerRef.current && matchIdToRelease && sessionId) {
-                releaseScorerSessionAction(matchIdToRelease, sessionId).catch(() => {})
-            }
-        }
-    }, [selectedMatchId, clientSessionId])
 
     // 5. Supabase Realtime Subscription
     useRealtimeMatch({
@@ -224,30 +220,24 @@ export function useScoringManagement(
         }
     }, [])
 
-    // 7. Scoring Server Action Handlers (dengan CAS Client Session ID dan Optimistic Updates)
+    // 7. Scoring Server Action Handlers (Beban Server Action dengan Loading State di Tombol, Tanpa Optimistic Prediction)
     const recordPoint = useCallback(
         (winningTeam: MatchTeam) => {
-            if (!selectedMatchId) return
-            // Device dalam mode read-only tidak melakukan optimistic update
+            if (!selectedMatchId || isPending) return
+            // User/device dalam mode read-only tidak dapat mencatat poin
             if (matchDetailQuery.data?.isReadOnly) return
 
+            setPendingTeam(winningTeam)
             startTransition(async () => {
-                // 1. Prediksi state berikutnya secara instan di UI wasit
-                setOptimisticMatch({
-                    winningTeam,
-                    goldenPointEnabled: true,
-                })
-
                 try {
                     const result = await recordPointAction(
                         selectedMatchId,
                         winningTeam,
-                        clientSessionId
+                        userEmail || undefined
                     )
 
                     if (!result.success) {
                         toast.error(result.message)
-                        // Reconcile/rollback otomatis ke state server jika action ditolak
                         await queryClient.invalidateQueries({
                             queryKey: matchDetailQueryKey(selectedMatchId),
                         })
@@ -259,10 +249,10 @@ export function useScoringManagement(
                         toast.success('Pertandingan selesai!', result.message)
                     }
 
-                    // Reconcile cache dengan data pasti dari response server
+                    // Sinkronkan cache dengan data dari response server
                     if (result.data) {
                         queryClient.setQueryData(
-                            matchDetailQueryKey(selectedMatchId, clientSessionId),
+                            matchDetailQueryKey(selectedMatchId, userEmail || undefined),
                             (old: unknown) => {
                                 const oldData = old as MatchDetailData | undefined
                                 if (!oldData) return oldData
@@ -284,14 +274,15 @@ export function useScoringManagement(
                 } catch (err: unknown) {
                     const errorMsg = err instanceof Error ? err.message : 'Gagal mencatat poin.'
                     toast.error(errorMsg)
-                    // Rollback ke server state jika terjadi network exception
                     await queryClient.invalidateQueries({
                         queryKey: matchDetailQueryKey(selectedMatchId),
                     })
+                } finally {
+                    setPendingTeam(null)
                 }
             })
         },
-        [selectedMatchId, selectedCourtId, clientSessionId, matchDetailQuery.data?.isReadOnly, setOptimisticMatch, queryClient]
+        [selectedMatchId, selectedCourtId, userEmail, matchDetailQuery.data?.isReadOnly, isPending, queryClient]
     )
 
     const undoPoint = useCallback(() => {
@@ -299,7 +290,7 @@ export function useScoringManagement(
 
         startTransition(async () => {
             try {
-                const result = await undoLastPointAction(selectedMatchId, clientSessionId)
+                const result = await undoLastPointAction(selectedMatchId, userEmail || undefined)
 
                 if (!result.success) {
                     toast.error(result.message)
@@ -319,14 +310,14 @@ export function useScoringManagement(
                 toast.error(errorMsg)
             }
         })
-    }, [selectedMatchId, selectedCourtId, clientSessionId, isPending, queryClient])
+    }, [selectedMatchId, selectedCourtId, userEmail, isPending, queryClient])
 
     const releaseControl = useCallback(async (): Promise<boolean> => {
-        if (!selectedMatchId || !clientSessionId) return false
+        if (!selectedMatchId) return false
         if (matchDetailQuery.data?.isReadOnly) return false
 
         try {
-            const result = await releaseScorerSessionAction(selectedMatchId, clientSessionId)
+            const result = await releaseScorerSessionAction(selectedMatchId, userEmail || undefined)
             if (result.success) {
                 toast.info(result.message)
             } else {
@@ -345,15 +336,16 @@ export function useScoringManagement(
             toast.error(errorMsg)
             return false
         }
-    }, [selectedMatchId, selectedCourtId, clientSessionId, matchDetailQuery.data?.isReadOnly, queryClient])
+    }, [selectedMatchId, selectedCourtId, userEmail, matchDetailQuery.data?.isReadOnly, queryClient])
 
     return {
         // Selection & Session state
         selectedCourtId,
         selectedMatchId,
-        clientSessionId,
+        userEmail,
         servingTeam,
         isPending,
+        pendingTeam,
 
         // Data
         courts: courtsQuery.data || [],
@@ -363,7 +355,7 @@ export function useScoringManagement(
         currentCourtMatch: courtMatchesQuery.data?.currentMatch || null,
         isMatchesLoading: courtMatchesQuery.isLoading,
 
-        currentMatch: optimisticMatch,
+        currentMatch,
         canUndo: Boolean(matchDetailQuery.data?.canUndo),
         isReadOnly: Boolean(matchDetailQuery.data?.isReadOnly),
         isClaimedByOther: Boolean(matchDetailQuery.data?.isClaimedByOther),

@@ -5,8 +5,8 @@ import { createClient } from '@/lib/supabase/client'
 import type { Match } from '@/types/domain'
 import { SESSION_LOCK_TTL_MS } from '@/lib/scoring'
 
-export const matchDetailQueryKey = (matchId: string | null, clientSessionId?: string) =>
-    clientSessionId ? ['match', matchId, clientSessionId] : ['match', matchId]
+export const matchDetailQueryKey = (matchId: string | null, userEmail?: string) =>
+    userEmail ? ['match', matchId, userEmail.toLowerCase().trim()] : ['match', matchId]
 export const matchHistoryCountQueryKey = (matchId: string | null) => ['match_history_count', matchId]
 
 export interface MatchDetailData {
@@ -19,13 +19,13 @@ export interface MatchDetailData {
 
 /**
  * Custom hook untuk mengambil detail match live scoring, status riwayat undo,
- * dan mengevaluasi status concurrency lock (read-only mode jika di-score device lain).
+ * dan mengevaluasi status concurrency lock (read-only mode jika di-score akun wasit lain).
  */
-export function useMatchDetailQuery(matchId: string | null, clientSessionId?: string) {
+export function useMatchDetailQuery(matchId: string | null, userEmail?: string) {
     const supabase = createClient()
 
     return useQuery<MatchDetailData>({
-        queryKey: matchDetailQueryKey(matchId, clientSessionId),
+        queryKey: matchDetailQueryKey(matchId, userEmail),
         enabled: Boolean(matchId),
         queryFn: async () => {
             if (!matchId) {
@@ -65,7 +65,7 @@ export function useMatchDetailQuery(matchId: string | null, clientSessionId?: st
 
             const historyCount = (!historyError && count) ? count : 0
 
-            // 3. Evaluasi status lock concurrency
+            // 3. Evaluasi status lock concurrency berbasis identitas user email
             const rawMatch = matchData as unknown as Match
             const now = Date.now()
             const claimedAtTime = rawMatch.active_scorer_claimed_at
@@ -73,10 +73,14 @@ export function useMatchDetailQuery(matchId: string | null, clientSessionId?: st
                 : 0
             const isClaimExpired = !rawMatch.active_scorer_claimed_at || (now - claimedAtTime > SESSION_LOCK_TTL_MS)
 
+            const currentUserEmail = userEmail?.toLowerCase().trim() || ''
+            const activeScorerEmail = rawMatch.active_scorer_session_id?.toLowerCase().trim() || ''
+
+            // Diklaim oleh orang lain jika active_scorer terisi, belum expired, dan BUKAN user yang sedang login
             const isClaimedByOther = Boolean(
-                rawMatch.active_scorer_session_id &&
+                activeScorerEmail &&
                 !isClaimExpired &&
-                (!clientSessionId || rawMatch.active_scorer_session_id !== clientSessionId)
+                (!currentUserEmail || activeScorerEmail !== currentUserEmail)
             )
 
             return {

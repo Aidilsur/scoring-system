@@ -28,7 +28,8 @@ const DRAW_RULE_HINTS = [
   {
     label: 'Hanya Tim Confirmed',
     description:
-      'Hanya tim yang telah diverifikasi pembayarannya (status confirmed) yang masuk ke dalam undian.',
+      'Hanya tim yang telah diverifikasi pembayarannya (status confirmed) ' +
+      'yang masuk ke dalam undian.',
   },
   {
     label: 'Pengacakan Fisher-Yates',
@@ -38,7 +39,8 @@ const DRAW_RULE_HINTS = [
   {
     label: 'Jadwal Otomatis',
     description:
-      'Pertandingan round robin langsung digenerate tanpa duplikat (n × (n - 1) / 2 match per grup).',
+      'Pertandingan round robin langsung digenerate tanpa duplikat ' +
+      '(n × (n - 1) / 2 match per grup).',
   },
   {
     label: 'Kunci Regenerate',
@@ -83,7 +85,12 @@ export function DrawManagementView({
   return (
     <div className="space-y-8">
       {/* Top Header & Breadcrumbs */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-zinc-800">
+      <div
+        className={[
+          'flex flex-col sm:flex-row sm:items-center justify-between',
+          'gap-4 pb-4 border-b border-zinc-800',
+        ].join(' ')}
+      >
         <div>
           <div className="flex items-center gap-2 text-xs text-zinc-400 mb-1">
             <Link href="/admin" className="hover:text-lime-400 transition-colors">
@@ -94,11 +101,17 @@ export function DrawManagementView({
               Drawing Grup
             </span>
           </div>
-          <h1 className="font-[family-name:var(--font-anton)] text-3xl sm:text-4xl text-white uppercase tracking-tight">
+          <h1
+            className={[
+              'font-[family-name:var(--font-anton)] text-3xl sm:text-4xl',
+              'text-white uppercase tracking-tight',
+            ].join(' ')}
+          >
             Drawing Grup &amp; Jadwal
           </h1>
           <p className="text-xs text-zinc-400 mt-1">
-            Acak peserta terkonfirmasi ke dalam grup dan buat jadwal pertandingan round robin otomatis.
+            Acak peserta terkonfirmasi ke dalam grup dan buat jadwal
+            pertandingan round robin otomatis.
           </p>
         </div>
 
@@ -107,7 +120,12 @@ export function DrawManagementView({
           type="button"
           onClick={() => refetchDraw()}
           disabled={isLoadingDraw || isRefetchingDraw}
-          className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white hover:border-zinc-700 transition cursor-pointer disabled:opacity-50"
+          className={[
+            'inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold',
+            'rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300',
+            'hover:text-white hover:border-zinc-700 transition cursor-pointer',
+            'disabled:opacity-50',
+          ].join(' ')}
         >
           <RotateCw
             className={`w-3.5 h-3.5 ${
@@ -121,11 +139,13 @@ export function DrawManagementView({
       {/* Toast Notification */}
       {toast && (
         <div
-          className={`flex items-start justify-between gap-3 p-4 rounded-2xl border text-xs font-medium animate-in fade-in slide-in-from-top-2 duration-200 ${
+          className={[
+            'flex items-start justify-between gap-3 p-4 rounded-2xl border',
+            'text-xs font-medium animate-in fade-in slide-in-from-top-2 duration-200',
             toast.type === 'success'
               ? 'bg-lime-400/10 border-lime-400/30 text-lime-300'
-              : 'bg-rose-500/10 border-rose-500/30 text-rose-300'
-          }`}
+              : 'bg-rose-500/10 border-rose-500/30 text-rose-300',
+          ].join(' ')}
         >
           <div className="flex items-center gap-2.5">
             {toast.type === 'success' ? (

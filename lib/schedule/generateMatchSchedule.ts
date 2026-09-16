@@ -57,6 +57,11 @@ export function formatMinutesToTime(totalMinutes: number): string {
     return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`
 }
 
+export interface GenerateScheduleOptions {
+    earliestStartTime?: string
+    reservedRoundsAtEnd?: number
+}
+
 /**
  * Menghasilkan jadwal pertandingan berdasarkan ketersediaan court dan jam operasional harian.
  * 
@@ -66,6 +71,7 @@ export function formatMinutesToTime(totalMinutes: number): string {
  * @param dailyEndTime Jam selesai operasional harian (format "HH:mm")
  * @param matchDurationMinutes Estimasi durasi per match dalam menit
  * @param occupiedSlots Daftar slot (courtId + scheduledTime) yang sudah terpakai oleh kategori lain
+ * @param options Opsi tambahan: earliestStartTime dan reservedRoundsAtEnd
  * @returns Objek berisi array match yang berhasil terjadwal dan yang tidak muat (unscheduled)
  */
 export function generateMatchSchedule(
@@ -74,7 +80,8 @@ export function generateMatchSchedule(
     dailyStartTime: string,
     dailyEndTime: string,
     matchDurationMinutes: number,
-    occupiedSlots: { courtId: string; scheduledTime: string }[] = []
+    occupiedSlots: { courtId: string; scheduledTime: string }[] = [],
+    options?: GenerateScheduleOptions
 ): {
     scheduled: { matchId: string; courtId: string; scheduledTime: string }[]
     unscheduled: { matchId: string }[]
@@ -110,6 +117,14 @@ export function generateMatchSchedule(
             unscheduled: matches.map((m) => ({ matchId: m.id })),
         }
     }
+
+    // Hitung batas maksimum ronde jika ada reservasi di akhir (reservedRoundsAtEnd)
+    const reservedAtEnd = Math.max(0, options?.reservedRoundsAtEnd || 0)
+    const effectiveTotalSlots = Math.max(0, totalSlots - reservedAtEnd)
+
+    const earliestMinutes = options?.earliestStartTime
+        ? parseTimeToMinutes(options.earliestStartTime)
+        : -1
 
     // 3. Setup state penjadwalan
     const remainingMatches = [...matches]
@@ -148,10 +163,16 @@ export function generateMatchSchedule(
     }
 
     // 4. Iterasi per ronde (slot waktu)
-    for (let roundIndex = 0; roundIndex < totalSlots; roundIndex++) {
+    for (let roundIndex = 0; roundIndex < effectiveTotalSlots; roundIndex++) {
         if (remainingMatches.length === 0) break
 
         const slotTimeMinutes = startMinutes + roundIndex * matchDurationMinutes
+
+        // Jika earliestStartTime diberikan, lewati slot sebelum waktu ini
+        if (earliestMinutes >= 0 && slotTimeMinutes < earliestMinutes) {
+            continue
+        }
+
         const scheduledTime = formatMinutesToTime(slotTimeMinutes)
 
         // Set tim yang bertanding di ronde ini untuk mencegah tim main di 2 court bersamaan

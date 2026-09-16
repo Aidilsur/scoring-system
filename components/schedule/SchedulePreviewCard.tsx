@@ -87,12 +87,18 @@ export function SchedulePreviewCard({
                         )}
                     </div>
                     <h3 className="text-xl font-black tracking-tight text-white uppercase">
-                        {isAllMode ? 'Seluruh Kategori (Paralel)' : (category?.name || '')}
+                        {isAllMode
+                            ? 'Seluruh Kategori (Paralel)'
+                            : `${category?.name || ''}${
+                                  (category as any)?.roundLabel
+                                      ? ` — ${(category as any).roundLabel}`
+                                      : ''
+                              }`}
                     </h3>
                     <p className="text-xs text-zinc-400">
                         {isAllMode
                             ? 'Menjadwalkan seluruh match dari semua kategori sekaligus agar court terisi paralel'
-                            : `Format: ${category?.partner_type.toUpperCase()} • Level: ${category?.level.toUpperCase()}`}
+                            : `Format: ${category?.partner_type?.toUpperCase()} • Level: ${category?.level?.toUpperCase()}`}
                     </p>
                 </div>
 
@@ -171,6 +177,28 @@ export function SchedulePreviewCard({
                     </div>
                 </div>
             </div>
+
+            {/* Knockout Reservation Notice (Requirement 3) */}
+            {scheduleData?.knockoutReservation &&
+                scheduleData.knockoutReservation.reservedRounds > 0 &&
+                (isAllMode || scheduleData.targetRound === 'group') && (
+                    <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-3 text-amber-300 text-xs animate-in fade-in duration-200">
+                        <AlertCircle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+                        <div className="space-y-1">
+                            <p className="font-bold text-amber-200">
+                                ℹ️ Informasi Alokasi Waktu Knockout:
+                            </p>
+                            <p className="leading-relaxed">
+                                <strong>{scheduleData.knockoutReservation.reservedRounds} ronde</strong> di akhir jadwal akan dicadangkan untuk babak semifinal/final dari{' '}
+                                <strong>{scheduleData.knockoutReservation.activeCategoriesCount} kategori aktif</strong>
+                                {scheduleData.knockoutReservation.reservedStartTime ? (
+                                    <span> (mulai pukul <strong>{scheduleData.knockoutReservation.reservedStartTime}</strong>)</span>
+                                ) : null}
+                                . Slot yang tersedia untuk pertandingan fase grup akan dibatasi hingga sebelum blok waktu cadangan ini agar babak gugur terjamin mendapat slot.
+                            </p>
+                        </div>
+                    </div>
+                )}
 
             {/* Action Buttons & Notice */}
             <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-4">

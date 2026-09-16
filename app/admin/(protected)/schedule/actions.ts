@@ -5,6 +5,8 @@ import { createClient } from '@/lib/supabase/server'
 import { generateScheduleSchema } from '@/lib/validations/schedule'
 import {
     generateMatchSchedule,
+    parseTimeToMinutes,
+    formatMinutesToTime,
     OccupiedSlot,
     ScheduleMatchInput,
 } from '@/lib/schedule/generateMatchSchedule'
@@ -33,19 +35,22 @@ function extractHHmm(timeStr?: string | null): string {
 }
 
 /**
- * Server Action: Generate atau Regenerate Jadwal Pertandingan Grup per Kategori
+ * Server Action: Generate atau Regenerate Jadwal Pertandingan per Kategori & Babak
  * 
  * Aturan Bisnis (§4.8):
- * 1. Ambil seluruh match round='group' di kategori terpilih.
- * 2. Ambil occupiedSlots dari seluruh kategori LAIN yang sudah punya court_id dan scheduled_time.
- * 3. Ambil konfigurasi court, jam operasional, dan durasi match dari tournament_settings.
- * 4. Panggil pure function generateMatchSchedule.
- * 5. Update court_id dan scheduled_time untuk match yang berhasil terjadwal.
- * 6. Jika ada match yang tidak muat, kembalikan warning dan rincian unscheduled tanpa error.
- * 7. Regenerate HANYA diizinkan jika belum ada match di kategori ini yang berstatus 'live' atau 'completed'.
+ * 1. Mendukung round IN ('group', 'semifinal', 'final', 'third_place').
+ * 2. Ambil seluruh match round terkait di kategori terpilih.
+ * 3. Ambil occupiedSlots dari SEMUA match (grup maupun knockout) dari SEMUA kategori
+ *    yang sudah memiliki court_id/scheduled_time, agar tidak bentrok.
+ * 4. Ambil konfigurasi court, jam operasional, dan durasi match dari tournament_settings.
+ * 5. Panggil pure function generateMatchSchedule.
+ * 6. Update court_id dan scheduled_time untuk match yang berhasil terjadwal.
+ * 7. Jika ada match yang tidak muat, kembalikan warning dan rincian unscheduled tanpa error.
+ * 8. Regenerate HANYA diizinkan jika belum ada match di babak kategori ini yang berstatus 'live' atau 'completed'.
  */
 export async function generateCategoryScheduleAction(
-    categoryId: string
+    categoryIdOrTarget: string,
+    roundParam?: 'group' | 'semifinal' | 'final' | 'third_place'
 ): Promise<ScheduleActionResponse> {
     try {
         const supabase = await createClient()
@@ -63,8 +68,18 @@ export async function generateCategoryScheduleAction(
             }
         }
 
-        // 2. Validasi input
-        const validation = generateScheduleSchema.safeParse({ categoryId })
+        // 2. Parse categoryId dan target round jika menggunakan format composite "categoryId:round"
+        let categoryId = categoryIdOrTarget
+        let round: 'group' | 'semifinal' | 'final' | 'third_place' = roundParam || 'group'
+
+        if (categoryIdOrTarget.includes(':')) {
+            const parts = categoryIdOrTarget.split(':')
+            categoryId = parts[0]
+            round = (parts[1] as 'group' | 'semifinal' | 'final' | 'third_place') || 'group'
+        }
+
+        // Validasi input dengan Zod schema
+        const validation = generateScheduleSchema.safeParse({ categoryId, round })
         if (!validation.success) {
             return {
                 success: false,
@@ -134,13 +149,13 @@ export async function generateCategoryScheduleAction(
             }
         }
 
-        // 5. Cek apakah ada match di kategori ini yang sedang 'live' atau 'completed'
+        // 5. Cek apakah ada match di babak kategori ini yang sedang 'live' atau 'completed'
         // Jika ada, kunci fitur regenerate sesuai aturan bisnis (§4.8 & §4.3)
         const { data: startedMatches, error: startedCheckError } = await supabase
             .from('matches')
             .select('id, status')
             .eq('category_id', categoryId)
-            .eq('round', 'group')
+            .eq('round', round)
             .in('status', ['live', 'completed'])
 
         if (startedCheckError) {
@@ -158,12 +173,12 @@ export async function generateCategoryScheduleAction(
             }
         }
 
-        // 6. Ambil semua match round='group' di kategori ini
+        // 6. Ambil semua match untuk round ini di kategori terpilih
         const { data: categoryMatches, error: matchesError } = await supabase
             .from('matches')
             .select('id, team_a_id, team_b_id')
             .eq('category_id', categoryId)
-            .eq('round', 'group')
+            .eq('round', round)
 
         if (matchesError) {
             return {
@@ -173,37 +188,42 @@ export async function generateCategoryScheduleAction(
         }
 
         if (!categoryMatches || categoryMatches.length === 0) {
+            const roundLabels: Record<string, string> = {
+                group: 'babak grup. Silakan jalankan Drawing Grup terlebih dahulu.',
+                semifinal: 'babak semifinal. Silakan generate Bracket Semifinal terlebih dahulu.',
+                final: 'babak final.',
+                third_place: 'perebutan juara 3.',
+            }
             return {
                 success: false,
-                message:
-                    'Belum ada pertandingan di kategori ini. Silakan jalankan Drawing Grup terlebih dahulu.',
+                message: `Belum ada pertandingan di ${roundLabels[round] || round}`,
             }
         }
 
-        // 7. Ambil occupiedSlots dari SEMUA kategori LAIN yang sudah dijadwalkan
-        // Ini memastikan court dipakai bersama lintas kategori tanpa bentrok court+waktu
-        const { data: otherMatches, error: occupiedError } = await supabase
+        // 7. Ambil occupiedSlots dari SEMUA match (grup maupun knockout) dari SEMUA kategori
+        // yang sudah memiliki court_id dan scheduled_time, KECUALI match (categoryId, round) yang sedang dijadwalkan
+        const { data: allScheduledMatches, error: occupiedError } = await supabase
             .from('matches')
-            .select('court_id, scheduled_time')
-            .neq('category_id', categoryId)
+            .select('court_id, scheduled_time, category_id, round')
             .not('court_id', 'is', null)
             .not('scheduled_time', 'is', null)
 
         if (occupiedError) {
             return {
                 success: false,
-                message: `Gagal memuat jadwal kategori lain: ${occupiedError.message}`,
+                message: `Gagal memuat jadwal pertandingan lain: ${occupiedError.message}`,
             }
         }
 
-        const occupiedSlots: OccupiedSlot[] = (otherMatches || [])
+        const occupiedSlots: OccupiedSlot[] = (allScheduledMatches || [])
+            .filter((m) => !(m.category_id === categoryId && m.round === round))
             .filter((m) => m.court_id && m.scheduled_time)
             .map((m) => ({
                 courtId: m.court_id!,
                 scheduledTime: extractHHmm(m.scheduled_time!),
             }))
 
-        // 8. Kosongkan terlebih dahulu court_id dan scheduled_time match kategori ini
+        // 8. Kosongkan terlebih dahulu court_id dan scheduled_time match pada babak ini di kategori ini
         // agar proses penjadwalan bersih dan idempoten
         const { error: resetError } = await supabase
             .from('matches')
@@ -213,12 +233,12 @@ export async function generateCategoryScheduleAction(
                 updated_at: new Date().toISOString(),
             })
             .eq('category_id', categoryId)
-            .eq('round', 'group')
+            .eq('round', round)
 
         if (resetError) {
             return {
                 success: false,
-                message: `Gagal mereset jadwal lama kategori: ${resetError.message}`,
+                message: `Gagal mereset jadwal lama: ${resetError.message}`,
             }
         }
 
@@ -234,13 +254,57 @@ export async function generateCategoryScheduleAction(
         const endTime = settings.daily_end_time ? extractHHmm(settings.daily_end_time) : '18:00'
         const durationMinutes = settings.match_duration_minutes || 45
 
+        let reservedRoundsAtEnd: number | undefined = undefined
+        let earliestStartTime: string | undefined = undefined
+        let activeCatCountForKnockout = 0
+
+        if (round === 'group') {
+            // 1. Hitung reservedRoundsAtEnd untuk babak knockout secara otomatis:
+            // 2 (semifinal) + 1 (final) + (1 jika third_place_enabled) per kategori aktif yang groups-nya sudah ada
+            const { data: activeCatsWithGroups } = await supabase
+                .from('categories')
+                .select('id, groups!inner(id)')
+                .eq('is_active', true)
+
+            activeCatCountForKnockout = new Set((activeCatsWithGroups || []).map((c) => c.id)).size
+            if (activeCatCountForKnockout > 0) {
+                const knockoutMatchesPerCat = 2 + 1 + (settings.third_place_enabled ? 1 : 0)
+                const totalKnockoutMatches = activeCatCountForKnockout * knockoutMatchesPerCat
+                const courtCount = courtIds.length || 1
+                reservedRoundsAtEnd = Math.ceil(totalKnockoutMatches / courtCount)
+            }
+        } else {
+            // 2. Jika round='semifinal' (atau 'final'/'third_place'):
+            // Hitung earliestStartTime dari scheduled_time TERAKHIR match round='group' di kategori yang sama + durationMinutes
+            const { data: latestGroupMatch } = await supabase
+                .from('matches')
+                .select('scheduled_time')
+                .eq('category_id', categoryId)
+                .eq('round', 'group')
+                .not('scheduled_time', 'is', null)
+                .order('scheduled_time', { ascending: false })
+                .limit(1)
+                .maybeSingle()
+
+            if (latestGroupMatch?.scheduled_time) {
+                const latestHHmm = extractHHmm(latestGroupMatch.scheduled_time)
+                const latestMinutes = parseTimeToMinutes(latestHHmm)
+                const earliestMinutes = latestMinutes + durationMinutes
+                earliestStartTime = formatMinutesToTime(earliestMinutes)
+            }
+        }
+
         const scheduleResult = generateMatchSchedule(
             matchesInput,
             courtIds,
             startTime,
             endTime,
             durationMinutes,
-            occupiedSlots
+            occupiedSlots,
+            {
+                reservedRoundsAtEnd,
+                earliestStartTime,
+            }
         )
 
         // 10. Update match yang berhasil terjadwal
@@ -271,9 +335,14 @@ export async function generateCategoryScheduleAction(
         const unscheduledMatchIds = scheduleResult.unscheduled.map((u) => u.matchId)
 
         if (unscheduledCount > 0) {
+            const reservedWarningDetail =
+                round === 'group' && reservedRoundsAtEnd && reservedRoundsAtEnd > 0
+                    ? ` Hal ini kemungkinan disebabkan ${reservedRoundsAtEnd} ronde di akhir jadwal dicadangkan untuk babak knockout (${activeCatCountForKnockout} kategori). Solusi: tambah court di Setup Turnamen, perpanjang jam operasional, atau matikan sementara kategori yang belum perlu.`
+                    : ''
+
             return {
                 success: true,
-                message: `${scheduledCount} pertandingan berhasil dijadwalkan, namun terdapat ${unscheduledCount} pertandingan yang tidak muat dalam jam operasional (${startTime} - ${endTime}).`,
+                message: `${scheduledCount} pertandingan berhasil dijadwalkan, namun terdapat ${unscheduledCount} pertandingan yang tidak muat dalam jam operasional (${startTime} - ${endTime}).${reservedWarningDetail}`,
                 scheduledCount,
                 unscheduledCount,
                 unscheduledMatchIds,
@@ -485,6 +554,10 @@ export async function generateAllCategoriesScheduleAction(): Promise<ScheduleAct
         const endTime = settings.daily_end_time ? extractHHmm(settings.daily_end_time) : '18:00'
         const durationMinutes = settings.match_duration_minutes || 45
 
+        const knockoutMatchesPerCat = 2 + 1 + (settings.third_place_enabled ? 1 : 0)
+        const totalKnockoutMatches = categoryIds.length * knockoutMatchesPerCat
+        const reservedRoundsAtEnd = Math.ceil(totalKnockoutMatches / courtIds.length)
+
         // occupiedSlots kosong karena seluruh match dari semua kategori dijadwalkan secara paralel bersamaan
         const scheduleResult = generateMatchSchedule(
             matchesInput,
@@ -492,7 +565,10 @@ export async function generateAllCategoriesScheduleAction(): Promise<ScheduleAct
             startTime,
             endTime,
             durationMinutes,
-            []
+            [],
+            {
+                reservedRoundsAtEnd,
+            }
         )
 
         // 9. Update match yang berhasil terjadwal
@@ -523,9 +599,14 @@ export async function generateAllCategoriesScheduleAction(): Promise<ScheduleAct
         const unscheduledMatchIds = scheduleResult.unscheduled.map((u) => u.matchId)
 
         if (unscheduledCount > 0) {
+            const reservedWarningDetail =
+                reservedRoundsAtEnd > 0
+                    ? ` Hal ini kemungkinan disebabkan ${reservedRoundsAtEnd} ronde di akhir jadwal dicadangkan untuk babak knockout (${categoryIds.length} kategori). Solusi: tambah court di Setup Turnamen, perpanjang jam operasional, atau matikan sementara kategori yang belum perlu.`
+                    : ''
+
             return {
                 success: true,
-                message: `${scheduledCount} pertandingan dari ${categoryIds.length} kategori berhasil dijadwalkan secara paralel, namun terdapat ${unscheduledCount} pertandingan yang tidak muat dalam jam operasional (${startTime} - ${endTime}).`,
+                message: `${scheduledCount} pertandingan dari ${categoryIds.length} kategori berhasil dijadwalkan secara paralel, namun terdapat ${unscheduledCount} pertandingan yang tidak muat dalam jam operasional (${startTime} - ${endTime}).${reservedWarningDetail}`,
                 scheduledCount,
                 unscheduledCount,
                 unscheduledMatchIds,

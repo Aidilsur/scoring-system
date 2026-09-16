@@ -30,12 +30,13 @@ export function MatchScoringView({
         isReadOnly,
         historyCount,
         isPending,
+        pendingTeam,
         isMatchLoading,
         recordPoint,
         undoPoint,
         toggleServe,
         releaseControl,
-    } = useScoringManagement(courtId, matchId)
+    } = useScoringManagement(courtId, matchId, userEmail)
 
     const [isReleasing, setIsReleasing] = React.useState(false)
 
@@ -129,6 +130,7 @@ export function MatchScoringView({
                     canUndo={canUndo}
                     historyCount={historyCount}
                     isPending={isPending || isMatchLoading}
+                    pendingTeam={pendingTeam}
                     isReadOnly={isReadOnly}
                     isReleasing={isReleasing}
                     onRecordPoint={recordPoint}

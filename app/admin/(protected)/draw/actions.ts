@@ -88,7 +88,9 @@ export async function generateCategoryDrawAction(
       return {
         success: false,
         message:
-          'Regenerate draw diblokir: Terdapat pertandingan yang sedang berlangsung (live) atau sudah selesai (completed) pada kategori ini. Drawing tidak boleh diubah saat turnamen sudah berjalan.',
+          'Regenerate draw diblokir: Terdapat pertandingan yang sedang ' +
+          'berlangsung (live) atau sudah selesai (completed) pada kategori ini. ' +
+          'Drawing tidak boleh diubah saat turnamen sudah berjalan.',
       }
     }
 
@@ -103,18 +105,23 @@ export async function generateCategoryDrawAction(
     if (teamsErr || !confirmedTeams) {
       return {
         success: false,
-        message: `Gagal mengambil data peserta: ${teamsErr?.message || 'Data tidak ditemukan'}`,
+        message: `Gagal mengambil data peserta: ${
+          teamsErr?.message || 'Data tidak ditemukan'
+        }`,
       }
     }
 
     if (confirmedTeams.length < 2) {
       return {
         success: false,
-        message: `Minimal harus ada 2 tim berstatus 'confirmed' untuk membuat drawing (saat ini ${confirmedTeams.length} tim).`,
+        message:
+          `Minimal harus ada 2 tim berstatus 'confirmed' untuk membuat drawing ` +
+          `(saat ini ${confirmedTeams.length} tim).`,
       }
     }
 
-    // 6. Jika sudah ada data draw lama (semua match masih 'scheduled'), hapus data lama terlebih dahulu
+    // 6. Jika sudah ada data draw lama (semua match masih 'scheduled'),
+    // hapus data lama terlebih dahulu
     if (existingMatches && existingMatches.length > 0) {
       const { error: delMatchesErr } = await supabase
         .from('matches')
@@ -258,7 +265,9 @@ export async function generateCategoryDrawAction(
 
     return {
       success: true,
-      message: `Drawing berhasil dibuat: ${drawnGroups.length} grup dan ${totalMatchesCreated} pertandingan round robin siap dijadwalkan.`,
+      message:
+        `Drawing berhasil dibuat: ${drawnGroups.length} grup dan ` +
+        `${totalMatchesCreated} pertandingan round robin siap dijadwalkan.`,
       groupsCount: drawnGroups.length,
       matchesCount: totalMatchesCreated,
     }

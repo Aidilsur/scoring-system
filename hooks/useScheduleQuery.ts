@@ -2,10 +2,21 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
-import { Category, Match, Court, TournamentSettings } from '@/types/domain'
+import { Category, Match, Court, TournamentSettings, MatchRound } from '@/types/domain'
+import {
+    parseTimeToMinutes,
+    formatMinutesToTime,
+} from '@/lib/schedule/generateMatchSchedule'
 
 export const CATEGORIES_WITH_GROUPS_QUERY_KEY = ['categories', 'with-groups']
 export const CATEGORY_SCHEDULE_QUERY_KEY = ['schedule', 'category']
+
+export interface SchedulableCategoryItem extends Category {
+    categoryId: string
+    round: MatchRound
+    roundLabel: string
+    displayLabel: string
+}
 
 export interface OccupiedCategorySlot {
     courtId: string
@@ -15,12 +26,22 @@ export interface OccupiedCategorySlot {
     categoryName?: string
 }
 
+export interface KnockoutReservationInfo {
+    reservedRounds: number
+    activeCategoriesCount: number
+    totalKnockoutMatches: number
+    thirdPlaceEnabled: boolean
+    reservedStartTime?: string
+}
+
 export interface CategoryScheduleData {
     category?: Category
+    targetRound?: MatchRound
     matches: Match[]
     courts: Court[]
     tournamentSettings: TournamentSettings | null
     occupiedSlots: OccupiedCategorySlot[]
+    knockoutReservation?: KnockoutReservationInfo
     totalMatches: number
     scheduledMatches: Match[]
     unscheduledMatches: Match[]
@@ -47,27 +68,26 @@ export function extractHHmm(timeStr?: string | null): string {
 }
 
 /**
- * Hook untuk mengambil kategori aktif yang sudah memiliki grup hasil drawing
+ * Hook untuk mengambil kategori & babak (fase grup, semifinal, final) yang dapat dijadwalkan
  */
 export function useCategoriesWithGroupsQuery() {
     const supabase = createClient()
 
-    return useQuery<Category[]>({
+    return useQuery<SchedulableCategoryItem[]>({
         queryKey: CATEGORIES_WITH_GROUPS_QUERY_KEY,
         queryFn: async () => {
-            // Mengambil semua kategori yang memiliki relasi grup di tabel groups (termasuk kategori nonaktif)
+            // 1. Mengambil semua kategori yang memiliki relasi grup di tabel groups
             const { data, error } = await supabase
                 .from('categories')
                 .select('*, groups!inner(id)')
                 .order('name', { ascending: true })
 
             if (error) {
-                // Fallback jika inner join gagal atau groups kosong
                 console.warn('Categories with groups query error:', error.message)
                 return []
             }
 
-            // Deduplikasi kategori jika ada beberapa grup
+            // Deduplikasi kategori
             const uniqueCategoriesMap = new Map<string, Category>()
             for (const item of data || []) {
                 if (!uniqueCategoriesMap.has(item.id)) {
@@ -82,7 +102,25 @@ export function useCategoriesWithGroupsQuery() {
                 }
             }
 
-            return Array.from(uniqueCategoriesMap.values())
+            const categories = Array.from(uniqueCategoriesMap.values())
+            if (categories.length === 0) return []
+
+            const categoryIds = categories.map((c) => c.id)
+
+            const schedulableItems: SchedulableCategoryItem[] = categories.map((cat) => ({
+                id: cat.id,
+                categoryId: cat.id,
+                round: 'group' as MatchRound,
+                name: cat.name,
+                partner_type: cat.partner_type,
+                level: cat.level,
+                is_active: cat.is_active,
+                created_at: cat.created_at,
+                roundLabel: 'Fase Grup',
+                displayLabel: `${cat.name} (${cat.partner_type.toUpperCase()} - ${cat.level.toUpperCase()})`,
+            }))
+
+            return schedulableItems
         },
     })
 }
@@ -90,18 +128,26 @@ export function useCategoriesWithGroupsQuery() {
 /**
  * Hook untuk mengambil data jadwal, match, court, dan slot terisi untuk kategori terpilih
  */
-export function useCategoryScheduleQuery(categoryId?: string) {
+export function useCategoryScheduleQuery(targetKey?: string) {
     const supabase = createClient()
 
     return useQuery<CategoryScheduleData>({
-        queryKey: [...CATEGORY_SCHEDULE_QUERY_KEY, categoryId],
-        enabled: Boolean(categoryId),
+        queryKey: [...CATEGORY_SCHEDULE_QUERY_KEY, targetKey],
+        enabled: Boolean(targetKey),
         queryFn: async () => {
-            if (!categoryId) {
+            if (!targetKey) {
                 throw new Error('Category ID wajib disediakan.')
             }
 
-            const isAllMode = categoryId === 'ALL'
+            const isAllMode = targetKey === 'ALL'
+            let categoryId = targetKey
+            let targetRound: MatchRound = 'group'
+
+            if (!isAllMode && targetKey.includes(':')) {
+                const parts = targetKey.split(':')
+                categoryId = parts[0]
+                targetRound = (parts[1] as MatchRound) || 'group'
+            }
 
             // 1. Ambil detail kategori (jika bukan mode ALL)
             let categoryData: Category | undefined
@@ -149,7 +195,7 @@ export function useCategoryScheduleQuery(categoryId?: string) {
                 courts = (courtsData as Court[]) || []
             }
 
-            // 4. Ambil match round='group' (apakah untuk 1 kategori atau seluruh kategori aktif)
+            // 4. Ambil match sesuai round dan kategori
             let matchesQuery = supabase
                 .from('matches')
                 .select(`
@@ -160,10 +206,13 @@ export function useCategoryScheduleQuery(categoryId?: string) {
                     court:courts(*),
                     category:categories(*)
                 `)
-                .eq('round', 'group')
 
             if (!isAllMode) {
-                matchesQuery = matchesQuery.eq('category_id', categoryId)
+                matchesQuery = matchesQuery
+                    .eq('category_id', categoryId)
+                    .eq('round', targetRound)
+            } else {
+                matchesQuery = matchesQuery.eq('round', 'group')
             }
 
             const { data: matchesData, error: matchesError } = await matchesQuery
@@ -175,7 +224,8 @@ export function useCategoryScheduleQuery(categoryId?: string) {
 
             const matches = (matchesData as Match[]) || []
 
-            // 5. Ambil slot terisi oleh kategori lain (hanya jika mode per-kategori)
+            // 5. Ambil slot terisi oleh match LAIN (hanya jika mode per-kategori)
+            // Memperhitungkan SEMUA match (grup maupun knockout) dari SEMUA kategori yang sudah punya court_id/scheduled_time
             let occupiedSlots: OccupiedCategorySlot[] = []
             if (!isAllMode) {
                 const { data: otherMatchesData } = await supabase
@@ -184,20 +234,22 @@ export function useCategoryScheduleQuery(categoryId?: string) {
                         court_id,
                         scheduled_time,
                         category_id,
+                        round,
                         categories(name),
                         courts(name)
                     `)
-                    .neq('category_id', categoryId)
                     .not('court_id', 'is', null)
                     .not('scheduled_time', 'is', null)
 
-                occupiedSlots = (otherMatchesData || []).map((m: any) => ({
-                    courtId: m.court_id,
-                    courtName: m.courts?.name,
-                    scheduledTime: extractHHmm(m.scheduled_time),
-                    categoryId: m.category_id,
-                    categoryName: m.categories?.name,
-                }))
+                occupiedSlots = (otherMatchesData || [])
+                    .filter((m: any) => !(m.category_id === categoryId && m.round === targetRound))
+                    .map((m: any) => ({
+                        courtId: m.court_id,
+                        courtName: m.courts?.name,
+                        scheduledTime: extractHHmm(m.scheduled_time),
+                        categoryId: m.category_id,
+                        categoryName: m.categories?.name,
+                    }))
             }
 
             // 6. Hitung status global untuk seluruh match babak grup di semua kategori (untuk tombol reset)
@@ -218,7 +270,46 @@ export function useCategoryScheduleQuery(categoryId?: string) {
 
             const hasAnyScheduledGroupMatches = (scheduledCount || 0) > 0
 
-            // 7. Hitung metrik dan status
+            // 7. Hitung estimasi reserved knockout rounds jika mode group atau ALL
+            let knockoutReservation: KnockoutReservationInfo | undefined = undefined
+            if (isAllMode || targetRound === 'group') {
+                const { data: activeCatsWithGroups } = await supabase
+                    .from('categories')
+                    .select('id, is_active, groups!inner(id)')
+                    .eq('is_active', true)
+
+                const uniqueActiveCats = new Set<string>()
+                for (const c of activeCatsWithGroups || []) {
+                    uniqueActiveCats.add(c.id)
+                }
+
+                const activeCategoriesCount = uniqueActiveCats.size
+                if (activeCategoriesCount > 0 && courts.length > 0 && tournamentSettings) {
+                    const thirdPlaceEnabled = tournamentSettings.third_place_enabled ?? false
+                    const knockoutMatchesPerCat = 2 + 1 + (thirdPlaceEnabled ? 1 : 0)
+                    const totalKnockoutMatches = activeCategoriesCount * knockoutMatchesPerCat
+                    const reservedRounds = Math.ceil(totalKnockoutMatches / courts.length)
+
+                    let reservedStartTime: string | undefined = undefined
+                    if (tournamentSettings.daily_end_time && tournamentSettings.match_duration_minutes) {
+                        const endMinutes = parseTimeToMinutes(tournamentSettings.daily_end_time)
+                        const startMinutes = endMinutes - reservedRounds * tournamentSettings.match_duration_minutes
+                        if (startMinutes > 0) {
+                            reservedStartTime = formatMinutesToTime(startMinutes)
+                        }
+                    }
+
+                    knockoutReservation = {
+                        reservedRounds,
+                        activeCategoriesCount,
+                        totalKnockoutMatches,
+                        thirdPlaceEnabled,
+                        reservedStartTime,
+                    }
+                }
+            }
+
+            // 8. Hitung metrik dan status untuk batch yang sedang aktif
             const totalMatches = matches.length
             const scheduledMatches = matches.filter(
                 (m) => m.court_id !== null && m.scheduled_time !== null
@@ -234,10 +325,12 @@ export function useCategoryScheduleQuery(categoryId?: string) {
 
             return {
                 category: categoryData as Category,
+                targetRound,
                 matches,
                 courts,
                 tournamentSettings,
                 occupiedSlots,
+                knockoutReservation,
                 totalMatches,
                 scheduledMatches,
                 unscheduledMatches,

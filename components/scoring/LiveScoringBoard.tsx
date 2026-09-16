@@ -22,6 +22,7 @@ export interface LiveScoringBoardProps {
     canUndo: boolean
     historyCount: number
     isPending: boolean
+    pendingTeam?: MatchTeam | null
     isReadOnly?: boolean
     isReleasing?: boolean
     onRecordPoint: (team: MatchTeam) => void
@@ -56,6 +57,7 @@ export function LiveScoringBoard({
     canUndo,
     historyCount,
     isPending,
+    pendingTeam,
     isReadOnly = false,
     isReleasing = false,
     onRecordPoint,
@@ -107,7 +109,7 @@ export function LiveScoringBoard({
                             onClick={onReleaseControl}
                             disabled={isPending || isReleasing}
                             className="text-amber-400 border-amber-500/30 hover:bg-amber-500/10 hover:border-amber-500/50 text-xs font-bold py-1 px-2.5 h-auto transition-all"
-                            title="Lepas kendali scoring agar dapat diambil alih device wasit lain"
+                            title="Lepas kendali scoring agar dapat diambil alih akun wasit lain"
                         >
                             <Unlock className="w-3.5 h-3.5 mr-1 text-amber-400" />
                             {isReleasing ? 'Melepas...' : 'Lepas Kendali'}
@@ -128,14 +130,14 @@ export function LiveScoringBoard({
                 </div>
             </div>
 
-            {/* Banner Mode Read-Only / Sesi Diklaim Device Lain */}
+            {/* Banner Mode Read-Only / Sesi Diklaim Akun Lain */}
             {isReadOnly && (
                 <div className="p-4 rounded-xl bg-amber-500/10 border-2 border-amber-500/40 flex items-center justify-between gap-3 text-amber-200">
                     <div className="flex items-center gap-3">
                         <Lock className="w-5 h-5 text-amber-400 shrink-0" />
                         <div>
                             <span className="font-bold text-sm tracking-wide text-amber-300">
-                                Match ini sedang di-score oleh device lain
+                                Match ini sedang di-score oleh akun wasit lain
                             </span>
                             <p className="text-xs text-zinc-300">
                                 Mode Read-Only aktif. Skor tetap diperbarui secara live via Realtime, namun tombol poin dan undo dinonaktifkan.
@@ -248,13 +250,22 @@ export function LiveScoringBoard({
                     <div className="w-full">
                         <Button
                             onClick={() => onRecordPoint('team_a')}
-                            disabled={isCompleted || isReadOnly}
+                            disabled={isCompleted || isReadOnly || isPending}
                             variant="primary"
                             size="lg"
                             className="w-full py-5 text-xl sm:text-2xl font-black rounded-2xl shadow-xl shadow-lime-400/20 active:scale-[0.98] transition-transform flex items-center justify-center gap-2"
                         >
-                            <Plus className="w-6 h-6 stroke-[3]" />
-                            <span>POIN TIM A</span>
+                            {isPending && pendingTeam === 'team_a' ? (
+                                <span className="flex items-center justify-center gap-2">
+                                    <span className="w-6 h-6 border-2 border-zinc-950 border-t-transparent rounded-full animate-spin" />
+                                    <span>Mencatat...</span>
+                                </span>
+                            ) : (
+                                <>
+                                    <Plus className="w-6 h-6 stroke-[3]" />
+                                    <span>POIN TIM A</span>
+                                </>
+                            )}
                         </Button>
                     </div>
                 </div>
@@ -305,13 +316,22 @@ export function LiveScoringBoard({
                     <div className="w-full">
                         <Button
                             onClick={() => onRecordPoint('team_b')}
-                            disabled={isCompleted || isReadOnly}
+                            disabled={isCompleted || isReadOnly || isPending}
                             variant="primary"
                             size="lg"
                             className="w-full py-5 text-xl sm:text-2xl font-black rounded-2xl shadow-xl shadow-lime-400/20 active:scale-[0.98] transition-transform flex items-center justify-center gap-2"
                         >
-                            <Plus className="w-6 h-6 stroke-[3]" />
-                            <span>POIN TIM B</span>
+                            {isPending && pendingTeam === 'team_b' ? (
+                                <span className="flex items-center justify-center gap-2">
+                                    <span className="w-6 h-6 border-2 border-zinc-950 border-t-transparent rounded-full animate-spin" />
+                                    <span>Mencatat...</span>
+                                </span>
+                            ) : (
+                                <>
+                                    <Plus className="w-6 h-6 stroke-[3]" />
+                                    <span>POIN TIM B</span>
+                                </>
+                            )}
                         </Button>
                     </div>
                 </div>

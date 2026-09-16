@@ -11,7 +11,6 @@ import { useCourtsQuery } from '@/hooks/useCourtsQuery'
 import { useCourtMatchesQuery } from '@/hooks/useCourtMatchesQuery'
 import { useRealtimeMatch } from '@/hooks/useRealtimeMatch'
 import { claimScorerSessionAction } from '@/app/admin/(protected)/scoring/actions'
-import { getClientScorerSessionId } from '@/lib/scoring'
 import { toast } from '@/lib/toast'
 
 export interface CourtMatchesViewProps {
@@ -69,27 +68,22 @@ export function CourtMatchesView({
                 return
             }
 
-            // 1. Dapatkan / generate session ID acak browser device tsb di sessionStorage
-            const sessionId = getClientScorerSessionId()
-
-            // 2. Klaim sesi scoring di database jika belum diklaim / expired
-            if (sessionId) {
-                try {
-                    const claimRes = await claimScorerSessionAction(matchId, sessionId)
-                    if (!claimRes.isOwner) {
-                        toast.warning(
-                            'Match ini sedang di-score oleh device lain. Halaman dibuka dalam mode Read-Only.'
-                        )
-                    }
-                } catch (err) {
-                    console.error('Error claiming session on select:', err)
+            // Klaim sesi scoring di database jika belum diklaim / expired
+            try {
+                const claimRes = await claimScorerSessionAction(matchId, userEmail)
+                if (!claimRes.isOwner) {
+                    toast.warning(
+                        claimRes.message || 'Match ini sedang di-score oleh akun lain. Halaman dibuka dalam mode Read-Only.'
+                    )
                 }
+            } catch (err) {
+                console.error('Error claiming session on select:', err)
             }
 
-            // 3. Pindah ke halaman nested live scoring
+            // Pindah ke halaman nested live scoring
             router.push(`/admin/scoring/${courtId}/${matchId}`)
         },
-        [matches, courtId, router]
+        [matches, courtId, userEmail, router]
     )
 
     return (

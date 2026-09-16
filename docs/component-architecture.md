@@ -64,3 +64,10 @@ selalu "cukup 1 tempat".
 - Semua feedback aksi (sukses/gagal) dari Server Action **WAJIB ditampilkan sebagai toast notification (via sonner)**, bukan hanya inline text di halaman — untuk memastikan admin selalu melihat feedback meski sedang scroll di bagian manapun halaman.
 - Gunakan helper standar dari `@/lib/toast` (`toast.success(message)`, `toast.error(message)`, `toast.warning(message)`) agar konsisten di seluruh aplikasi.
 - Inline alert/feedback kartu di body halaman bersifat opsional/sekunder; toast notification adalah saluran komunikasi utama untuk konfirmasi aksi mutasi data admin.
+
+## K. Clean Code Standards
+
+- **Tidak boleh ada dead code**: import yang tidak dipakai, function/variable yang di-export tapi tidak pernah digunakan di tempat lain, komentar yang menjelaskan hal yang sudah jelas dari kode itu sendiri (self-explanatory) harus dihapus. Komentar hanya dipertahankan untuk menjelaskan "kenapa" (alasan non-obvious), bukan "apa" yang sudah jelas dari nama variable/function.
+- **Hindari "god hook"**: custom hook yang menangani lebih dari 1 tanggung jawab (misal: fetch data + form state + file upload + navigasi sekaligus dalam 1 hook). Pecah menjadi beberapa hook terpisah sesuai tanggung jawab masing-masing (misal `useTeamForm`, `useTeamFileUpload`, `useTeamSubmit`), lalu compose di komponen jika perlu.
+- **Panjang baris kode terukur**: Baris kode tidak boleh terlalu panjang (target maksimal ~100 karakter). JSX/props yang panjang dipecah multi-line, kondisi kompleks diekstrak ke variable/function bernama jelas terlebih dahulu.
+- **Refactor branching kompleks ke object/record lookup**: Conditional rendering dengan banyak percabangan (if/else if berantai, atau switch dengan banyak case untuk menentukan tampilan) sebaiknya direfactor menjadi object/record lookup (misal: `const STATUS_CONFIG = { live: {...}, scheduled: {...}, completed: {...} }`, lalu `STATUS_CONFIG[status]`) — lebih deklaratif dan mudah ditambah kasus baru.

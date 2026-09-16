@@ -9,10 +9,11 @@ export type Group = DrawnGroup
 
 /**
  * Mengacak array menggunakan algoritma Fisher-Yates (Knuth shuffle).
- * Menghasilkan permutasi acak yang seragam (unbiased), berbeda dengan `sort(() => Math.random() - 0.5)`.
+ * Menghasilkan permutasi acak yang seragam (unbiased),
+ * berbeda dengan `sort(() => Math.random() - 0.5)`.
  * Fungsi ini murni (pure function) dan tidak memutasi array asli.
  */
-export function shuffle<T>(array: readonly T[]): T[] {
+function shuffle<T>(array: readonly T[]): T[] {
   const result = [...array]
   for (let i = result.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1))
@@ -26,7 +27,7 @@ export function shuffle<T>(array: readonly T[]): T[] {
 /**
  * Menghasilkan label nama grup otomatis (Group A, Group B, ..., Group Z, Group AA, dst.)
  */
-export function formatGroupName(index: number): string {
+function formatGroupName(index: number): string {
   let label = ''
   let num = index
   while (num >= 0) {

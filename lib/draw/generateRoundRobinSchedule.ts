@@ -1,4 +1,4 @@
-export interface RoundRobinMatchPair {
+interface RoundRobinMatchPair {
   teamAId: string
   teamBId: string
 }

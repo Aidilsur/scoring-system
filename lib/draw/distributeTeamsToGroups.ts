@@ -6,9 +6,10 @@
  * 2. Jumlah grup yang dibentuk (k) dipilih dari kandidat di sekitar teamCount / targetGroupSize
  *    (yaitu Math.floor dan Math.ceil).
  * 3. Setiap kandidat dihitung variansi / deviasinya terhadap targetGroupSize.
- * 4. Jika terjadi tie deviasi (contoh 14 tim target 4 -> k=3 menghasilkan [5, 5, 4] vs k=4 menghasilkan [4, 4, 3, 3]),
- *    sistem memilih distribusi dengan ukuran grup minimum yang lebih besar (memilih [5, 5, 4] dengan min size 4,
- *    bukan [4, 4, 3, 3] dengan min size 3) agar tiap tim mendapatkan jumlah pertandingan yang cukup.
+ * 4. Jika terjadi tie deviasi (contoh 14 tim target 4 -> k=3 menghasilkan [5, 5, 4]
+ *    vs k=4 menghasilkan [4, 4, 3, 3]), sistem memilih distribusi dengan ukuran
+ *    grup minimum yang lebih besar (memilih [5, 5, 4] dengan min size 4, bukan
+ *    [4, 4, 3, 3] dengan min size 3) agar tiap tim mendapat jumlah match cukup.
  * 
  * Contoh Kasus Habis Dibagi Rata:
  * - distributeTeamsToGroups(16, 4) -> [4, 4, 4, 4] (16 / 4 = 4 grup pas)
@@ -17,11 +18,11 @@
  * 
  * Contoh Kasus Tidak Habis Dibagi Rata:
  * - distributeTeamsToGroups(14, 4) -> [5, 5, 4] (bukan [4, 4, 4, 2] atau [4, 4, 3, 3])
- * - distributeTeamsToGroups(15, 4) -> [4, 4, 4, 3] (15/4 = 3.75 -> 4 grup lebih dekat ke 4 daripada 3 grup [5,5,5])
+ * - distributeTeamsToGroups(15, 4) -> [4, 4, 4, 3] (15/4 = 3.75 -> 4 grup lebih dekat ke 4)
  * - distributeTeamsToGroups(17, 4) -> [5, 4, 4, 4] (17/4 = 4.25 -> 4 grup)
  * - distributeTeamsToGroups(18, 4) -> [5, 5, 4, 4] (tie deviasi -> k=4 dipilih karena min size 4)
  * - distributeTeamsToGroups(19, 4) -> [4, 4, 4, 4, 3]
- * - distributeTeamsToGroups(10, 4) -> [5, 5] (tie deviasi -> k=2 min size 5 vs k=3 [4,3,3] min size 3)
+ * - distributeTeamsToGroups(10, 4) -> [5, 5] (tie deviasi -> k=2 min size 5 vs k=3 min size 3)
  * - distributeTeamsToGroups(7, 4)  -> [4, 3]
  * - distributeTeamsToGroups(6, 4)  -> [3, 3]
  * - distributeTeamsToGroups(3, 4)  -> [3] (kurang dari target, tetap 1 grup)
@@ -32,7 +33,7 @@
  * 
  * @param teamCount Jumlah total tim yang terdaftar dan confirmed
  * @param targetGroupSize Target ukuran grup ideal (biasanya 4)
- * @returns Array ukuran tiap grup, diurutkan descending (grup dengan tim lebih banyak diletakkan di depan)
+ * @returns Array ukuran tiap grup, diurutkan descending (tim lebih banyak di depan)
  */
 export function distributeTeamsToGroups(
   teamCount: number,
@@ -66,11 +67,17 @@ export function distributeTeamsToGroups(
 
   // Pilih kandidat terbaik:
   // 1. Total squared difference terendah dari targetGroupSize
-  // 2. Tie breaker: Ukuran grup minimum terbesar (misal [5,5,4] min=4 lebih dipilih daripada [4,4,3,3] min=3)
+  // 2. Tie breaker: Ukuran grup minimum terbesar (misal [5,5,4] min=4 vs [4,4,3,3] min=3)
   // 3. Tie breaker: Jumlah grup lebih sedikit
   candidates.sort((a, b) => {
-    const scoreA = a.reduce((sum, s) => sum + Math.pow(s - targetGroupSize, 2), 0)
-    const scoreB = b.reduce((sum, s) => sum + Math.pow(s - targetGroupSize, 2), 0)
+    const scoreA = a.reduce(
+      (sum, s) => sum + Math.pow(s - targetGroupSize, 2),
+      0
+    )
+    const scoreB = b.reduce(
+      (sum, s) => sum + Math.pow(s - targetGroupSize, 2),
+      0
+    )
 
     if (scoreA !== scoreB) {
       return scoreA - scoreB
