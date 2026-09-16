@@ -5,10 +5,8 @@ import Link from 'next/link'
 import {
     Trophy,
     RotateCw,
-    Play,
     Sparkles,
     AlertCircle,
-    Info,
     Calendar,
     Layers,
     Crown,
@@ -17,11 +15,12 @@ import {
 } from 'lucide-react'
 import { useBracketManagement } from '@/hooks/useBracketManagement'
 import { SelectInput, Button, Card, Badge } from '@/components/ui'
+import { cn } from '@/lib/utils'
 import { BracketPairingCard } from './BracketPairingCard'
 import { FinalPairingCard } from './FinalPairingCard'
 import { BracketStatusAlert } from './BracketStatusAlert'
 
-export interface BracketManagementViewProps {
+interface BracketManagementViewProps {
     initialCategoryId?: string
 }
 
@@ -29,8 +28,6 @@ export function BracketManagementView({ initialCategoryId }: BracketManagementVi
     const {
         categories,
         isLoadingCategories,
-        isCategoriesError,
-        categoriesError,
         selectedCategoryId,
         setSelectedCategoryId,
         bracketData,
@@ -56,7 +53,9 @@ export function BracketManagementView({ initialCategoryId }: BracketManagementVi
     if (!isLoadingCategories && categories.length === 0) {
         return (
             <div className="space-y-6">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-zinc-800">
+                <div
+                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-zinc-800"
+                >
                     <div>
                         <div className="flex items-center gap-2 text-xs text-zinc-400 mb-1">
                             <Link href="/admin" className="hover:text-lime-400 transition-colors">
@@ -65,18 +64,26 @@ export function BracketManagementView({ initialCategoryId }: BracketManagementVi
                             <span>/</span>
                             <span className="text-zinc-200 font-medium">Bracket Knockout</span>
                         </div>
-                        <h1 className="font-[family-name:var(--font-anton)] text-3xl sm:text-4xl text-white uppercase tracking-tight">
+                        <h1
+                            className="font-[family-name:var(--font-anton)] text-3xl sm:text-4xl text-white uppercase tracking-tight"
+                        >
                             Bracket Babak Gugur
                         </h1>
                     </div>
                 </div>
 
-                <Card className="p-8 text-center max-w-xl mx-auto space-y-4 bg-zinc-900/60 border-zinc-800">
-                    <div className="w-12 h-12 rounded-2xl bg-zinc-800 text-zinc-400 flex items-center justify-center mx-auto">
+                <Card
+                    className="p-8 text-center max-w-xl mx-auto space-y-4 bg-zinc-900/60 border-zinc-800"
+                >
+                    <div
+                        className="w-12 h-12 rounded-2xl bg-zinc-800 text-zinc-400 flex items-center justify-center mx-auto"
+                    >
                         <Layers className="w-6 h-6" />
                     </div>
                     <div className="space-y-1">
-                        <h2 className="text-base font-bold text-white">Belum Ada Kategori Dengan Grup</h2>
+                        <h2 className="text-base font-bold text-white">
+                            Belum Ada Kategori Dengan Grup
+                        </h2>
                         <p className="text-xs text-zinc-400 max-w-md mx-auto">
                             Tahap knockout membutuhkan pembagian grup babak penyisihan terlebih dahulu. Silakan lakukan proses drawing grup untuk kategori turnamen.
                         </p>
@@ -118,7 +125,9 @@ export function BracketManagementView({ initialCategoryId }: BracketManagementVi
     return (
         <div className="space-y-8">
             {/* Top Header & Breadcrumbs */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-zinc-800">
+            <div
+                className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-zinc-800"
+            >
                 <div>
                     <div className="flex items-center gap-2 text-xs text-zinc-400 mb-1">
                         <Link href="/admin" className="hover:text-lime-400 transition-colors">
@@ -127,7 +136,9 @@ export function BracketManagementView({ initialCategoryId }: BracketManagementVi
                         <span>/</span>
                         <span className="text-zinc-200 font-medium">Bracket Knockout</span>
                     </div>
-                    <h1 className="font-[family-name:var(--font-anton)] text-3xl sm:text-4xl text-white uppercase tracking-tight">
+                    <h1
+                        className="font-[family-name:var(--font-anton)] text-3xl sm:text-4xl text-white uppercase tracking-tight"
+                    >
                         Bracket Babak Gugur
                     </h1>
                     <p className="text-xs text-zinc-400 mt-1">
@@ -143,9 +154,10 @@ export function BracketManagementView({ initialCategoryId }: BracketManagementVi
                     className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white hover:border-zinc-700 transition cursor-pointer disabled:opacity-50"
                 >
                     <RotateCw
-                        className={`w-3.5 h-3.5 ${
-                            isRefetchingBracket ? 'animate-spin text-lime-400' : ''
-                        }`}
+                        className={cn(
+                            'w-3.5 h-3.5',
+                            isRefetchingBracket && 'animate-spin text-lime-400'
+                        )}
                     />
                     Segarkan Data
                 </button>
@@ -179,7 +191,9 @@ export function BracketManagementView({ initialCategoryId }: BracketManagementVi
                             className="w-full flex items-center justify-center gap-2"
                         >
                             <Sparkles className="w-4 h-4" />
-                            {hasExistingBracket ? 'Regenerate Bracket Semifinal' : 'Generate Bracket Semifinal'}
+                            {hasExistingBracket
+                                ? 'Regenerate Bracket Semifinal'
+                                : 'Generate Bracket Semifinal'}
                         </Button>
                     </div>
                 </div>
@@ -200,9 +214,13 @@ export function BracketManagementView({ initialCategoryId }: BracketManagementVi
             {/* Semifinal Pairings Display */}
             {hasExistingBracket && (
                 <div className="space-y-4">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div
+                        className="flex flex-col sm:flex-row sm:items-center justify-between gap-2"
+                    >
                         <div>
-                            <h2 className="font-[family-name:var(--font-anton)] text-2xl text-white uppercase tracking-tight flex items-center gap-2">
+                            <h2
+                                className="font-[family-name:var(--font-anton)] text-2xl text-white uppercase tracking-tight flex items-center gap-2"
+                            >
                                 <Trophy className="w-5 h-5 text-lime-400" />
                                 Pasangan Semifinal
                             </h2>
@@ -238,7 +256,9 @@ export function BracketManagementView({ initialCategoryId }: BracketManagementVi
                     </div>
 
                     {/* Schedule Link Card */}
-                    <div className="p-4 rounded-xl bg-zinc-900/40 border border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-zinc-400">
+                    <div
+                        className="p-4 rounded-xl bg-zinc-900/40 border border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-zinc-400"
+                    >
                         <div className="flex items-center gap-2">
                             <Calendar className="w-4 h-4 text-lime-400" />
                             <span>Pertandingan semifinal belum memiliki court dan jam tanding?</span>
@@ -256,19 +276,26 @@ export function BracketManagementView({ initialCategoryId }: BracketManagementVi
                     {/* ------------------------------------------------------------------ */}
                     <div className="pt-8 border-t border-zinc-800 space-y-6">
                         <Card className="p-6 bg-zinc-900/80 border-zinc-800 shadow-xl space-y-6">
-                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div
+                                className="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                            >
                                 <div>
                                     <div className="flex items-center gap-2">
                                         <span className="text-xs font-mono font-bold uppercase tracking-wider text-amber-400">
-                                            Puncak Turnamen
+                                             Puncak Turnamen
                                         </span>
                                         {hasStartedFinalStage && (
-                                            <Badge variant="danger" className="text-[10px] font-mono uppercase">
+                                            <Badge
+                                                variant="danger"
+                                                className="text-[10px] font-mono uppercase"
+                                            >
                                                 Pertandingan Dimulai
                                             </Badge>
                                         )}
                                     </div>
-                                    <h2 className="font-[family-name:var(--font-anton)] text-2xl sm:text-3xl text-white uppercase tracking-tight flex items-center gap-2 mt-0.5">
+                                    <h2
+                                        className="font-[family-name:var(--font-anton)] text-2xl sm:text-3xl text-white uppercase tracking-tight flex items-center gap-2 mt-0.5"
+                                    >
                                         <Crown className="w-6 h-6 text-amber-400" />
                                         Babak Final {thirdPlaceEnabled ? '& Perebutan Juara 3' : ''}
                                     </h2>
@@ -322,8 +349,12 @@ export function BracketManagementView({ initialCategoryId }: BracketManagementVi
 
                             {/* Status Alerts for Final */}
                             {!isSemifinalComplete && (
-                                <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-3 text-amber-300 text-xs">
-                                    <AlertCircle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+                                <div
+                                    className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-3 text-amber-300 text-xs"
+                                >
+                                    <AlertCircle
+                                        className="w-5 h-5 text-amber-400 shrink-0 mt-0.5"
+                                    />
                                     <div className="space-y-1">
                                         <p className="font-bold text-amber-200">
                                             Babak Semifinal Belum Selesai
@@ -336,8 +367,12 @@ export function BracketManagementView({ initialCategoryId }: BracketManagementVi
                             )}
 
                             {isSemifinalComplete && !hasExistingFinal && (
-                                <div className="p-4 rounded-xl bg-lime-500/10 border border-lime-500/30 flex items-start gap-3 text-lime-300 text-xs">
-                                    <CheckCircle2 className="w-5 h-5 text-lime-400 shrink-0 mt-0.5" />
+                                <div
+                                    className="p-4 rounded-xl bg-lime-500/10 border border-lime-500/30 flex items-start gap-3 text-lime-300 text-xs"
+                                >
+                                    <CheckCircle2
+                                        className="w-5 h-5 text-lime-400 shrink-0 mt-0.5"
+                                    />
                                     <div className="space-y-1">
                                         <p className="font-bold text-lime-200">
                                             Babak Semifinal Selesai — Siap Generate Final!
@@ -350,8 +385,12 @@ export function BracketManagementView({ initialCategoryId }: BracketManagementVi
                             )}
 
                             {hasStartedFinalStage && (
-                                <div className="p-4 rounded-xl bg-rose-950/30 border border-rose-500/40 flex items-start gap-3 text-rose-300 text-xs">
-                                    <ShieldAlert className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
+                                <div
+                                    className="p-4 rounded-xl bg-rose-950/30 border border-rose-500/40 flex items-start gap-3 text-rose-300 text-xs"
+                                >
+                                    <ShieldAlert
+                                        className="w-5 h-5 text-rose-400 shrink-0 mt-0.5"
+                                    />
                                     <div className="space-y-1">
                                         <p className="font-bold text-rose-200">
                                             Proteksi Pertandingan Aktif
@@ -373,12 +412,17 @@ export function BracketManagementView({ initialCategoryId }: BracketManagementVi
 
                                     {/* Third Place Card (if enabled and exists) */}
                                     {thirdPlaceEnabled && thirdPlaceMatch && (
-                                        <FinalPairingCard match={thirdPlaceMatch} type="third_place" />
+                                        <FinalPairingCard
+                                            match={thirdPlaceMatch}
+                                            type="third_place"
+                                        />
                                     )}
                                 </div>
 
                                 {/* Schedule Link Card for Final Stage */}
-                                <div className="p-4 rounded-xl bg-zinc-900/40 border border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-zinc-400">
+                                <div
+                                    className="p-4 rounded-xl bg-zinc-900/40 border border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-zinc-400"
+                                >
                                     <div className="flex items-center gap-2">
                                         <Calendar className="w-4 h-4 text-amber-400" />
                                         <span>Pertandingan babak final belum memiliki court dan jam tanding?</span>

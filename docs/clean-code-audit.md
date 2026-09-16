@@ -13,7 +13,7 @@ Daftar modul diurutkan berdasarkan tingkat urgensi dan jumlah pelanggaran terban
 | **P1** | **`admin/schedule`** | 18 temuan | 2 hooks (`useScheduleManagement`, `useKnockoutSchedule`) | **226 baris** (7 file) | Status match badge (Grid & Knockout) | 2 |
 | **P2** | **`display`** | 14 temuan | 1 hook (`useCourtLiveDisplay`) | **232 baris** (6 file) | `getRoundLabel` & `formatLevel` | 3 |
 | **P3** | **`admin/scoring`** | 12 temuan (termasuk action `getScoreHistoryCountAction`) | 1 hook (`useScoringManagement` 375 baris) | **132 baris** | Status badge & `getRoundTitle` | 2 |
-| **P4** | **`admin/bracket`** | 8 temuan | 1 hook (`useBracketManagement`) | **68 baris** | - | 1 |
+| **P4** | **`admin/bracket`** | ~~8 temuan~~ ✅ Selesai dibersihkan | 1 hook (`useBracketManagement`) | ~~68 baris~~ ✅ Selesai di-wrap | - | ~~1~~ ✅ Dihapus |
 | **P5** | **`admin/tournament-setup`** | ~~6 temuan~~ ✅ Selesai dibersihkan | 1 hook (`useTournamentSettingsForm`) | ~~62 baris~~ ✅ Selesai di-wrap | ~~`TOURNAMENT_STATUS_CONFIG`~~ ✅ Selesai di-refactor | ~~1~~ ✅ Dihapus |
 | **P6** | **`admin/categories`** | ~~4 temuan~~ ✅ Selesai dibersihkan | 1 hook (`useCategoriesManagement`) | ~~53 baris~~ ✅ Selesai di-wrap | ~~`CATEGORY_LEVEL_CONFIG`~~ ✅ Selesai di-refactor | ~~2~~ ✅ Dihapus |
 | **P7** | **`register`** | ~~4 temuan~~ ✅ Selesai dibersihkan | 1 hook (`useTeamRegistration`) | ~~13 baris~~ ✅ 0 baris | - | ~~3~~ ✅ Dihapus |
@@ -56,12 +56,12 @@ Daftar modul diurutkan berdasarkan tingkat urgensi dan jumlah pelanggaran terban
     - L14: Param `matchId` di-destructure tapi tidak dipakai.
   - `app/admin/(protected)/scoring/actions.ts`:
     - L39, L127, L169, L255, L526: Parameter `_userIdentifier` tidak digunakan dalam body fungsi.
-- **admin/bracket**:
+- ~~**admin/bracket**~~ (✅ Selesai dibersihkan):
   - `components/bracket/BracketManagementView.tsx`:
-    - L8, L11: Import `Play`, `Info` tidak terpakai.
-    - L32, L33: Query state `isCategoriesError` dan `categoriesError` tidak dipakai.
+    - ~~L8, L11: Import `Play`, `Info` tidak terpakai.~~
+    - ~~L32, L33: Query state `isCategoriesError` dan `categoriesError` tidak dipakai.~~
   - `hooks/useBracketManagement.ts`:
-    - L9: Variable `BRACKET_CATEGORIES_QUERY_KEY` tidak terpakai.
+    - ~~L9: Variable `BRACKET_CATEGORIES_QUERY_KEY` tidak terpakai.~~
 - **display**:
   - `components/display/CategoryStandingsView.tsx`:
     - L25, L31: Fungsi `formatPartnerType` dan `formatLevel` dideklarasikan lokal tapi tidak pernah dipanggil.
@@ -120,8 +120,17 @@ Daftar modul diurutkan berdasarkan tingkat urgensi dan jumlah pelanggaran terban
     - ~~L12: Interface `TournamentSetupViewProps`~~ (dijadikan interface internal).
   - `components/tournament-setup/TournamentSetupForm.tsx`:
     - ~~L11: Interface `TournamentSetupFormProps`~~ (dijadikan interface internal).
-  - `components/tournament-setup/ShareRegistrationCard.tsx`:
-    - ~~L8: Interface `ShareRegistrationCardProps`~~ (dijadikan interface internal).
+- **admin/bracket (✅ Selesai)**:
+  - `app/admin/(protected)/bracket/actions.ts`:
+    - ~~L14: Interface `BracketActionResponse`~~ (dijadikan interface internal).
+  - `components/bracket/BracketManagementView.tsx`:
+    - ~~L24: Interface `BracketManagementViewProps`~~ (dijadikan interface internal).
+  - `components/bracket/FinalPairingCard.tsx`:
+    - ~~L7: Interface `FinalPairingCardProps`~~ (dijadikan interface internal).
+  - `components/bracket/BracketPairingCard.tsx`:
+    - ~~L6: Interface `BracketPairingCardProps`~~ (dijadikan interface internal).
+  - `components/bracket/BracketStatusAlert.tsx`:
+    - ~~L4: Interface `BracketStatusAlertProps`~~ (dijadikan interface internal).
 - **admin/schedule**:
   - `lib/schedule/generateMatchSchedule.ts`:
     - L24, L30, L34, L60: Type `ScheduledMatchItem`, `UnscheduledMatchItem`, `ScheduleResult`, `GenerateScheduleOptions`.
@@ -174,7 +183,7 @@ Berikut daftar file dengan pelanggaran panjang baris terbanyak akibat JSX props 
 | `components/display/CourtOverviewCard.tsx` | **46** | 334 |
 | `components/schedule/ScheduleManagementView.tsx` | **44** | 439 |
 | `components/scoring/LiveScoringBoard.tsx` | **38** | 384 |
-| `components/bracket/BracketManagementView.tsx` | **37** | 401 |
+| `components/bracket/BracketManagementView.tsx` | ~~37~~ ✅ Selesai di-wrap | 438 |
 | `components/display/StandingsOverviewGrid.tsx` | **36** | 246 |
 | `components/schedule/ScheduleGridView.tsx` | **33** | 323 |
 | `app/admin/(protected)/scoring/actions.ts` | **29** | 651 |
@@ -190,7 +199,7 @@ Berikut daftar file dengan pelanggaran panjang baris terbanyak akibat JSX props 
 | `components/tournament-setup/TournamentSetupView.tsx` | **18** | 232 |
 | `hooks/useScoringManagement.ts` | **17** | 375 |
 | `components/tournament-setup/ShareRegistrationCard.tsx` | **16** | 176 |
-| `components/bracket/FinalPairingCard.tsx` | **15** | 204 |
+| `components/bracket/FinalPairingCard.tsx` | ~~15~~ ✅ Selesai di-wrap | 232 |
 | `components/schedule/ScheduleRegenerateConfirmModal.tsx` | **15** | 157 |
 | `components/scoring/CourtSelectionView.tsx` | **14** | 104 |
 | `components/tournament-setup/TournamentSetupForm.tsx` | **14** | 260 |
@@ -254,7 +263,7 @@ Komentar yang hanya mengulang apa yang sudah jelas dari nama method/variable/fun
 - ~~`hooks/useTeamsManagement.ts:L98`: `// Update selected team status jika modal sedang terbuka`~~ (✅ Dihapus).
 - `hooks/useScoringManagement.ts:L365`: `// Handlers` (tepat sebelum return object `selectCourt, ...`).
 - ~~`app/admin/(protected)/tournament-setup/page.tsx:L26`: `// Ambil data pengaturan turnamen yang aktif jika sudah ada (mode edit)`~~ (✅ Dihapus).
-- `app/admin/(protected)/bracket/actions.ts:L172`: `// Ambil data tim untuk pasangan nama pemain`.
+- ~~`app/admin/(protected)/bracket/actions.ts:L172`: `// Ambil data tim untuk pasangan nama pemain`~~ (✅ Dihapus).
 - `app/admin/(protected)/scoring/actions.ts:L343`: `// Ambil pengaturan golden point dari tournament_settings`.
 
 ---

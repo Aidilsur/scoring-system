@@ -2,8 +2,9 @@ import React from 'react'
 import { Trophy, Medal, Calendar, MapPin, CheckCircle2, Crown } from 'lucide-react'
 import { Badge, Card } from '@/components/ui'
 import type { SemifinalMatchWithTeams } from '@/hooks/useBracketQuery'
+import { cn } from '@/lib/utils'
 
-export interface FinalPairingCardProps {
+interface FinalPairingCardProps {
     match: SemifinalMatchWithTeams
     type: 'final' | 'third_place'
 }
@@ -25,22 +26,29 @@ export function FinalPairingCard({ match, type }: FinalPairingCardProps) {
 
     return (
         <Card
-            className={`p-5 sm:p-6 transition-all shadow-xl border ${
+            className={cn(
+                'p-5 sm:p-6 transition-all shadow-xl border',
                 isFinal
                     ? 'bg-gradient-to-b from-amber-950/20 via-zinc-900/90 to-zinc-900/90 border-amber-500/40 hover:border-amber-500/60'
                     : 'bg-zinc-900/90 border-zinc-800 hover:border-zinc-700/80'
-            }`}
+            )}
         >
             {/* Header: Stage Badge & Status */}
-            <div className="flex items-center justify-between gap-2 pb-4 mb-4 border-b border-zinc-800/80">
+            <div
+                className="flex items-center justify-between gap-2 pb-4 mb-4 border-b border-zinc-800/80"
+            >
                 <div className="flex items-center gap-2">
                     {isFinal ? (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-amber-400/15 border border-amber-400/40 text-amber-300">
+                        <span
+                            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-amber-400/15 border border-amber-400/40 text-amber-300"
+                        >
                             <Crown className="w-3.5 h-3.5 text-amber-400" />
                             FINAL — JUARA 1 &amp; 2
                         </span>
                     ) : (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-zinc-800 border border-zinc-700 text-zinc-300">
+                        <span
+                            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-zinc-800 border border-zinc-700 text-zinc-300"
+                        >
                             <Medal className="w-3.5 h-3.5 text-amber-400" />
                             PEREBUTAN JUARA 3
                         </span>
@@ -49,7 +57,9 @@ export function FinalPairingCard({ match, type }: FinalPairingCardProps) {
 
                 <div>
                     {isLive && (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold font-mono tracking-wider bg-red-500/20 text-red-400 border border-red-500/30 animate-pulse">
+                        <span
+                            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold font-mono tracking-wider bg-red-500/20 text-red-400 border border-red-500/30 animate-pulse"
+                        >
                             <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
                             LIVE
                         </span>
@@ -72,23 +82,26 @@ export function FinalPairingCard({ match, type }: FinalPairingCardProps) {
             <div className="space-y-3">
                 {/* Team A */}
                 <div
-                    className={`flex items-center justify-between p-3.5 rounded-xl border transition-all ${
+                    className={cn(
+                        'flex items-center justify-between p-3.5 rounded-xl border transition-all',
                         isTeamAWinner
                             ? isFinal
                                 ? 'bg-amber-950/40 border-amber-500/50 text-white shadow-md shadow-amber-500/10'
                                 : 'bg-lime-950/30 border-lime-500/40 text-white'
                             : 'bg-zinc-950/60 border-zinc-800/60 text-zinc-200'
-                    }`}
+                    )}
                 >
                     <div className="flex items-center gap-3 min-w-0">
                         <div
-                            className={`w-7 h-7 rounded-lg flex items-center justify-center font-black text-xs shrink-0 ${
+                            className={cn(
+                                'w-7 h-7 rounded-lg flex items-center justify-center',
+                                'font-black text-xs shrink-0',
                                 isTeamAWinner
                                     ? isFinal
                                         ? 'bg-amber-400 text-zinc-950'
                                         : 'bg-lime-400 text-zinc-950'
                                     : 'bg-zinc-800 text-zinc-400'
-                            }`}
+                            )}
                         >
                             A
                         </div>
@@ -97,14 +110,17 @@ export function FinalPairingCard({ match, type }: FinalPairingCardProps) {
                                 <span className="truncate">{teamAName}</span>
                                 {isTeamAWinner && (
                                     <Trophy
-                                        className={`w-4 h-4 shrink-0 ${
+                                        className={cn(
+                                            'w-4 h-4 shrink-0',
                                             isFinal ? 'text-amber-400' : 'text-lime-400'
-                                        }`}
+                                        )}
                                     />
                                 )}
                             </div>
                             {isTeamAWinner && isFinal && (
-                                <span className="text-[10px] font-bold text-amber-300 uppercase tracking-wide">
+                                <span
+                                    className="text-[10px] font-bold text-amber-300 uppercase tracking-wide"
+                                >
                                     🏆 Juara 1
                                 </span>
                             )}
@@ -113,9 +129,10 @@ export function FinalPairingCard({ match, type }: FinalPairingCardProps) {
 
                     {(isLive || isCompleted) && (
                         <div
-                            className={`font-mono font-bold text-lg px-2 ${
+                            className={cn(
+                                'font-mono font-bold text-lg px-2',
                                 isFinal ? 'text-amber-400' : 'text-lime-400'
-                            }`}
+                            )}
                         >
                             {match.games_team_a}
                         </div>
@@ -124,30 +141,35 @@ export function FinalPairingCard({ match, type }: FinalPairingCardProps) {
 
                 {/* VS Divider */}
                 <div className="flex items-center justify-center -my-1">
-                    <span className="text-[10px] font-black tracking-widest text-zinc-600 uppercase px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800">
+                    <span
+                        className="text-[10px] font-black tracking-widest text-zinc-600 uppercase px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800"
+                    >
                         VS
                     </span>
                 </div>
 
                 {/* Team B */}
                 <div
-                    className={`flex items-center justify-between p-3.5 rounded-xl border transition-all ${
+                    className={cn(
+                        'flex items-center justify-between p-3.5 rounded-xl border transition-all',
                         isTeamBWinner
                             ? isFinal
                                 ? 'bg-amber-950/40 border-amber-500/50 text-white shadow-md shadow-amber-500/10'
                                 : 'bg-lime-950/30 border-lime-500/40 text-white'
                             : 'bg-zinc-950/60 border-zinc-800/60 text-zinc-200'
-                    }`}
+                    )}
                 >
                     <div className="flex items-center gap-3 min-w-0">
                         <div
-                            className={`w-7 h-7 rounded-lg flex items-center justify-center font-black text-xs shrink-0 ${
+                            className={cn(
+                                'w-7 h-7 rounded-lg flex items-center justify-center',
+                                'font-black text-xs shrink-0',
                                 isTeamBWinner
                                     ? isFinal
                                         ? 'bg-amber-400 text-zinc-950'
                                         : 'bg-lime-400 text-zinc-950'
                                     : 'bg-zinc-800 text-zinc-400'
-                            }`}
+                            )}
                         >
                             B
                         </div>
@@ -156,14 +178,17 @@ export function FinalPairingCard({ match, type }: FinalPairingCardProps) {
                                 <span className="truncate">{teamBName}</span>
                                 {isTeamBWinner && (
                                     <Trophy
-                                        className={`w-4 h-4 shrink-0 ${
+                                        className={cn(
+                                            'w-4 h-4 shrink-0',
                                             isFinal ? 'text-amber-400' : 'text-lime-400'
-                                        }`}
+                                        )}
                                     />
                                 )}
                             </div>
                             {isTeamBWinner && isFinal && (
-                                <span className="text-[10px] font-bold text-amber-300 uppercase tracking-wide">
+                                <span
+                                    className="text-[10px] font-bold text-amber-300 uppercase tracking-wide"
+                                >
                                     🏆 Juara 1
                                 </span>
                             )}
@@ -172,9 +197,10 @@ export function FinalPairingCard({ match, type }: FinalPairingCardProps) {
 
                     {(isLive || isCompleted) && (
                         <div
-                            className={`font-mono font-bold text-lg px-2 ${
+                            className={cn(
+                                'font-mono font-bold text-lg px-2',
                                 isFinal ? 'text-amber-400' : 'text-lime-400'
-                            }`}
+                            )}
                         >
                             {match.games_team_b}
                         </div>
@@ -183,7 +209,9 @@ export function FinalPairingCard({ match, type }: FinalPairingCardProps) {
             </div>
 
             {/* Match Schedule / Court Meta */}
-            <div className="mt-4 pt-3 border-t border-zinc-800/80 flex items-center justify-between text-xs text-zinc-400">
+            <div
+                className="mt-4 pt-3 border-t border-zinc-800/80 flex items-center justify-between text-xs text-zinc-400"
+            >
                 <div className="flex items-center gap-1.5">
                     <MapPin className="w-3.5 h-3.5 text-zinc-500" />
                     <span>{match.court?.name || 'Belum ada court'}</span>

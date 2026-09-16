@@ -11,7 +11,7 @@ import {
 import { sortGroupStandings } from '@/lib/scoring'
 import type { Match, Team, StandingRow } from '@/types/domain'
 
-export interface BracketActionResponse {
+interface BracketActionResponse {
     success: boolean
     message: string
 }
@@ -169,7 +169,6 @@ export async function generateBracketAction(
             }
         }
 
-        // Ambil data tim untuk pasangan nama pemain
         const { data: teamsData, error: teamsError } = await supabase
             .from('teams')
             .select('id, player1_name, player2_name')

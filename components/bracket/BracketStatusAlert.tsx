@@ -1,7 +1,7 @@
 import React from 'react'
 import { AlertCircle, AlertTriangle, CheckCircle2, Trophy } from 'lucide-react'
 
-export interface BracketStatusAlertProps {
+interface BracketStatusAlertProps {
     groupCount: number
     isTwoGroups: boolean
     isGroupStageComplete: boolean
@@ -21,7 +21,9 @@ export function BracketStatusAlert({
     // 1. Kasus jumlah grup selain 2
     if (!isTwoGroups) {
         return (
-            <div className="flex items-start gap-3.5 p-4 sm:p-5 rounded-2xl bg-amber-500/10 border border-amber-500/25 text-amber-300">
+            <div
+                className="flex items-start gap-3.5 p-4 sm:p-5 rounded-2xl bg-amber-500/10 border border-amber-500/25 text-amber-300"
+            >
                 <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
                 <div className="space-y-1">
                     <h3 className="font-bold text-sm text-amber-200">
@@ -38,7 +40,9 @@ export function BracketStatusAlert({
     // 2. Kasus fase grup belum selesai
     if (!isGroupStageComplete) {
         return (
-            <div className="flex items-start gap-3.5 p-4 sm:p-5 rounded-2xl bg-amber-500/10 border border-amber-500/25 text-amber-300">
+            <div
+                className="flex items-start gap-3.5 p-4 sm:p-5 rounded-2xl bg-amber-500/10 border border-amber-500/25 text-amber-300"
+            >
                 <AlertCircle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
                 <div className="space-y-1">
                     <h3 className="font-bold text-sm text-amber-200">
@@ -55,7 +59,9 @@ export function BracketStatusAlert({
     // 3. Kasus bracket sudah pernah dibuat
     if (hasExistingBracket) {
         return (
-            <div className="flex items-start gap-3.5 p-4 sm:p-5 rounded-2xl bg-zinc-900/90 border border-lime-500/30 text-zinc-200">
+            <div
+                className="flex items-start gap-3.5 p-4 sm:p-5 rounded-2xl bg-zinc-900/90 border border-lime-500/30 text-zinc-200"
+            >
                 <Trophy className="w-5 h-5 text-lime-400 shrink-0 mt-0.5" />
                 <div className="space-y-1">
                     <h3 className="font-bold text-sm text-white flex items-center gap-2">
@@ -71,7 +77,9 @@ export function BracketStatusAlert({
 
     // 4. Kasus siap generate bracket
     return (
-        <div className="flex items-start gap-3.5 p-4 sm:p-5 rounded-2xl bg-lime-500/10 border border-lime-500/30 text-lime-300">
+        <div
+            className="flex items-start gap-3.5 p-4 sm:p-5 rounded-2xl bg-lime-500/10 border border-lime-500/30 text-lime-300"
+        >
             <CheckCircle2 className="w-5 h-5 text-lime-400 shrink-0 mt-0.5" />
             <div className="space-y-1">
                 <h3 className="font-bold text-sm text-lime-200">

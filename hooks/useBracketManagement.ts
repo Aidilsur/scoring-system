@@ -6,7 +6,6 @@ import {
     useCategoriesWithGroupsQuery,
     useCategoryBracketQuery,
     CATEGORY_BRACKET_QUERY_KEY,
-    BRACKET_CATEGORIES_QUERY_KEY,
 } from './useBracketQuery'
 import {
     generateBracketAction,
@@ -28,8 +27,6 @@ export function useBracketManagement(initialCategoryId?: string) {
     const {
         data: categories = [],
         isLoading: isLoadingCategories,
-        isError: isCategoriesError,
-        error: categoriesError,
     } = useCategoriesWithGroupsQuery()
 
     // Otomatis pilih kategori pertama jika belum ada yang dipilih
@@ -186,8 +183,6 @@ export function useBracketManagement(initialCategoryId?: string) {
     return {
         categories,
         isLoadingCategories,
-        isCategoriesError,
-        categoriesError,
         selectedCategoryId,
         setSelectedCategoryId,
         bracketData,
