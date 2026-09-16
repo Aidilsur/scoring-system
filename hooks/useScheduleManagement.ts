@@ -21,7 +21,7 @@ export interface ScheduleToast {
     message: string
 }
 
-export interface UnscheduledWarningInfo {
+interface UnscheduledWarningInfo {
     count: number
     matchIds: string[]
 }
@@ -45,7 +45,8 @@ export function useScheduleManagement(initialCategoryId?: string) {
     const [toast, setToast] = useState<ScheduleToast | null>(null)
 
     // 5. State warning khusus unscheduled matches
-    const [unscheduledWarning, setUnscheduledWarning] = useState<UnscheduledWarningInfo | null>(null)
+    const [unscheduledWarning, setUnscheduledWarning] =
+        useState<UnscheduledWarningInfo | null>(null)
 
     const clearToast = useCallback(() => {
         setToast(null)
@@ -178,7 +179,9 @@ export function useScheduleManagement(initialCategoryId?: string) {
         },
         onError: (err: unknown) => {
             const errMsg =
-                err instanceof Error ? err.message : 'Terjadi kesalahan sistem saat membuat jadwal paralel.'
+                err instanceof Error
+                    ? err.message
+                    : 'Terjadi kesalahan sistem saat membuat jadwal paralel.'
             setToast({
                 type: 'error',
                 message: errMsg,
@@ -234,7 +237,13 @@ export function useScheduleManagement(initialCategoryId?: string) {
         clearToast()
         clearUnscheduledWarning()
         await runGenerateSchedule(singleCategoryId)
-    }, [singleCategoryId, scheduleData?.hasExistingSchedule, clearToast, clearUnscheduledWarning, runGenerateSchedule])
+    }, [
+        singleCategoryId,
+        scheduleData?.hasExistingSchedule,
+        clearToast,
+        clearUnscheduledWarning,
+        runGenerateSchedule,
+    ])
 
     const handleTriggerAllSchedule = useCallback(async () => {
         if (scheduleData?.hasExistingSchedule) {
@@ -246,7 +255,12 @@ export function useScheduleManagement(initialCategoryId?: string) {
         clearToast()
         clearUnscheduledWarning()
         await runGenerateAllSchedule()
-    }, [scheduleData?.hasExistingSchedule, clearToast, clearUnscheduledWarning, runGenerateAllSchedule])
+    }, [
+        scheduleData?.hasExistingSchedule,
+        clearToast,
+        clearUnscheduledWarning,
+        runGenerateAllSchedule,
+    ])
 
     const handleTriggerReset = useCallback(() => {
         setConfirmModalMode('reset')
@@ -265,7 +279,15 @@ export function useScheduleManagement(initialCategoryId?: string) {
         } else if (singleCategoryId) {
             await runGenerateSchedule(singleCategoryId)
         }
-    }, [confirmModalMode, singleCategoryId, clearToast, clearUnscheduledWarning, runResetAllSchedules, runGenerateAllSchedule, runGenerateSchedule])
+    }, [
+        confirmModalMode,
+        singleCategoryId,
+        clearToast,
+        clearUnscheduledWarning,
+        runResetAllSchedules,
+        runGenerateAllSchedule,
+        runGenerateSchedule,
+    ])
 
     const isAllMode = scheduleMode === 'parallel'
     const selectedCategory = isAllMode

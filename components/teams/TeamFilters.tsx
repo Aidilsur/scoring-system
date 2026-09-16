@@ -59,9 +59,12 @@ export function TeamFilters({
                             onClick={() => onStatusChange(tab.id)}
                             className={cn(
                                 'px-3 py-1.5 rounded-md text-xs font-semibold transition cursor-pointer',
-                                isActive
-                                    ? 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white shadow-xs'
-                                    : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
+                                {
+                                    'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white shadow-xs':
+                                        isActive,
+                                    'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white':
+                                        !isActive,
+                                }
                             )}
                         >
                             {tab.label}

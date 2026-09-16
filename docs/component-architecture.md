@@ -72,4 +72,29 @@ selalu "cukup 1 tempat".
 - **Hindari "god hook"**: custom hook yang menangani lebih dari 1 tanggung jawab (misal: fetch data + form state + file upload + navigasi sekaligus dalam 1 hook). Pecah menjadi beberapa hook terpisah sesuai tanggung jawab masing-masing (misal `useTeamForm`, `useTeamFileUpload`, `useTeamSubmit`), lalu compose di komponen jika perlu.
 - **Panjang baris kode terukur**: Batas ~100 karakter berlaku untuk STRUKTUR kode (kondisi, parameter function, JSX props, object literal), BUKAN untuk isi string literal (pesan error, teks UI, className). String literal panjang TETAP ditulis dalam 1 baris utuh menggunakan template literal biasa - DILARANG memotong string dengan operator concatenation (+) semata-mata untuk memenuhi batas karakter, karena ini justru menurunkan keterbacaan.
   Untuk className Tailwind yang kompleks/kondisional, WAJIB menggunakan utility function `cn()` (kombinasi `clsx` + `tailwind-merge`), BUKAN array manual yang di-`join(' ')`. `cn()` HANYA digunakan ketika ada MINIMAL 2 sumber className yang digabung (misal: base class + conditional class, atau className dari props + default className). JANGAN membungkus 1 string className statis tunggal dengan `cn()` - itu tidak memberi manfaat apapun dan menyesatkan (seolah ada logic penggabungan padahal tidak ada). String className statis panjang tetap ditulis sebagai 1 string biasa.
+
+  Setiap argumen di dalam `cn()` HARUS punya alasan kondisional yang jelas - BUKAN dipecah semata-mata karena string panjang. Base class statis digabung jadi SATU string utuh. Untuk bagian kondisional, pilih pattern sesuai sifat kondisinya:
+
+  1. **KONDISI SALING EKSKLUSIF** (cuma 1 yang true di satu waktu) - gunakan object syntax clsx:
+     ```ts
+     cn(
+       'base classes statis di sini',
+       {
+         'bg-zinc-800 text-zinc-400': !isWinner,
+         'bg-lime-400 text-zinc-950': isWinner && !isFinal,
+         'bg-amber-400 text-zinc-950': isWinner && isFinal,
+       }
+     )
+     ```
+
+  2. **KONDISI INDEPENDEN/BISA NUMPUK** (beberapa bisa true bersamaan) - gunakan short-circuit `&&` per entry:
+     ```ts
+     cn(
+       'base classes statis di sini',
+       isDisabled && 'opacity-50 cursor-not-allowed',
+       isLoading && 'animate-pulse'
+     )
+     ```
+
+  DILARANG ternary bersarang di dalam satu argumen `cn()`.
 - **Refactor branching kompleks ke object/record lookup**: Conditional rendering dengan banyak percabangan (if/else if berantai, atau switch dengan banyak case untuk menentukan tampilan) sebaiknya direfactor menjadi object/record lookup (misal: `const STATUS_CONFIG = { live: {...}, scheduled: {...}, completed: {...} }`, lalu `STATUS_CONFIG[status]`) — lebih deklaratif dan mudah ditambah kasus baru.

@@ -130,12 +130,11 @@ export function CategoryTable({
                             {TABLE_HEADERS.map((header) => (
                                 <th
                                     key={header.label}
-                                    className={cn(
-                                        'px-5 py-3.5',
-                                        header.align === 'center' && 'text-center',
-                                        header.align === 'right' && 'text-right',
-                                        header.align === 'left' && 'text-left'
-                                    )}
+                                    className={cn('px-5 py-3.5', {
+                                        'text-center': header.align === 'center',
+                                        'text-right': header.align === 'right',
+                                        'text-left': header.align === 'left',
+                                    })}
                                 >
                                     {header.label}
                                 </th>
@@ -160,9 +159,12 @@ export function CategoryTable({
                                             <div
                                                 className={cn(
                                                     'w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs border',
-                                                    isActive
-                                                        ? 'bg-lime-400/15 border-lime-400/30 text-lime-400'
-                                                        : 'bg-zinc-800 border-zinc-700 text-zinc-400'
+                                                    {
+                                                        'bg-lime-400/15 border-lime-400/30 text-lime-400':
+                                                            isActive,
+                                                        'bg-zinc-800 border-zinc-700 text-zinc-400':
+                                                            !isActive,
+                                                    }
                                                 )}
                                             >
                                                 <Layers className="w-4 h-4" />
@@ -209,9 +211,10 @@ export function CategoryTable({
                                                 <span
                                                     className={cn(
                                                         'text-xs font-bold flex items-center justify-end gap-1',
-                                                        isActive
-                                                            ? 'text-lime-400'
-                                                            : 'text-zinc-500'
+                                                        {
+                                                            'text-lime-400': isActive,
+                                                            'text-zinc-500': !isActive,
+                                                        }
                                                     )}
                                                 >
                                                     {isActive ? (

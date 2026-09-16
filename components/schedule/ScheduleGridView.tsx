@@ -1,12 +1,13 @@
 'use client'
 
 import React, { useMemo } from 'react'
-import { Clock, MapPin, Users, CheckCircle2, Play, AlertCircle } from 'lucide-react'
-import { Card, Badge } from '@/components/ui'
+import { Clock, MapPin } from 'lucide-react'
+import { Card } from '@/components/ui'
+import { MATCH_STATUS_CONFIG } from '@/lib/scoring'
 import { Match, Court } from '@/types/domain'
 import { OccupiedCategorySlot } from '@/hooks/useScheduleQuery'
 
-export interface ScheduleGridViewProps {
+interface ScheduleGridViewProps {
     courts: Court[]
     scheduledMatches: Match[]
     occupiedSlots?: OccupiedCategorySlot[]
@@ -74,9 +75,6 @@ export function ScheduleGridView({
     courts,
     scheduledMatches,
     occupiedSlots = [],
-    startTime = '08:00',
-    endTime = '18:00',
-    durationMinutes = 45,
 }: ScheduleGridViewProps) {
     // 1. Buat mapping palet warna yang konsisten per kategori
     const { categoryPaletteMap, categoryNamesMap } = useMemo(() => {
@@ -87,7 +85,8 @@ export function ScheduleGridView({
         scheduledMatches.forEach((m) => {
             const catId = m.category_id || m.category?.id
             if (catId && !pMap.has(catId)) {
-                pMap.set(catId, CATEGORY_COLOR_PALETTES[idx % CATEGORY_COLOR_PALETTES.length])
+                const palette = CATEGORY_COLOR_PALETTES[idx % CATEGORY_COLOR_PALETTES.length]
+                pMap.set(catId, palette)
                 nMap.set(catId, m.category?.name || `Kategori ${idx + 1}`)
                 idx++
             }
@@ -148,15 +147,22 @@ export function ScheduleGridView({
     })
 
     return (
-        <Card className="p-6 bg-zinc-900/80 border border-zinc-800 rounded-2xl space-y-5 text-white shadow-xl">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-zinc-800">
+        <Card
+            className="p-6 bg-zinc-900/80 border border-zinc-800 rounded-2xl space-y-5 text-white shadow-xl"
+        >
+            <div
+                className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-zinc-800"
+            >
                 <div>
-                    <h3 className="text-lg font-black uppercase tracking-tight text-white flex items-center gap-2">
+                    <h3
+                        className="text-lg font-black uppercase tracking-tight text-white flex items-center gap-2"
+                    >
                         <Clock className="w-4 h-4 text-lime-400" />
                         Jadwal Pertandingan (Timetable Grid)
                     </h3>
                     <p className="text-xs text-zinc-400 mt-0.5">
-                        Matriks pembagian waktu dan lapangan. Setiap baris mewakili 1 ronde pertandingan.
+                        Matriks pembagian waktu dan lapangan. Setiap baris mewakili 1 ronde
+                        pertandingan.
                     </p>
                 </div>
 
@@ -177,7 +183,9 @@ export function ScheduleGridView({
                         </span>
                     )}
                     <span className="flex items-center gap-1.5">
-                        <span className="w-2.5 h-2.5 rounded-full border border-dashed border-zinc-600" />
+                        <span
+                            className="w-2.5 h-2.5 rounded-full border border-dashed border-zinc-600"
+                        />
                         Jeda Istirahat
                     </span>
                 </div>
@@ -188,7 +196,9 @@ export function ScheduleGridView({
                 <table className="w-full text-left border-collapse min-w-[640px]">
                     <thead>
                         <tr className="border-b border-zinc-800 bg-zinc-950/70">
-                            <th className="py-3 px-4 text-xs font-mono font-bold uppercase tracking-wider text-lime-400 w-28">
+                            <th
+                                className="py-3 px-4 text-xs font-mono font-bold uppercase tracking-wider text-lime-400 w-28"
+                            >
                                 Waktu
                             </th>
                             {courts.map((court) => (
@@ -212,7 +222,9 @@ export function ScheduleGridView({
                             return (
                                 <tr key={time} className="hover:bg-zinc-900/50 transition">
                                     {/* Kolom Waktu */}
-                                    <td className="py-3.5 px-4 font-mono text-xs font-bold text-white align-top bg-zinc-950/40">
+                                    <td
+                                        className="py-3.5 px-4 font-mono text-xs font-bold text-white align-top bg-zinc-950/40"
+                                    >
                                         <div className="flex items-center gap-1.5">
                                             <span className="px-2 py-1 rounded-lg bg-zinc-800 text-lime-300">
                                                 {time}
@@ -226,8 +238,11 @@ export function ScheduleGridView({
                                         const occupiedSlot = occMap?.get(court.id)
 
                                         if (match) {
-                                            const catId = match.category_id || match.category?.id || ''
-                                            const pal = categoryPaletteMap.get(catId) || CATEGORY_COLOR_PALETTES[0]
+                                            const catId =
+                                                match.category_id || match.category?.id || ''
+                                            const pal =
+                                                categoryPaletteMap.get(catId) ||
+                                                CATEGORY_COLOR_PALETTES[0]
 
                                             return (
                                                 <td key={court.id} className="py-3 px-3 align-top">
@@ -235,7 +250,9 @@ export function ScheduleGridView({
                                                         className={`p-3 rounded-xl border ${pal.cardClass} transition space-y-2 shadow-md`}
                                                     >
                                                         {/* Category & Group Badges + Match Status */}
-                                                        <div className="flex flex-wrap items-center justify-between gap-1.5 text-[11px]">
+                                                        <div
+                                                            className="flex flex-wrap items-center justify-between gap-1.5 text-[11px]"
+                                                        >
                                                             <div className="flex items-center gap-1.5 flex-wrap">
                                                                 {match.category?.name && (
                                                                     <span
@@ -245,23 +262,33 @@ export function ScheduleGridView({
                                                                     </span>
                                                                 )}
                                                                 {match.group && (
-                                                                    <span className="font-mono font-bold px-1.5 py-0.5 rounded bg-zinc-900/80 text-zinc-300 text-[10px] border border-zinc-700">
+                                                                    <span
+                                                                        className="font-mono font-bold px-1.5 py-0.5 rounded bg-zinc-900/80 text-zinc-300 text-[10px] border border-zinc-700"
+                                                                    >
                                                                         {match.group.name}
                                                                     </span>
                                                                 )}
                                                             </div>
                                                             {match.status === 'live' ? (
-                                                                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-lime-400 uppercase">
-                                                                    <span className="w-1.5 h-1.5 rounded-full bg-lime-400 animate-pulse" />
-                                                                    LIVE
+                                                                <span
+                                                                    className="inline-flex items-center gap-1 text-[10px] font-bold text-lime-400 uppercase"
+                                                                >
+                                                                    <span
+                                                                        className="w-1.5 h-1.5 rounded-full bg-lime-400 animate-pulse"
+                                                                    />
+                                                                    {MATCH_STATUS_CONFIG.live.label}
                                                                 </span>
                                                             ) : match.status === 'completed' ? (
-                                                                <span className="text-[10px] text-zinc-400 font-semibold uppercase">
-                                                                    Selesai
+                                                                <span
+                                                                    className="text-[10px] text-zinc-400 font-semibold uppercase"
+                                                                >
+                                                                    {MATCH_STATUS_CONFIG.completed.label}
                                                                 </span>
                                                             ) : (
-                                                                <span className="text-[10px] text-zinc-500 font-mono">
-                                                                    Terjadwal
+                                                                <span
+                                                                    className="text-[10px] text-zinc-500 font-mono uppercase"
+                                                                >
+                                                                    {MATCH_STATUS_CONFIG.scheduled.label}
                                                                 </span>
                                                             )}
                                                         </div>
@@ -288,11 +315,17 @@ export function ScheduleGridView({
                                         if (occupiedSlot) {
                                             return (
                                                 <td key={court.id} className="py-3 px-3 align-top">
-                                                    <div className="p-3 rounded-xl bg-zinc-950/40 border border-zinc-800/80 text-zinc-500 space-y-1">
-                                                        <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">
+                                                    <div
+                                                        className="p-3 rounded-xl bg-zinc-950/40 border border-zinc-800/80 text-zinc-500 space-y-1"
+                                                    >
+                                                        <div
+                                                            className="text-[10px] font-bold uppercase tracking-wider text-zinc-400"
+                                                        >
                                                             Slot Terpakai
                                                         </div>
-                                                        <div className="text-xs font-semibold text-zinc-300 truncate">
+                                                        <div
+                                                            className="text-xs font-semibold text-zinc-300 truncate"
+                                                        >
                                                             {occupiedSlot.categoryName || 'Kategori Lain'}
                                                         </div>
                                                         <div className="text-[10px] text-zinc-600">
@@ -305,8 +338,12 @@ export function ScheduleGridView({
 
                                         return (
                                             <td key={court.id} className="py-3 px-3 align-top">
-                                                <div className="p-3 rounded-xl border border-dashed border-zinc-800/80 text-zinc-600 text-xs flex flex-col items-center justify-center min-h-[82px]">
-                                                    <span className="text-[11px] font-mono">Istirahat / Kosong</span>
+                                                <div
+                                                    className="p-3 rounded-xl border border-dashed border-zinc-800/80 text-zinc-600 text-xs flex flex-col items-center justify-center min-h-[82px]"
+                                                >
+                                                    <span className="text-[11px] font-mono">
+                                                        Istirahat / Kosong
+                                                    </span>
                                                 </div>
                                             </td>
                                         )

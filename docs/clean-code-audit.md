@@ -10,7 +10,7 @@ Daftar modul diurutkan berdasarkan tingkat urgensi dan jumlah pelanggaran terban
 
 | Prioritas | Modul | Dead Code | God Hooks | Baris >100 Karakter | Refactor Record Lookup | Komentar Redundant |
 | :---: | :--- | :---: | :---: | :---: | :---: | :---: |
-| **P1** | **`admin/schedule`** | 18 temuan | 2 hooks (`useScheduleManagement`, `useKnockoutSchedule`) | **226 baris** (7 file) | Status match badge (Grid & Knockout) | 2 |
+| **P1** | **`admin/schedule`** | ~~18 temuan~~ ✅ Selesai dibersihkan | 2 hooks (`useScheduleManagement`, `useKnockoutSchedule`) | ~~226 baris~~ ✅ Selesai di-wrap & dipecah | ~~Status match badge (Grid & Knockout)~~ ✅ Selesai di-refactor (`MATCH_STATUS_CONFIG`) | ~~2~~ ✅ Dihapus |
 | **P2** | **`display`** | ~~14 temuan~~ ✅ Selesai dibersihkan | 1 hook (`useCourtLiveDisplay`) | ~~232 baris~~ ✅ Selesai di-wrap | ~~`ROUND_LABELS` & dead code `formatLevel`~~ ✅ Selesai | ~~3~~ ✅ Dihapus |
 | **P3** | **`admin/scoring`** | ~~12 temuan~~ ✅ Selesai dibersihkan | 1 hook (`useScoringManagement` 375 baris) | ~~132 baris~~ ✅ Selesai di-wrap | ~~Status badge & `ROUND_LABELS`~~ ✅ Selesai di-refactor | ~~2~~ ✅ Dihapus |
 | **P4** | **`admin/bracket`** | ~~8 temuan~~ ✅ Selesai dibersihkan | 1 hook (`useBracketManagement`) | ~~68 baris~~ ✅ Selesai di-wrap | - | ~~1~~ ✅ Dihapus |
@@ -27,22 +27,22 @@ Daftar modul diurutkan berdasarkan tingkat urgensi dan jumlah pelanggaran terban
 ### 1. Dead Code
 
 #### A. Unused Imports & Variables
-- **admin/schedule**:
-  - `components/schedule/ScheduleGridView.tsx`:
-    - L4-L5: Import `Users`, `CheckCircle2`, `Play`, `AlertCircle`, `Badge` tidak pernah digunakan.
-    - L77-L79: Variable `startTime`, `endTime`, `durationMinutes` di-destructure tapi tidak dipakai.
-  - `components/schedule/ScheduleManagementView.tsx`:
-    - L86: Variable `unscheduledWarning` dihitung tapi tidak dipakai.
-  - `components/schedule/SchedulePreviewCard.tsx`:
-    - L5, L11: Import `Calendar` dan `Play` tidak pernah dipakai.
-  - `components/schedule/ScheduleWarningCard.tsx`:
-    - L4: Import `Clock`, `PlusCircle`, `Sliders` tidak terpakai.
-  - `components/schedule/KnockoutScheduleTab.tsx`:
-    - L17: Import `KnockoutRoundItem` tidak terpakai.
-  - `hooks/useKnockoutSchedule.ts`:
-    - L8: Import type `MatchRound` tidak terpakai.
-  - `hooks/useScheduleQuery.ts`:
-    - L108: Variable `categoryIds` di-assign tapi tidak terpakai.
+- ~~**admin/schedule**~~ (✅ Selesai dibersihkan):
+  - ~~`components/schedule/ScheduleGridView.tsx`:~~
+    - ~~L4-L5: Import `Users`, `CheckCircle2`, `Play`, `AlertCircle`, `Badge` tidak pernah digunakan.~~
+    - ~~L77-L79: Variable `startTime`, `endTime`, `durationMinutes` di-destructure tapi tidak dipakai.~~
+  - ~~`components/schedule/ScheduleManagementView.tsx`:~~
+    - ~~L86: Variable `unscheduledWarning` dihitung tapi tidak dipakai.~~
+  - ~~`components/schedule/SchedulePreviewCard.tsx`:~~
+    - ~~L5, L11: Import `Calendar` dan `Play` tidak pernah dipakai.~~
+  - ~~`components/schedule/ScheduleWarningCard.tsx`:~~
+    - ~~L4: Import `Clock`, `PlusCircle`, `Sliders` tidak terpakai.~~
+  - ~~`components/schedule/KnockoutScheduleTab.tsx`:~~
+    - ~~L17: Import `KnockoutRoundItem` tidak terpakai.~~
+  - ~~`hooks/useKnockoutSchedule.ts`:~~
+    - ~~L8: Import type `MatchRound` tidak terpakai.~~
+  - ~~`hooks/useScheduleQuery.ts`:~~
+    - ~~L108: Variable `categoryIds` di-assign tapi tidak terpakai.~~
 - ~~**admin/scoring**~~ (✅ Selesai dibersihkan):
   - `components/scoring/CourtMatchList.tsx`:
     - ~~L4: Import `AlertCircle` tidak terpakai.~~
@@ -131,15 +131,11 @@ Daftar modul diurutkan berdasarkan tingkat urgensi dan jumlah pelanggaran terban
     - ~~L6: Interface `BracketPairingCardProps`~~ (dijadikan interface internal).
   - `components/bracket/BracketStatusAlert.tsx`:
     - ~~L4: Interface `BracketStatusAlertProps`~~ (dijadikan interface internal).
-- **admin/schedule**:
-  - `lib/schedule/generateMatchSchedule.ts`:
-    - L24, L30, L34, L60: Type `ScheduledMatchItem`, `UnscheduledMatchItem`, `ScheduleResult`, `GenerateScheduleOptions`.
-  - `hooks/useScheduleManagement.ts`:
-    - L17, L19, L24: Type `ScheduleGenerationMode`, `ScheduleToast`, `UnscheduledWarningInfo`.
-  - `hooks/useScheduleQuery.ts`:
-    - L11, L14, L29: `CATEGORIES_WITH_GROUPS_QUERY_KEY`, `SchedulableCategoryItem`, `KnockoutReservationInfo`.
-  - `hooks/useKnockoutSchedule.ts`:
-    - L11, L25: `KNOCKOUT_SCHEDULE_QUERY_KEY`, `KnockoutScheduleData`.
+- ~~**admin/schedule**~~ (✅ Selesai dibersihkan):
+  - ~~`lib/schedule/generateMatchSchedule.ts`: L24, L30, L34, L60 (tetap dipertahankan untuk pure engine schedule).~~
+  - ~~`hooks/useScheduleManagement.ts`: L17, L19, L24: Type `UnscheduledWarningInfo` (dijadikan internal), `ScheduleGenerationMode`, `ScheduleToast`.~~
+  - ~~`hooks/useScheduleQuery.ts`: L11, L14, L29: `CATEGORIES_WITH_GROUPS_QUERY_KEY`, `SchedulableCategoryItem`, `KnockoutReservationInfo` (dijadikan internal).~~
+  - ~~`hooks/useKnockoutSchedule.ts`: L11, L25: `KNOCKOUT_SCHEDULE_QUERY_KEY`, `KnockoutScheduleData` (dijadikan internal).~~
 - ~~**register**~~ (✅ Selesai dibersihkan):
   - ~~`hooks/useTeamRegistration.ts`: L10: Interface `UseTeamRegistrationReturn`.~~
   - ~~`lib/validations/team-registration.ts`: L7, L8, L58: `MAX_FILE_SIZE`, `ALLOWED_FILE_TYPES`, `TeamRegistrationInput` (dijadikan internal konstanta/tipe).~~
@@ -179,28 +175,28 @@ Berikut daftar file dengan pelanggaran panjang baris terbanyak akibat JSX props 
 | Nama File | Jumlah Baris >100 Karakter | Total Baris |
 | :--- | :---: | :---: |
 | `components/display/CourtLiveDisplay.tsx` | ~~68~~ ✅ Selesai di-wrap & dipecah | 240 |
-| `components/schedule/KnockoutScheduleTab.tsx` | **56** | 359 |
+| `components/schedule/KnockoutScheduleTab.tsx` | ~~56~~ ✅ Selesai di-wrap | 444 |
 | `components/display/CourtOverviewCard.tsx` | ~~46~~ ✅ Selesai di-wrap | 334 |
-| `components/schedule/ScheduleManagementView.tsx` | **44** | 439 |
+| `components/schedule/ScheduleManagementView.tsx` | ~~44~~ ✅ Selesai di-wrap & dipecah | 198 |
 | `components/scoring/LiveScoringBoard.tsx` | ~~38~~ ✅ Selesai di-wrap | 384 |
 | `components/bracket/BracketManagementView.tsx` | ~~37~~ ✅ Selesai di-wrap | 438 |
 | `components/display/StandingsOverviewGrid.tsx` | ~~36~~ ✅ Selesai di-wrap | 246 |
-| `components/schedule/ScheduleGridView.tsx` | **33** | 323 |
+| `components/schedule/ScheduleGridView.tsx` | ~~33~~ ✅ Selesai di-wrap | 363 |
 | `app/admin/(protected)/scoring/actions.ts` | ~~29~~ ✅ Selesai di-wrap | 651 |
 | `components/scoring/CourtMatchList.tsx` | ~~28~~ ✅ Selesai di-wrap | 222 |
-| `app/admin/(protected)/schedule/actions.ts` | **27** | 717 |
+| `app/admin/(protected)/schedule/actions.ts` | ~~27~~ ✅ Selesai di-wrap | 727 |
 | `components/display/CourtsOverviewGrid.tsx` | ~~27~~ ✅ Selesai di-wrap | 208 |
 | `components/display/CategoryStandingsView.tsx` | ~~25~~ ✅ Selesai di-wrap | 250 |
 | `components/categories/CategoriesManagementView.tsx` | **24** | 265 |
 | `components/display/GroupStandingsTable.tsx` | ~~24~~ ✅ Selesai di-wrap | 211 |
 | `components/categories/CategoryTable.tsx` | **21** | 294 |
-| `components/schedule/SchedulePreviewCard.tsx` | **21** | 257 |
+| `components/schedule/SchedulePreviewCard.tsx` | ~~21~~ ✅ Selesai di-wrap | 289 |
 | `components/teams/TeamDetailModal.tsx` | **20** | 226 |
 | `components/tournament-setup/TournamentSetupView.tsx` | **18** | 232 |
 | `hooks/useScoringManagement.ts` | **17** | 375 |
 | `components/tournament-setup/ShareRegistrationCard.tsx` | **16** | 176 |
 | `components/bracket/FinalPairingCard.tsx` | ~~15~~ ✅ Selesai di-wrap | 232 |
-| `components/schedule/ScheduleRegenerateConfirmModal.tsx` | **15** | 157 |
+| `components/schedule/ScheduleRegenerateConfirmModal.tsx` | ~~15~~ ✅ Selesai di-wrap | 185 |
 | `components/scoring/CourtSelectionView.tsx` | ~~14~~ ✅ Selesai di-wrap | 104 |
 | `components/tournament-setup/TournamentSetupForm.tsx` | **14** | 260 |
 
@@ -226,8 +222,7 @@ Berikut daftar file dengan pelanggaran panjang baris terbanyak akibat JSX props 
 
 2. **Status Badge Match (`live` / `scheduled` / `completed`)**:
    - ~~`components/scoring/CourtMatchList.tsx:L137-L160`~~: ✅ Selesai di-refactor menggunakan `MATCH_STATUS_CONFIG` lookup di `lib/scoring/constants.ts`.
-   - `components/schedule/KnockoutScheduleTab.tsx:L233-L245`: Ternary `match.status === 'live' ? ... : match.status === 'completed' ? ... : ...`.
-   - `components/schedule/ScheduleGridView.tsx:L253-L265`: Pola ternary status serupa.
+   - ~~`components/schedule/KnockoutScheduleTab.tsx` & `ScheduleGridView.tsx`~~: ✅ Selesai di-refactor menggunakan `MATCH_STATUS_CONFIG` lookup di `lib/scoring/constants.ts`.
    - *Solusi refactor*: Buat lookup object:
      ```ts
      export const MATCH_STATUS_CONFIG: Record<MatchStatus, { badgeClass: string; label: string; icon: LucideIcon }> = {

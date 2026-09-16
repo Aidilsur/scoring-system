@@ -298,7 +298,10 @@ export function CourtOverviewCard({ item }: CourtOverviewCardProps) {
                             <span
                                 className={cn(
                                     'text-xs sm:text-sm font-semibold truncate',
-                                    isWinnerA ? 'text-lime-400 font-bold' : 'text-zinc-400'
+                                    {
+                                        'text-lime-400 font-bold': isWinnerA,
+                                        'text-zinc-400': !isWinnerA,
+                                    }
                                 )}
                             >
                                 {teamAName} {isWinnerA && '★'}
@@ -311,7 +314,10 @@ export function CourtOverviewCard({ item }: CourtOverviewCardProps) {
                             <span
                                 className={cn(
                                     'text-xs sm:text-sm font-semibold truncate',
-                                    !isWinnerA ? 'text-lime-400 font-bold' : 'text-zinc-400'
+                                    {
+                                        'text-lime-400 font-bold': !isWinnerA,
+                                        'text-zinc-400': isWinnerA,
+                                    }
                                 )}
                             >
                                 {teamBName} {!isWinnerA && '★'}

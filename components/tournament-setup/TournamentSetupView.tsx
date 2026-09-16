@@ -123,9 +123,12 @@ export function TournamentSetupView({ initialData }: TournamentSetupViewProps) {
                 <div
                     className={cn(
                         'p-4 rounded-xl text-sm flex items-start justify-between gap-3 transition shadow-lg bg-zinc-900 shadow-black/40',
-                        feedback.type === 'success'
-                            ? 'border border-lime-400/50 text-lime-300'
-                            : 'border border-red-500/50 text-red-200'
+                        {
+                            'border border-lime-400/50 text-lime-300':
+                                feedback.type === 'success',
+                            'border border-red-500/50 text-red-200':
+                                feedback.type !== 'success',
+                        }
                     )}
                 >
                     <div className="flex items-center gap-2.5">

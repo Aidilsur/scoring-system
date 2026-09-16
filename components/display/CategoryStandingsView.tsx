@@ -202,12 +202,12 @@ export function CategoryStandingsView({ categoryId }: CategoryStandingsViewProps
                         </div>
 
                         <div
-                            className={cn(
-                                'grid gap-6 sm:gap-8',
-                                groups.length === 1
-                                    ? 'grid-cols-1 max-w-4xl mx-auto'
-                                    : 'grid-cols-1 lg:grid-cols-2'
-                            )}
+                            className={cn('grid gap-6 sm:gap-8', {
+                                'grid-cols-1 max-w-4xl mx-auto':
+                                    groups.length === 1,
+                                'grid-cols-1 lg:grid-cols-2':
+                                    groups.length !== 1,
+                            })}
                         >
                             {groups.map((groupWithStandings) => (
                                 <GroupStandingsTable

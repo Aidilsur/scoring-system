@@ -150,13 +150,16 @@ export function CourtMatchList({
                                 key={match.id}
                                 className={cn(
                                     'p-4 rounded-xl transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3',
-                                    isLive
-                                        ? 'bg-gradient-to-r from-emerald-950/50 via-zinc-900 to-zinc-900 border-2 border-lime-400 shadow-lg shadow-lime-400/10'
-                                        : isCurrent
-                                        ? 'bg-zinc-900 border-lime-400/50'
-                                        : isCompleted
-                                        ? 'bg-zinc-900/40 border border-zinc-800/80 opacity-75'
-                                        : 'bg-zinc-900/80 border border-zinc-800 hover:border-zinc-700'
+                                    {
+                                        'bg-gradient-to-r from-emerald-950/50 via-zinc-900 to-zinc-900 border-2 border-lime-400 shadow-lg shadow-lime-400/10':
+                                            isLive,
+                                        'bg-zinc-900 border-lime-400/50':
+                                            !isLive && isCurrent,
+                                        'bg-zinc-900/40 border border-zinc-800/80 opacity-75':
+                                            !isLive && !isCurrent && isCompleted,
+                                        'bg-zinc-900/80 border border-zinc-800 hover:border-zinc-700':
+                                            !isLive && !isCurrent && !isCompleted,
+                                    }
                                 )}
                             >
                                 <div className="space-y-1.5">

@@ -43,11 +43,14 @@ export function CourtDisplayScoreBoard({
                 <div
                     className={cn(
                         'md:col-span-4 p-6 sm:p-8 rounded-3xl transition-all duration-300 flex flex-col justify-between min-h-[220px] sm:min-h-[260px] md:min-h-[300px] border-2',
-                        isTeamAWinner
-                            ? 'bg-gradient-to-br from-emerald-950/80 via-zinc-900 to-zinc-900 border-lime-400 shadow-2xl shadow-lime-400/20'
-                            : isTeamAServing
-                            ? 'bg-zinc-900/90 border-lime-400/90 ring-4 ring-lime-400/20 shadow-2xl shadow-lime-400/10'
-                            : 'bg-zinc-900/70 border-zinc-800/80'
+                        {
+                            'bg-gradient-to-br from-emerald-950/80 via-zinc-900 to-zinc-900 border-lime-400 shadow-2xl shadow-lime-400/20':
+                                isTeamAWinner,
+                            'bg-zinc-900/90 border-lime-400/90 ring-4 ring-lime-400/20 shadow-2xl shadow-lime-400/10':
+                                !isTeamAWinner && isTeamAServing,
+                            'bg-zinc-900/70 border-zinc-800/80':
+                                !isTeamAWinner && !isTeamAServing,
+                        }
                     )}
                 >
                     {/* Header Kartu Tim A: Serve / Winner Badge */}
@@ -161,11 +164,14 @@ export function CourtDisplayScoreBoard({
                 <div
                     className={cn(
                         'md:col-span-4 p-6 sm:p-8 rounded-3xl transition-all duration-300 flex flex-col justify-between min-h-[220px] sm:min-h-[260px] md:min-h-[300px] border-2 text-right',
-                        isTeamBWinner
-                            ? 'bg-gradient-to-bl from-emerald-950/80 via-zinc-900 to-zinc-900 border-lime-400 shadow-2xl shadow-lime-400/20'
-                            : isTeamBServing
-                            ? 'bg-zinc-900/90 border-lime-400/90 ring-4 ring-lime-400/20 shadow-2xl shadow-lime-400/10'
-                            : 'bg-zinc-900/70 border-zinc-800/80'
+                        {
+                            'bg-gradient-to-bl from-emerald-950/80 via-zinc-900 to-zinc-900 border-lime-400 shadow-2xl shadow-lime-400/20':
+                                isTeamBWinner,
+                            'bg-zinc-900/90 border-lime-400/90 ring-4 ring-lime-400/20 shadow-2xl shadow-lime-400/10':
+                                !isTeamBWinner && isTeamBServing,
+                            'bg-zinc-900/70 border-zinc-800/80':
+                                !isTeamBWinner && !isTeamBServing,
+                        }
                     )}
                 >
                     {/* Header Kartu Tim B: Serve / Winner Badge */}

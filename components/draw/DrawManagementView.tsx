@@ -128,11 +128,11 @@ export function DrawManagementView({
       {toast && (
         <div
           className={cn(
-            'flex items-start justify-between gap-3 p-4 rounded-2xl border',
-            'text-xs font-medium animate-in fade-in slide-in-from-top-2 duration-200',
-            toast.type === 'success'
-              ? 'bg-lime-400/10 border-lime-400/30 text-lime-300'
-              : 'bg-rose-500/10 border-rose-500/30 text-rose-300'
+            'flex items-start justify-between gap-3 p-4 rounded-2xl border text-xs font-medium animate-in fade-in slide-in-from-top-2 duration-200',
+            {
+              'bg-lime-400/10 border-lime-400/30 text-lime-300': toast.type === 'success',
+              'bg-rose-500/10 border-rose-500/30 text-rose-300': toast.type !== 'success',
+            }
           )}
         >
           <div className="flex items-center gap-2.5">

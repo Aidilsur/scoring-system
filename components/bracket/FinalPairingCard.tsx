@@ -28,9 +28,12 @@ export function FinalPairingCard({ match, type }: FinalPairingCardProps) {
         <Card
             className={cn(
                 'p-5 sm:p-6 transition-all shadow-xl border',
-                isFinal
-                    ? 'bg-gradient-to-b from-amber-950/20 via-zinc-900/90 to-zinc-900/90 border-amber-500/40 hover:border-amber-500/60'
-                    : 'bg-zinc-900/90 border-zinc-800 hover:border-zinc-700/80'
+                {
+                    'bg-gradient-to-b from-amber-950/20 via-zinc-900/90 to-zinc-900/90 border-amber-500/40 hover:border-amber-500/60':
+                        isFinal,
+                    'bg-zinc-900/90 border-zinc-800 hover:border-zinc-700/80':
+                        !isFinal,
+                }
             )}
         >
             {/* Header: Stage Badge & Status */}
@@ -84,23 +87,28 @@ export function FinalPairingCard({ match, type }: FinalPairingCardProps) {
                 <div
                     className={cn(
                         'flex items-center justify-between p-3.5 rounded-xl border transition-all',
-                        isTeamAWinner
-                            ? isFinal
-                                ? 'bg-amber-950/40 border-amber-500/50 text-white shadow-md shadow-amber-500/10'
-                                : 'bg-lime-950/30 border-lime-500/40 text-white'
-                            : 'bg-zinc-950/60 border-zinc-800/60 text-zinc-200'
+                        {
+                            'bg-zinc-950/60 border-zinc-800/60 text-zinc-200':
+                                !isTeamAWinner,
+                            'bg-lime-950/30 border-lime-500/40 text-white':
+                                isTeamAWinner && !isFinal,
+                            'bg-amber-950/40 border-amber-500/50 text-white shadow-md shadow-amber-500/10':
+                                isTeamAWinner && isFinal,
+                        }
                     )}
                 >
                     <div className="flex items-center gap-3 min-w-0">
                         <div
                             className={cn(
-                                'w-7 h-7 rounded-lg flex items-center justify-center',
-                                'font-black text-xs shrink-0',
-                                isTeamAWinner
-                                    ? isFinal
-                                        ? 'bg-amber-400 text-zinc-950'
-                                        : 'bg-lime-400 text-zinc-950'
-                                    : 'bg-zinc-800 text-zinc-400'
+                                'w-7 h-7 rounded-lg flex items-center justify-center font-black text-xs shrink-0',
+                                {
+                                    'bg-zinc-800 text-zinc-400':
+                                        !isTeamAWinner,
+                                    'bg-lime-400 text-zinc-950':
+                                        isTeamAWinner && !isFinal,
+                                    'bg-amber-400 text-zinc-950':
+                                        isTeamAWinner && isFinal,
+                                }
                             )}
                         >
                             A
@@ -112,7 +120,10 @@ export function FinalPairingCard({ match, type }: FinalPairingCardProps) {
                                     <Trophy
                                         className={cn(
                                             'w-4 h-4 shrink-0',
-                                            isFinal ? 'text-amber-400' : 'text-lime-400'
+                                            {
+                                                'text-amber-400': isFinal,
+                                                'text-lime-400': !isFinal,
+                                            }
                                         )}
                                     />
                                 )}
@@ -131,7 +142,10 @@ export function FinalPairingCard({ match, type }: FinalPairingCardProps) {
                         <div
                             className={cn(
                                 'font-mono font-bold text-lg px-2',
-                                isFinal ? 'text-amber-400' : 'text-lime-400'
+                                {
+                                    'text-amber-400': isFinal,
+                                    'text-lime-400': !isFinal,
+                                }
                             )}
                         >
                             {match.games_team_a}
@@ -152,23 +166,28 @@ export function FinalPairingCard({ match, type }: FinalPairingCardProps) {
                 <div
                     className={cn(
                         'flex items-center justify-between p-3.5 rounded-xl border transition-all',
-                        isTeamBWinner
-                            ? isFinal
-                                ? 'bg-amber-950/40 border-amber-500/50 text-white shadow-md shadow-amber-500/10'
-                                : 'bg-lime-950/30 border-lime-500/40 text-white'
-                            : 'bg-zinc-950/60 border-zinc-800/60 text-zinc-200'
+                        {
+                            'bg-zinc-950/60 border-zinc-800/60 text-zinc-200':
+                                !isTeamBWinner,
+                            'bg-lime-950/30 border-lime-500/40 text-white':
+                                isTeamBWinner && !isFinal,
+                            'bg-amber-950/40 border-amber-500/50 text-white shadow-md shadow-amber-500/10':
+                                isTeamBWinner && isFinal,
+                        }
                     )}
                 >
                     <div className="flex items-center gap-3 min-w-0">
                         <div
                             className={cn(
-                                'w-7 h-7 rounded-lg flex items-center justify-center',
-                                'font-black text-xs shrink-0',
-                                isTeamBWinner
-                                    ? isFinal
-                                        ? 'bg-amber-400 text-zinc-950'
-                                        : 'bg-lime-400 text-zinc-950'
-                                    : 'bg-zinc-800 text-zinc-400'
+                                'w-7 h-7 rounded-lg flex items-center justify-center font-black text-xs shrink-0',
+                                {
+                                    'bg-zinc-800 text-zinc-400':
+                                        !isTeamBWinner,
+                                    'bg-lime-400 text-zinc-950':
+                                        isTeamBWinner && !isFinal,
+                                    'bg-amber-400 text-zinc-950':
+                                        isTeamBWinner && isFinal,
+                                }
                             )}
                         >
                             B
@@ -180,7 +199,10 @@ export function FinalPairingCard({ match, type }: FinalPairingCardProps) {
                                     <Trophy
                                         className={cn(
                                             'w-4 h-4 shrink-0',
-                                            isFinal ? 'text-amber-400' : 'text-lime-400'
+                                            {
+                                                'text-amber-400': isFinal,
+                                                'text-lime-400': !isFinal,
+                                            }
                                         )}
                                     />
                                 )}
@@ -199,7 +221,10 @@ export function FinalPairingCard({ match, type }: FinalPairingCardProps) {
                         <div
                             className={cn(
                                 'font-mono font-bold text-lg px-2',
-                                isFinal ? 'text-amber-400' : 'text-lime-400'
+                                {
+                                    'text-amber-400': isFinal,
+                                    'text-lime-400': !isFinal,
+                                }
                             )}
                         >
                             {match.games_team_b}

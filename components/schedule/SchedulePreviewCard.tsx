@@ -2,21 +2,20 @@
 
 import React from 'react'
 import {
-    Calendar,
     Clock,
     Layers,
     AlertCircle,
     CheckCircle2,
     RotateCw,
-    Play,
     Sparkles,
     ShieldAlert,
 } from 'lucide-react'
 import { Card, Button, Badge } from '@/components/ui'
+import { cn } from '@/lib/utils'
 import { CategoryScheduleData } from '@/hooks/useScheduleQuery'
 import { Category } from '@/types/domain'
 
-export interface SchedulePreviewCardProps {
+interface SchedulePreviewCardProps {
     category?: Category
     scheduleData?: CategoryScheduleData
     isAllMode?: boolean
@@ -70,12 +69,18 @@ export function SchedulePreviewCard({
     const duration = tournamentSettings?.match_duration_minutes || 45
 
     return (
-        <Card className="p-6 bg-zinc-900/80 border border-zinc-800 rounded-2xl space-y-6 text-white shadow-xl">
+        <Card
+            className="p-6 bg-zinc-900/80 border border-zinc-800 rounded-2xl space-y-6 text-white shadow-xl"
+        >
             {/* Header info */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-zinc-800">
+            <div
+                className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-zinc-800"
+            >
                 <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                        <span className="text-xs font-mono font-bold uppercase tracking-wider text-lime-400">
+                        <span
+                            className="text-xs font-mono font-bold uppercase tracking-wider text-lime-400"
+                        >
                             {isAllMode
                                 ? 'Ringkasan Penjadwalan Paralel (Global)'
                                 : 'Ringkasan Penjadwalan Kategori'}
@@ -104,17 +109,23 @@ export function SchedulePreviewCard({
 
                 <div className="flex items-center gap-2">
                     {allScheduled ? (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-lime-400/15 border border-lime-400/30 text-lime-400">
+                        <span
+                            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-lime-400/15 border border-lime-400/30 text-lime-400"
+                        >
                             <CheckCircle2 className="w-4 h-4 text-lime-400" />
                             Semua Terjadwal
                         </span>
                     ) : hasExistingSchedule ? (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-400/15 border border-amber-400/30 text-amber-400">
+                        <span
+                            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-400/15 border border-amber-400/30 text-amber-400"
+                        >
                             <AlertCircle className="w-4 h-4 text-amber-400" />
                             Jadwal Parsial
                         </span>
                     ) : (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-zinc-800 border border-zinc-700 text-zinc-400">
+                        <span
+                            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-zinc-800 border border-zinc-700 text-zinc-400"
+                        >
                             Belum Dijadwalkan
                         </span>
                     )}
@@ -125,7 +136,9 @@ export function SchedulePreviewCard({
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 {/* Metric 1: Total Match */}
                 <div className="p-4 rounded-xl bg-zinc-950/70 border border-zinc-800 space-y-1">
-                    <div className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
+                    <div
+                        className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5"
+                    >
                         <Layers className="w-3.5 h-3.5 text-lime-400" />
                         Total Match
                     </div>
@@ -137,7 +150,9 @@ export function SchedulePreviewCard({
 
                 {/* Metric 2: Terjadwal */}
                 <div className="p-4 rounded-xl bg-zinc-950/70 border border-zinc-800 space-y-1">
-                    <div className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
+                    <div
+                        className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5"
+                    >
                         <CheckCircle2 className="w-3.5 h-3.5 text-lime-400" />
                         Terjadwal
                     </div>
@@ -149,14 +164,17 @@ export function SchedulePreviewCard({
 
                 {/* Metric 3: Belum Terjadwal */}
                 <div className="p-4 rounded-xl bg-zinc-950/70 border border-zinc-800 space-y-1">
-                    <div className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
+                    <div
+                        className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5"
+                    >
                         <AlertCircle className="w-3.5 h-3.5 text-amber-400" />
                         Sisa Match
                     </div>
                     <div
-                        className={`text-2xl font-black ${
-                            unscheduledMatches.length > 0 ? 'text-amber-400' : 'text-zinc-500'
-                        }`}
+                        className={cn('text-2xl font-black', {
+                            'text-amber-400': unscheduledMatches.length > 0,
+                            'text-zinc-500': unscheduledMatches.length === 0,
+                        })}
                     >
                         {unscheduledMatches.length}
                     </div>
@@ -165,7 +183,9 @@ export function SchedulePreviewCard({
 
                 {/* Metric 4: Court & Waktu */}
                 <div className="p-4 rounded-xl bg-zinc-950/70 border border-zinc-800 space-y-1">
-                    <div className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
+                    <div
+                        className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5"
+                    >
                         <Clock className="w-3.5 h-3.5 text-lime-400" />
                         Jam &amp; Durasi
                     </div>
@@ -182,19 +202,29 @@ export function SchedulePreviewCard({
             {scheduleData?.knockoutReservation &&
                 scheduleData.knockoutReservation.reservedRounds > 0 &&
                 (isAllMode || scheduleData.targetRound === 'group') && (
-                    <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-3 text-amber-300 text-xs animate-in fade-in duration-200">
+                    <div
+                        className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-3 text-amber-300 text-xs animate-in fade-in duration-200"
+                    >
                         <AlertCircle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
                         <div className="space-y-1">
                             <p className="font-bold text-amber-200">
                                 ℹ️ Informasi Alokasi Waktu Knockout:
                             </p>
                             <p className="leading-relaxed">
-                                <strong>{scheduleData.knockoutReservation.reservedRounds} ronde</strong> di akhir jadwal akan dicadangkan untuk babak semifinal/final dari{' '}
-                                <strong>{scheduleData.knockoutReservation.activeCategoriesCount} kategori aktif</strong>
+                                <strong>
+                                    {scheduleData.knockoutReservation.reservedRounds} ronde
+                                </strong>{' '}
+                                di akhir jadwal akan dicadangkan untuk babak semifinal/final dari{' '}
+                                <strong>
+                                    {scheduleData.knockoutReservation.activeCategoriesCount} kategori aktif
+                                </strong>
                                 {scheduleData.knockoutReservation.reservedStartTime ? (
-                                    <span> (mulai pukul <strong>{scheduleData.knockoutReservation.reservedStartTime}</strong>)</span>
+                                    <span>
+                                        {' '}(mulai pukul <strong>{scheduleData.knockoutReservation.reservedStartTime}</strong>)
+                                    </span>
                                 ) : null}
-                                . Slot yang tersedia untuk pertandingan fase grup akan dibatasi hingga sebelum blok waktu cadangan ini agar babak gugur terjamin mendapat slot.
+                                . Slot yang tersedia untuk pertandingan fase grup akan dibatasi hingga
+                                sebelum blok waktu cadangan ini agar babak gugur terjamin mendapat slot.
                             </p>
                         </div>
                     </div>
@@ -210,11 +240,13 @@ export function SchedulePreviewCard({
                         </span>
                     ) : isAllMode ? (
                         <span>
-                            ⚡ <strong>Mode Paralel:</strong> Mengisi seluruh court secara optimal antar kategori pada ronde yang sama dengan jaminan jeda 1 ronde per tim.
+                            ⚡ <strong>Mode Paralel:</strong> Mengisi seluruh court secara optimal
+                            antar kategori pada ronde yang sama dengan jaminan jeda 1 ronde per tim.
                         </span>
                     ) : (
                         <span>
-                            Penjadwalan otomatis mempertimbangkan jeda 1 ronde antar tim dan menghindari slot yang sudah terpakai kategori lain.
+                            Penjadwalan otomatis mempertimbangkan jeda 1 ronde antar tim dan
+                            menghindari slot yang sudah terpakai kategori lain.
                         </span>
                     )}
                 </div>

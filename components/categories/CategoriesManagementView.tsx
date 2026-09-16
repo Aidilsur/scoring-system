@@ -134,9 +134,12 @@ export function CategoriesManagementView() {
                 <div
                     className={cn(
                         'p-4 rounded-xl border flex items-center justify-between text-xs transition-all shadow-sm',
-                        toast.type === 'success'
-                            ? 'bg-lime-400/10 border-lime-400/30 text-lime-300'
-                            : 'bg-rose-500/10 border-rose-500/30 text-rose-300'
+                        {
+                            'bg-lime-400/10 border-lime-400/30 text-lime-300':
+                                toast.type === 'success',
+                            'bg-rose-500/10 border-rose-500/30 text-rose-300':
+                                toast.type !== 'success',
+                        }
                     )}
                 >
                     <div className="flex items-center gap-2.5 font-medium">

@@ -192,9 +192,12 @@ export function LiveScoringBoard({
                 <div
                     className={cn(
                         'p-4 sm:p-6 rounded-2xl border-2 transition-all flex flex-col items-center justify-between',
-                        servingTeam === 'team_a'
-                            ? 'bg-zinc-900 border-lime-400/80 shadow-lg shadow-lime-400/5'
-                            : 'bg-zinc-900/70 border-zinc-800'
+                        {
+                            'bg-zinc-900 border-lime-400/80 shadow-lg shadow-lime-400/5':
+                                servingTeam === 'team_a',
+                            'bg-zinc-900/70 border-zinc-800':
+                                servingTeam !== 'team_a',
+                        }
                     )}
                 >
                     {/* Header Tim A & Serve Toggle */}
@@ -207,9 +210,12 @@ export function LiveScoringBoard({
                                 title="Klik untuk pindah giliran serve ke Tim A"
                                 className={cn(
                                     'px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider inline-flex items-center gap-1 transition-all',
-                                    servingTeam === 'team_a'
-                                        ? 'bg-lime-400 text-zinc-950 shadow-sm'
-                                        : 'bg-zinc-800 text-zinc-400 hover:text-zinc-200',
+                                    {
+                                        'bg-lime-400 text-zinc-950 shadow-sm':
+                                            servingTeam === 'team_a',
+                                        'bg-zinc-800 text-zinc-400 hover:text-zinc-200':
+                                            servingTeam !== 'team_a',
+                                    },
                                     (isReadOnly || isCompleted) && 'opacity-50 cursor-not-allowed'
                                 )}
                             >
@@ -270,9 +276,12 @@ export function LiveScoringBoard({
                 <div
                     className={cn(
                         'p-4 sm:p-6 rounded-2xl border-2 transition-all flex flex-col items-center justify-between',
-                        servingTeam === 'team_b'
-                            ? 'bg-zinc-900 border-lime-400/80 shadow-lg shadow-lime-400/5'
-                            : 'bg-zinc-900/70 border-zinc-800'
+                        {
+                            'bg-zinc-900 border-lime-400/80 shadow-lg shadow-lime-400/5':
+                                servingTeam === 'team_b',
+                            'bg-zinc-900/70 border-zinc-800':
+                                servingTeam !== 'team_b',
+                        }
                     )}
                 >
                     {/* Header Tim B & Serve Toggle */}
@@ -285,9 +294,12 @@ export function LiveScoringBoard({
                                 title="Klik untuk pindah giliran serve ke Tim B"
                                 className={cn(
                                     'px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider inline-flex items-center gap-1 transition-all',
-                                    servingTeam === 'team_b'
-                                        ? 'bg-lime-400 text-zinc-950 shadow-sm'
-                                        : 'bg-zinc-800 text-zinc-400 hover:text-zinc-200',
+                                    {
+                                        'bg-lime-400 text-zinc-950 shadow-sm':
+                                            servingTeam === 'team_b',
+                                        'bg-zinc-800 text-zinc-400 hover:text-zinc-200':
+                                            servingTeam !== 'team_b',
+                                    },
                                     (isReadOnly || isCompleted) && 'opacity-50 cursor-not-allowed'
                                 )}
                             >
@@ -373,11 +385,7 @@ export function LiveScoringBoard({
                     disabled={!canUndo || isPending || isReadOnly}
                     variant="outline"
                     size="md"
-                    className={cn(
-                        'w-full sm:w-auto text-rose-300 border-rose-900/60 hover:bg-rose-950/40 hover:border-rose-700',
-                        'disabled:opacity-40 disabled:border-zinc-800 disabled:text-zinc-600',
-                        'inline-flex items-center justify-center gap-2 rounded-xl'
-                    )}
+                    className="w-full sm:w-auto text-rose-300 border-rose-900/60 hover:bg-rose-950/40 hover:border-rose-700 disabled:opacity-40 disabled:border-zinc-800 disabled:text-zinc-600 inline-flex items-center justify-center gap-2 rounded-xl"
                 >
                     <RotateCcw className="w-4 h-4" />
                     <span>Undo Poin Terakhir</span>

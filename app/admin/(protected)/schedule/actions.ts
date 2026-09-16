@@ -46,7 +46,8 @@ function extractHHmm(timeStr?: string | null): string {
  * 5. Panggil pure function generateMatchSchedule.
  * 6. Update court_id dan scheduled_time untuk match yang berhasil terjadwal.
  * 7. Jika ada match yang tidak muat, kembalikan warning dan rincian unscheduled tanpa error.
- * 8. Regenerate HANYA diizinkan jika belum ada match di babak kategori ini yang berstatus 'live' atau 'completed'.
+ * 8. Regenerate HANYA diizinkan jika belum ada match di babak kategori ini
+ *    yang berstatus 'live' atau 'completed'.
  */
 export async function generateCategoryScheduleAction(
     categoryIdOrTarget: string,
@@ -201,7 +202,8 @@ export async function generateCategoryScheduleAction(
         }
 
         // 7. Ambil occupiedSlots dari SEMUA match (grup maupun knockout) dari SEMUA kategori
-        // yang sudah memiliki court_id dan scheduled_time, KECUALI match (categoryId, round) yang sedang dijadwalkan
+        // yang sudah memiliki court_id dan scheduled_time, KECUALI match (categoryId, round)
+        // yang sedang dijadwalkan
         const { data: allScheduledMatches, error: occupiedError } = await supabase
             .from('matches')
             .select('court_id, scheduled_time, category_id, round')
@@ -223,8 +225,8 @@ export async function generateCategoryScheduleAction(
                 scheduledTime: extractHHmm(m.scheduled_time!),
             }))
 
-        // 8. Kosongkan terlebih dahulu court_id dan scheduled_time match pada babak ini di kategori ini
-        // agar proses penjadwalan bersih dan idempoten
+        // 8. Kosongkan terlebih dahulu court_id dan scheduled_time match pada babak ini
+        // di kategori ini agar proses penjadwalan bersih dan idempoten
         const { error: resetError } = await supabase
             .from('matches')
             .update({
@@ -250,8 +252,12 @@ export async function generateCategoryScheduleAction(
         }))
 
         const courtIds = courts.map((c) => c.id)
-        const startTime = settings.daily_start_time ? extractHHmm(settings.daily_start_time) : '08:00'
-        const endTime = settings.daily_end_time ? extractHHmm(settings.daily_end_time) : '18:00'
+        const startTime = settings.daily_start_time
+            ? extractHHmm(settings.daily_start_time)
+            : '08:00'
+        const endTime = settings.daily_end_time
+            ? extractHHmm(settings.daily_end_time)
+            : '18:00'
         const durationMinutes = settings.match_duration_minutes || 45
 
         let reservedRoundsAtEnd: number | undefined = undefined
@@ -260,7 +266,8 @@ export async function generateCategoryScheduleAction(
 
         if (round === 'group') {
             // 1. Hitung reservedRoundsAtEnd untuk babak knockout secara otomatis:
-            // 2 (semifinal) + 1 (final) + (1 jika third_place_enabled) per kategori aktif yang groups-nya sudah ada
+            // 2 (semifinal) + 1 (final) + (1 jika third_place_enabled) per kategori
+            // aktif yang groups-nya sudah ada
             const { data: activeCatsWithGroups } = await supabase
                 .from('categories')
                 .select('id, groups!inner(id)')
@@ -275,7 +282,8 @@ export async function generateCategoryScheduleAction(
             }
         } else {
             // 2. Jika round='semifinal' (atau 'final'/'third_place'):
-            // Hitung earliestStartTime dari scheduled_time TERAKHIR match round='group' di kategori yang sama + durationMinutes
+            // Hitung earliestStartTime dari scheduled_time TERAKHIR match round='group'
+            // di kategori yang sama + durationMinutes
             const { data: latestGroupMatch } = await supabase
                 .from('matches')
                 .select('scheduled_time')
@@ -361,7 +369,9 @@ export async function generateCategoryScheduleAction(
         return {
             success: false,
             message:
-                err instanceof Error ? err.message : 'Terjadi kesalahan sistem saat membuat jadwal.',
+                err instanceof Error
+                    ? err.message
+                    : 'Terjadi kesalahan sistem saat membuat jadwal.',
         }
     }
 }
@@ -373,9 +383,11 @@ export async function generateCategoryScheduleAction(
  * 1. Ambil SEMUA kategori aktif yang sudah memiliki groups (hasil draw).
  * 2. Ambil SEMUA match round='group' dari seluruh kategori tersebut.
  * 3. Guard: Cek apakah ada match yang berstatus 'live' atau 'completed'. Jika ada, tolak aksi ini.
- * 4. Set kembali court_id dan scheduled_time menjadi null untuk SEMUA match round='group' di SEMUA kategori (reset total).
- * 5. Panggil generateMatchSchedule() SATU KALI SAJA dengan gabungan SEMUA match dari semua kategori sekaligus,
- *    sehingga match dari kategori berbeda bisa terisi di court berbeda pada ronde/waktu yang sama (paralel).
+ * 4. Set kembali court_id dan scheduled_time menjadi null untuk SEMUA match round='group'
+ *    di SEMUA kategori (reset total).
+ * 5. Panggil generateMatchSchedule() SATU KALI SAJA dengan gabungan SEMUA match dari semua
+ *    kategori sekaligus, sehingga match dari kategori berbeda bisa terisi di court berbeda
+ *    pada ronde/waktu yang sama (paralel).
  * 6. Simpan hasil scheduled ke database (court_id, scheduled_time).
  * 7. Tampilkan warning jika ada match yang unscheduled (tidak muat dalam jam operasional).
  */
@@ -542,7 +554,8 @@ export async function generateAllCategoriesScheduleAction(): Promise<ScheduleAct
             }
         }
 
-        // 8. Panggil generateMatchSchedule SATU KALI SAJA dengan gabungan seluruh match dari semua kategori
+        // 8. Panggil generateMatchSchedule SATU KALI SAJA dengan gabungan seluruh match
+        // dari semua kategori
         const matchesInput: ScheduleMatchInput[] = allMatches.map((m) => ({
             id: m.id,
             teamAId: m.team_a_id,
@@ -550,15 +563,20 @@ export async function generateAllCategoriesScheduleAction(): Promise<ScheduleAct
         }))
 
         const courtIds = courts.map((c) => c.id)
-        const startTime = settings.daily_start_time ? extractHHmm(settings.daily_start_time) : '08:00'
-        const endTime = settings.daily_end_time ? extractHHmm(settings.daily_end_time) : '18:00'
+        const startTime = settings.daily_start_time
+            ? extractHHmm(settings.daily_start_time)
+            : '08:00'
+        const endTime = settings.daily_end_time
+            ? extractHHmm(settings.daily_end_time)
+            : '18:00'
         const durationMinutes = settings.match_duration_minutes || 45
 
         const knockoutMatchesPerCat = 2 + 1 + (settings.third_place_enabled ? 1 : 0)
         const totalKnockoutMatches = categoryIds.length * knockoutMatchesPerCat
         const reservedRoundsAtEnd = Math.ceil(totalKnockoutMatches / courtIds.length)
 
-        // occupiedSlots kosong karena seluruh match dari semua kategori dijadwalkan secara paralel bersamaan
+        // occupiedSlots kosong karena seluruh match dari semua kategori dijadwalkan
+        // secara paralel bersamaan
         const scheduleResult = generateMatchSchedule(
             matchesInput,
             courtIds,
@@ -625,7 +643,9 @@ export async function generateAllCategoriesScheduleAction(): Promise<ScheduleAct
         return {
             success: false,
             message:
-                err instanceof Error ? err.message : 'Terjadi kesalahan sistem saat membuat jadwal paralel.',
+                err instanceof Error
+                    ? err.message
+                    : 'Terjadi kesalahan sistem saat membuat jadwal paralel.',
         }
     }
 }
@@ -658,7 +678,8 @@ export async function resetAllGroupSchedulesAction(): Promise<ScheduleActionResp
             }
         }
 
-        // 2. Cek apakah ada match round='group' di SEMUA kategori yang berstatus 'live' atau 'completed'
+        // 2. Cek apakah ada match round='group' di SEMUA kategori yang berstatus
+        // 'live' atau 'completed'
         const { data: startedMatches, error: startedCheckError } = await supabase
             .from('matches')
             .select('id, status')
@@ -710,7 +731,9 @@ export async function resetAllGroupSchedulesAction(): Promise<ScheduleActionResp
         return {
             success: false,
             message:
-                err instanceof Error ? err.message : 'Terjadi kesalahan sistem saat mereset seluruh jadwal.',
+                err instanceof Error
+                    ? err.message
+                    : 'Terjadi kesalahan sistem saat mereset seluruh jadwal.',
         }
     }
 }

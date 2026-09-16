@@ -1,11 +1,11 @@
 'use client'
 
 import React from 'react'
-import { AlertTriangle, Clock, PlusCircle, Sliders, X } from 'lucide-react'
+import { AlertTriangle, X } from 'lucide-react'
 import Link from 'next/link'
 import { Match } from '@/types/domain'
 
-export interface ScheduleWarningCardProps {
+interface ScheduleWarningCardProps {
     unscheduledMatches: Match[]
     onDismiss?: () => void
 }
@@ -17,7 +17,9 @@ export function ScheduleWarningCard({
     if (!unscheduledMatches || unscheduledMatches.length === 0) return null
 
     return (
-        <div className="p-5 rounded-2xl bg-amber-950/40 border border-amber-500/40 text-amber-200 shadow-xl space-y-4">
+        <div
+            className="p-5 rounded-2xl bg-amber-950/40 border border-amber-500/40 text-amber-200 shadow-xl space-y-4"
+        >
             <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-2.5">
                     <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0" />
@@ -38,7 +40,8 @@ export function ScheduleWarningCard({
             </div>
 
             <p className="text-xs text-amber-200/90 leading-relaxed">
-                Sistem tidak dapat menjadwalkan seluruh pertandingan tanpa melanggar aturan wajib jeda 1 ronde antar pertandingan tim atau batas jam selesai harian.
+                Sistem tidak dapat menjadwalkan seluruh pertandingan tanpa melanggar aturan wajib
+                jeda 1 ronde antar pertandingan tim atau batas jam selesai harian.
             </p>
 
             {/* List of Unscheduled Matches */}
@@ -47,22 +50,33 @@ export function ScheduleWarningCard({
                     Daftar Pertandingan Belum Terjadwal:
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {unscheduledMatches.map((m) => (
-                        <div
-                            key={m.id}
-                            className="text-xs px-3 py-2 rounded-xl bg-black/40 border border-amber-500/20 text-zinc-300 flex items-center justify-between"
-                        >
-                            <span className="font-semibold text-white">
-                                {m.team_a?.player1_name || 'Tim A'} / {m.team_a?.player2_name || ''} vs{' '}
-                                {m.team_b?.player1_name || 'Tim B'} / {m.team_b?.player2_name || ''}
-                            </span>
-                            {m.group && (
-                                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">
-                                    {m.group.name}
+                    {unscheduledMatches.map((m) => {
+                        const teamAPlayer1 = m.team_a?.player1_name || 'Tim A'
+                        const teamAPlayer2 = m.team_a?.player2_name || ''
+                        const teamAName = `${teamAPlayer1} / ${teamAPlayer2}`.trim()
+
+                        const teamBPlayer1 = m.team_b?.player1_name || 'Tim B'
+                        const teamBPlayer2 = m.team_b?.player2_name || ''
+                        const teamBName = `${teamBPlayer1} / ${teamBPlayer2}`.trim()
+
+                        return (
+                            <div
+                                key={m.id}
+                                className="text-xs px-3 py-2 rounded-xl bg-black/40 border border-amber-500/20 text-zinc-300 flex items-center justify-between"
+                            >
+                                <span className="font-semibold text-white truncate mr-2">
+                                    {teamAName} vs {teamBName}
                                 </span>
-                            )}
-                        </div>
-                    ))}
+                                {m.group && (
+                                    <span
+                                        className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 shrink-0"
+                                    >
+                                        {m.group.name}
+                                    </span>
+                                )}
+                            </div>
+                        )
+                    })}
                 </div>
             </div>
 
@@ -83,13 +97,19 @@ export function ScheduleWarningCard({
                         (misal dari 18:00 ke 20:00).
                     </li>
                     <li>
-                        <strong>Tambah Jumlah Court:</strong> Tambahkan slot court aktif agar lebih banyak pertandingan dapat dimainkan secara paralel.
+                        <strong>Tambah Jumlah Court:</strong> Tambahkan slot court aktif agar lebih
+                        banyak pertandingan dapat dimainkan secara paralel.
                     </li>
                     <li>
-                        <strong>Periksa Alokasi Knockout atau Nonaktifkan Kategori:</strong> Jika turnamen memiliki banyak kategori, sistem secara otomatis mencadangkan ronde di akhir jadwal untuk semifinal &amp; final. Anda dapat menonaktifkan sementara kategori yang belum perlu dijadwalkan agar slot fase grup lebih lega.
+                        <strong>Periksa Alokasi Knockout atau Nonaktifkan Kategori:</strong> Jika
+                        turnamen memiliki banyak kategori, sistem secara otomatis mencadangkan
+                        ronde di akhir jadwal untuk semifinal &amp; final. Anda dapat menonaktifkan
+                        sementara kategori yang belum perlu dijadwalkan agar slot fase grup
+                        lebih lega.
                     </li>
                     <li>
-                        <strong>Kurangi Durasi Estimasi per Match:</strong> Sesuaikan estimasi alokasi waktu per match (misal dari 45 menit ke 35 menit).
+                        <strong>Kurangi Durasi Estimasi per Match:</strong> Sesuaikan estimasi
+                        alokasi waktu per match (misal dari 45 menit ke 35 menit).
                     </li>
                 </ul>
             </div>

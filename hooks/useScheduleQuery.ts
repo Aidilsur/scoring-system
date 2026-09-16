@@ -8,10 +8,10 @@ import {
     formatMinutesToTime,
 } from '@/lib/schedule/generateMatchSchedule'
 
-export const CATEGORIES_WITH_GROUPS_QUERY_KEY = ['categories', 'with-groups']
+const CATEGORIES_WITH_GROUPS_QUERY_KEY = ['categories', 'with-groups']
 export const CATEGORY_SCHEDULE_QUERY_KEY = ['schedule', 'category']
 
-export interface SchedulableCategoryItem extends Category {
+interface SchedulableCategoryItem extends Category {
     categoryId: string
     round: MatchRound
     roundLabel: string
@@ -26,7 +26,7 @@ export interface OccupiedCategorySlot {
     categoryName?: string
 }
 
-export interface KnockoutReservationInfo {
+interface KnockoutReservationInfo {
     reservedRounds: number
     activeCategoriesCount: number
     totalKnockoutMatches: number
@@ -105,20 +105,23 @@ export function useCategoriesWithGroupsQuery() {
             const categories = Array.from(uniqueCategoriesMap.values())
             if (categories.length === 0) return []
 
-            const categoryIds = categories.map((c) => c.id)
+            const schedulableItems: SchedulableCategoryItem[] = categories.map((cat) => {
+                const partnerType = cat.partner_type.toUpperCase()
+                const level = cat.level.toUpperCase()
 
-            const schedulableItems: SchedulableCategoryItem[] = categories.map((cat) => ({
-                id: cat.id,
-                categoryId: cat.id,
-                round: 'group' as MatchRound,
-                name: cat.name,
-                partner_type: cat.partner_type,
-                level: cat.level,
-                is_active: cat.is_active,
-                created_at: cat.created_at,
-                roundLabel: 'Fase Grup',
-                displayLabel: `${cat.name} (${cat.partner_type.toUpperCase()} - ${cat.level.toUpperCase()})`,
-            }))
+                return {
+                    id: cat.id,
+                    categoryId: cat.id,
+                    round: 'group' as MatchRound,
+                    name: cat.name,
+                    partner_type: cat.partner_type,
+                    level: cat.level,
+                    is_active: cat.is_active,
+                    created_at: cat.created_at,
+                    roundLabel: 'Fase Grup',
+                    displayLabel: `${cat.name} (${partnerType} - ${level})`,
+                }
+            })
 
             return schedulableItems
         },
@@ -225,7 +228,8 @@ export function useCategoryScheduleQuery(targetKey?: string) {
             const matches = (matchesData as Match[]) || []
 
             // 5. Ambil slot terisi oleh match LAIN (hanya jika mode per-kategori)
-            // Memperhitungkan SEMUA match (grup maupun knockout) dari SEMUA kategori yang sudah punya court_id/scheduled_time
+            // Memperhitungkan SEMUA match (grup maupun knockout) dari SEMUA kategori
+            // yang sudah punya court_id/scheduled_time
             let occupiedSlots: OccupiedCategorySlot[] = []
             if (!isAllMode) {
                 const { data: otherMatchesData } = await supabase
@@ -252,7 +256,8 @@ export function useCategoryScheduleQuery(targetKey?: string) {
                     }))
             }
 
-            // 6. Hitung status global untuk seluruh match babak grup di semua kategori (untuk tombol reset)
+            // 6. Hitung status global untuk seluruh match babak grup di semua kategori
+            // (untuk validasi tombol reset)
             const { count: startedCount } = await supabase
                 .from('matches')
                 .select('id', { count: 'exact', head: true })
@@ -291,9 +296,13 @@ export function useCategoryScheduleQuery(targetKey?: string) {
                     const reservedRounds = Math.ceil(totalKnockoutMatches / courts.length)
 
                     let reservedStartTime: string | undefined = undefined
-                    if (tournamentSettings.daily_end_time && tournamentSettings.match_duration_minutes) {
+                    if (
+                        tournamentSettings.daily_end_time &&
+                        tournamentSettings.match_duration_minutes
+                    ) {
                         const endMinutes = parseTimeToMinutes(tournamentSettings.daily_end_time)
-                        const startMinutes = endMinutes - reservedRounds * tournamentSettings.match_duration_minutes
+                        const duration = tournamentSettings.match_duration_minutes
+                        const startMinutes = endMinutes - reservedRounds * duration
                         if (startMinutes > 0) {
                             reservedStartTime = formatMinutesToTime(startMinutes)
                         }

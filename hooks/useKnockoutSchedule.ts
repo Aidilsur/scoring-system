@@ -5,12 +5,12 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
 import { useCategoriesWithGroupsQuery, extractHHmm, OccupiedCategorySlot } from './useScheduleQuery'
 import { generateCategoryScheduleAction } from '@/app/admin/(protected)/schedule/actions'
-import { Category, Match, Court, TournamentSettings, MatchRound } from '@/types/domain'
+import { Category, Match, Court, TournamentSettings } from '@/types/domain'
 import { toast } from '@/lib/toast'
 
-export const KNOCKOUT_SCHEDULE_QUERY_KEY = ['schedule', 'knockout']
+const KNOCKOUT_SCHEDULE_QUERY_KEY = ['schedule', 'knockout']
 
-export interface KnockoutRoundItem {
+interface KnockoutRoundItem {
     round: 'semifinal' | 'third_place' | 'final'
     title: string
     description: string
@@ -22,7 +22,7 @@ export interface KnockoutRoundItem {
     canGenerate: boolean
 }
 
-export interface KnockoutScheduleData {
+interface KnockoutScheduleData {
     category: Category | null
     settings: TournamentSettings | null
     courts: Court[]
@@ -149,7 +149,8 @@ export function useKnockoutSchedule(initialCategoryId?: string) {
 
             const knockoutMatches = (knockoutMatchesData as unknown as Match[]) || []
 
-            // e. Ambil SEMUA match (grup + knockout) seluruh kategori yang sudah terjadwal (untuk occupied slots & grid)
+            // e. Ambil SEMUA match (grup + knockout) seluruh kategori yang sudah terjadwal
+            // (untuk occupied slots & grid)
             const { data: allScheduledData } = await supabase
                 .from('matches')
                 .select(`
@@ -218,9 +219,12 @@ export function useKnockoutSchedule(initialCategoryId?: string) {
                 if (!cfg.include) continue
 
                 const exists = cfg.matches.length > 0
-                const isAllCompleted = exists && cfg.matches.every((m) => m.status === 'completed')
-                const isScheduled = exists && cfg.matches.every((m) => Boolean(m.court_id && m.scheduled_time))
-                const hasStarted = cfg.matches.some((m) => m.status === 'live' || m.status === 'completed')
+                const isAllCompleted =
+                    exists && cfg.matches.every((m) => m.status === 'completed')
+                const isScheduled =
+                    exists && cfg.matches.every((m) => Boolean(m.court_id && m.scheduled_time))
+                const hasStarted =
+                    cfg.matches.some((m) => m.status === 'live' || m.status === 'completed')
                 const canGenerate = exists && !isAllCompleted && !hasStarted
 
                 allRounds.push({
@@ -258,7 +262,9 @@ export function useKnockoutSchedule(initialCategoryId?: string) {
     })
 
     // 5. Mutation untuk generate jadwal babak knockout spesifik
-    const [generatingRound, setGeneratingRound] = useState<'semifinal' | 'third_place' | 'final' | null>(null)
+    const [generatingRound, setGeneratingRound] = useState<
+        'semifinal' | 'third_place' | 'final' | null
+    >(null)
 
     const { mutateAsync: runGenerateKnockout, isPending: isGeneratingKnockout } = useMutation({
         mutationFn: async (round: 'semifinal' | 'third_place' | 'final') => {
@@ -290,7 +296,8 @@ export function useKnockoutSchedule(initialCategoryId?: string) {
             ])
         },
         onError: (err: unknown) => {
-            const errorMsg = err instanceof Error ? err.message : 'Gagal membuat jadwal babak knockout.'
+            const errorMsg =
+                err instanceof Error ? err.message : 'Gagal membuat jadwal babak knockout.'
             toast.error(errorMsg)
         },
         onSettled: () => {

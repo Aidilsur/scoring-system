@@ -65,19 +65,22 @@ export function BracketPairingCard({ match, matchIndex }: BracketPairingCardProp
                 <div
                     className={cn(
                         'flex items-center justify-between p-3.5 rounded-xl border transition-all',
-                        isTeamAWinner
-                            ? 'bg-lime-950/30 border-lime-500/40 text-white'
-                            : 'bg-zinc-950/60 border-zinc-800/60 text-zinc-200'
+                        {
+                            'bg-lime-950/30 border-lime-500/40 text-white':
+                                isTeamAWinner,
+                            'bg-zinc-950/60 border-zinc-800/60 text-zinc-200':
+                                !isTeamAWinner,
+                        }
                     )}
                 >
                     <div className="flex items-center gap-3 min-w-0">
                         <div
                             className={cn(
-                                'w-7 h-7 rounded-lg flex items-center justify-center',
-                                'font-black text-xs shrink-0',
-                                isTeamAWinner
-                                    ? 'bg-lime-400 text-zinc-950'
-                                    : 'bg-zinc-800 text-zinc-400'
+                                'w-7 h-7 rounded-lg flex items-center justify-center font-black text-xs shrink-0',
+                                {
+                                    'bg-lime-400 text-zinc-950': isTeamAWinner,
+                                    'bg-zinc-800 text-zinc-400': !isTeamAWinner,
+                                }
                             )}
                         >
                             A
@@ -112,19 +115,22 @@ export function BracketPairingCard({ match, matchIndex }: BracketPairingCardProp
                 <div
                     className={cn(
                         'flex items-center justify-between p-3.5 rounded-xl border transition-all',
-                        isTeamBWinner
-                            ? 'bg-lime-950/30 border-lime-500/40 text-white'
-                            : 'bg-zinc-950/60 border-zinc-800/60 text-zinc-200'
+                        {
+                            'bg-lime-950/30 border-lime-500/40 text-white':
+                                isTeamBWinner,
+                            'bg-zinc-950/60 border-zinc-800/60 text-zinc-200':
+                                !isTeamBWinner,
+                        }
                     )}
                 >
                     <div className="flex items-center gap-3 min-w-0">
                         <div
                             className={cn(
-                                'w-7 h-7 rounded-lg flex items-center justify-center',
-                                'font-black text-xs shrink-0',
-                                isTeamBWinner
-                                    ? 'bg-lime-400 text-zinc-950'
-                                    : 'bg-zinc-800 text-zinc-400'
+                                'w-7 h-7 rounded-lg flex items-center justify-center font-black text-xs shrink-0',
+                                {
+                                    'bg-lime-400 text-zinc-950': isTeamBWinner,
+                                    'bg-zinc-800 text-zinc-400': !isTeamBWinner,
+                                }
                             )}
                         >
                             B

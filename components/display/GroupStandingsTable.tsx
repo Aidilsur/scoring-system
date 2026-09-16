@@ -116,9 +116,14 @@ export function GroupStandingsTable({
                                             <span
                                                 className={cn(
                                                     'inline-flex items-center justify-center w-7 h-7 rounded-lg text-xs font-mono font-bold',
-                                                    isRank1 && 'bg-lime-400 text-zinc-950 font-black shadow-sm shadow-lime-400/20',
-                                                    isRank2 && 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40',
-                                                    !isRank1 && !isRank2 && 'text-zinc-400'
+                                                    {
+                                                        'bg-lime-400 text-zinc-950 font-black shadow-sm shadow-lime-400/20':
+                                                            isRank1,
+                                                        'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40':
+                                                            isRank2,
+                                                        'text-zinc-400':
+                                                            !isRank1 && !isRank2,
+                                                    }
                                                 )}
                                             >
                                                 {item.rank}
@@ -179,9 +184,11 @@ export function GroupStandingsTable({
                                         <td
                                             className={cn(
                                                 'py-3.5 px-3 text-center font-mono text-sm font-semibold',
-                                                item.game_diff > 0 && 'text-lime-400',
-                                                item.game_diff < 0 && 'text-rose-400',
-                                                item.game_diff === 0 && 'text-zinc-400'
+                                                {
+                                                    'text-lime-400': item.game_diff > 0,
+                                                    'text-rose-400': item.game_diff < 0,
+                                                    'text-zinc-400': item.game_diff === 0,
+                                                }
                                             )}
                                         >
                                             {formatGameDiff(item.game_diff)}
