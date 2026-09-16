@@ -12,7 +12,7 @@ Daftar modul diurutkan berdasarkan tingkat urgensi dan jumlah pelanggaran terban
 | :---: | :--- | :---: | :---: | :---: | :---: | :---: |
 | **P1** | **`admin/schedule`** | 18 temuan | 2 hooks (`useScheduleManagement`, `useKnockoutSchedule`) | **226 baris** (7 file) | Status match badge (Grid & Knockout) | 2 |
 | **P2** | **`display`** | 14 temuan | 1 hook (`useCourtLiveDisplay`) | **232 baris** (6 file) | `getRoundLabel` & `formatLevel` | 3 |
-| **P3** | **`admin/scoring`** | 12 temuan (termasuk action `getScoreHistoryCountAction`) | 1 hook (`useScoringManagement` 375 baris) | **132 baris** | Status badge & `getRoundTitle` | 2 |
+| **P3** | **`admin/scoring`** | ~~12 temuan~~ ✅ Selesai dibersihkan | 1 hook (`useScoringManagement` 375 baris) | ~~132 baris~~ ✅ Selesai di-wrap | ~~Status badge & `ROUND_LABELS`~~ ✅ Selesai di-refactor | ~~2~~ ✅ Dihapus |
 | **P4** | **`admin/bracket`** | ~~8 temuan~~ ✅ Selesai dibersihkan | 1 hook (`useBracketManagement`) | ~~68 baris~~ ✅ Selesai di-wrap | - | ~~1~~ ✅ Dihapus |
 | **P5** | **`admin/tournament-setup`** | ~~6 temuan~~ ✅ Selesai dibersihkan | 1 hook (`useTournamentSettingsForm`) | ~~62 baris~~ ✅ Selesai di-wrap | ~~`TOURNAMENT_STATUS_CONFIG`~~ ✅ Selesai di-refactor | ~~1~~ ✅ Dihapus |
 | **P6** | **`admin/categories`** | ~~4 temuan~~ ✅ Selesai dibersihkan | 1 hook (`useCategoriesManagement`) | ~~53 baris~~ ✅ Selesai di-wrap | ~~`CATEGORY_LEVEL_CONFIG`~~ ✅ Selesai di-refactor | ~~2~~ ✅ Dihapus |
@@ -43,19 +43,19 @@ Daftar modul diurutkan berdasarkan tingkat urgensi dan jumlah pelanggaran terban
     - L8: Import type `MatchRound` tidak terpakai.
   - `hooks/useScheduleQuery.ts`:
     - L108: Variable `categoryIds` di-assign tapi tidak terpakai.
-- **admin/scoring**:
+- ~~**admin/scoring**~~ (✅ Selesai dibersihkan):
   - `components/scoring/CourtMatchList.tsx`:
-    - L4: Import `AlertCircle` tidak terpakai.
+    - ~~L4: Import `AlertCircle` tidak terpakai.~~
   - `components/scoring/CourtSelectionView.tsx`:
-    - L6, L14: Import `Button` dan prop `userEmail` tidak terpakai.
+    - ~~L6, L14: Import `Button` dan prop `userEmail` tidak terpakai.~~
   - `components/scoring/LiveScoringBoard.tsx`:
-    - L11, L77: Import `Zap` dan variable `isKnockoutGoldenGame` tidak terpakai.
+    - ~~L11, L77: Import `Zap` dan variable `isKnockoutGoldenGame` tidak terpakai.~~
   - `app/admin/(protected)/scoring/[courtId]/page.tsx`:
-    - L14: Param `courtId` di-destructure tapi tidak dipakai.
+    - ~~L14: Param `courtId` di-destructure tapi tidak dipakai.~~
   - `app/admin/(protected)/scoring/[courtId]/[matchId]/page.tsx`:
-    - L14: Param `matchId` di-destructure tapi tidak dipakai.
+    - ~~L14: Param `matchId` di-destructure tapi tidak dipakai.~~
   - `app/admin/(protected)/scoring/actions.ts`:
-    - L39, L127, L169, L255, L526: Parameter `_userIdentifier` tidak digunakan dalam body fungsi.
+    - ~~L39, L127, L169, L255, L526: Parameter `_userIdentifier` tidak digunakan dalam body fungsi~~ (dipertahankan aman dengan prefix `_userIdentifier?: string` untuk kompatibilitas pemanggil).
 - ~~**admin/bracket**~~ (✅ Selesai dibersihkan):
   - `components/bracket/BracketManagementView.tsx`:
     - ~~L8, L11: Import `Play`, `Info` tidak terpakai.~~
@@ -82,14 +82,14 @@ Daftar modul diurutkan berdasarkan tingkat urgensi dan jumlah pelanggaran terban
     - ~~L7: Import type `TournamentSettingsInput` tidak terpakai.~~
 
 #### B. Unused Exported Functions & Types (Export tanpa consumer luar)
-- **admin/scoring**:
+- ~~**admin/scoring**~~ (✅ Selesai dibersihkan):
   - `app/admin/(protected)/scoring/actions.ts`:
-    - L635: `export async function getScoreHistoryCountAction(...)` (Server action tidak pernah dipanggil di hook/komponen).
-    - L16, L22: Type `ScoringActionResponse`, `SessionClaimResponse`.
+    - ~~L635: `export async function getScoreHistoryCountAction(...)`~~ (Server action dihapus karena tidak pernah dipanggil).
+    - ~~L16, L22: Type `ScoringActionResponse`, `SessionClaimResponse`~~ (dijadikan internal interface).
   - `hooks/useMatchDetailQuery.ts`:
-    - L10: `export const matchHistoryCountQueryKey`.
+    - ~~L10: `export const matchHistoryCountQueryKey`~~ (dihapus).
   - `components/scoring/ScoringView.tsx`:
-    - L20: Duplikasi ekspor `export function ScoringView` (sudah ada `export default ScoringView`).
+    - ~~L20: Duplikasi ekspor `export function ScoringView`~~ (diperbaiki menjadi internal function, tetap `export default ScoringView`).
 - **admin/draw (✅ Selesai)**:
   - `lib/draw/generateGroupDraw.ts`:
     - ~~L15, L29: Fungsi `shuffle` dan `formatGroupName` diekspor~~ (dijadikan fungsi internal).
@@ -182,12 +182,12 @@ Berikut daftar file dengan pelanggaran panjang baris terbanyak akibat JSX props 
 | `components/schedule/KnockoutScheduleTab.tsx` | **56** | 359 |
 | `components/display/CourtOverviewCard.tsx` | **46** | 334 |
 | `components/schedule/ScheduleManagementView.tsx` | **44** | 439 |
-| `components/scoring/LiveScoringBoard.tsx` | **38** | 384 |
+| `components/scoring/LiveScoringBoard.tsx` | ~~38~~ ✅ Selesai di-wrap | 384 |
 | `components/bracket/BracketManagementView.tsx` | ~~37~~ ✅ Selesai di-wrap | 438 |
 | `components/display/StandingsOverviewGrid.tsx` | **36** | 246 |
 | `components/schedule/ScheduleGridView.tsx` | **33** | 323 |
-| `app/admin/(protected)/scoring/actions.ts` | **29** | 651 |
-| `components/scoring/CourtMatchList.tsx` | **28** | 222 |
+| `app/admin/(protected)/scoring/actions.ts` | ~~29~~ ✅ Selesai di-wrap | 651 |
+| `components/scoring/CourtMatchList.tsx` | ~~28~~ ✅ Selesai di-wrap | 222 |
 | `app/admin/(protected)/schedule/actions.ts` | **27** | 717 |
 | `components/display/CourtsOverviewGrid.tsx` | **27** | 208 |
 | `components/display/CategoryStandingsView.tsx` | **25** | 250 |
@@ -201,7 +201,7 @@ Berikut daftar file dengan pelanggaran panjang baris terbanyak akibat JSX props 
 | `components/tournament-setup/ShareRegistrationCard.tsx` | **16** | 176 |
 | `components/bracket/FinalPairingCard.tsx` | ~~15~~ ✅ Selesai di-wrap | 232 |
 | `components/schedule/ScheduleRegenerateConfirmModal.tsx` | **15** | 157 |
-| `components/scoring/CourtSelectionView.tsx` | **14** | 104 |
+| `components/scoring/CourtSelectionView.tsx` | ~~14~~ ✅ Selesai di-wrap | 104 |
 | `components/tournament-setup/TournamentSetupForm.tsx` | **14** | 260 |
 
 ---
@@ -210,10 +210,10 @@ Berikut daftar file dengan pelanggaran panjang baris terbanyak akibat JSX props 
 
 1. **Label & Judul Ronde Pertandingan (`round`)**:
    - Terduplikasi di 4 komponen:
-     - `components/scoring/CourtMatchList.tsx:L28`
+     - ~~`components/scoring/CourtMatchList.tsx:L28`~~ ✅ Selesai di-refactor menggunakan `ROUND_LABELS` di `lib/scoring/constants.ts`
      - `components/display/CourtLiveDisplay.tsx:L35`
      - `components/display/CourtOverviewCard.tsx:L36`
-     - `components/scoring/LiveScoringBoard.tsx:L36`
+     - ~~`components/scoring/LiveScoringBoard.tsx:L36`~~ ✅ Selesai di-refactor menggunakan `ROUND_LABELS` di `lib/scoring/constants.ts`
    - *Solusi refactor*: Buat record terpusat di `types/domain.ts` atau `lib/scoring/constants.ts`:
      ```ts
      export const ROUND_LABELS: Record<MatchRound, string> = {
@@ -224,7 +224,7 @@ Berikut daftar file dengan pelanggaran panjang baris terbanyak akibat JSX props 
      ```
 
 2. **Status Badge Match (`live` / `scheduled` / `completed`)**:
-   - `components/scoring/CourtMatchList.tsx:L137-L160`: Ternary bersarang untuk background + `isLive && ...` `isScheduled && ...` `isCompleted && ...`.
+   - ~~`components/scoring/CourtMatchList.tsx:L137-L160`~~: ✅ Selesai di-refactor menggunakan `MATCH_STATUS_CONFIG` lookup di `lib/scoring/constants.ts`.
    - `components/schedule/KnockoutScheduleTab.tsx:L233-L245`: Ternary `match.status === 'live' ? ... : match.status === 'completed' ? ... : ...`.
    - `components/schedule/ScheduleGridView.tsx:L253-L265`: Pola ternary status serupa.
    - *Solusi refactor*: Buat lookup object:
@@ -261,10 +261,10 @@ Komentar yang hanya mengulang apa yang sudah jelas dari nama method/variable/fun
   - ~~L221: `// Form`~~
 - ~~`hooks/useDrawManagement.ts:L112`: `// Buka modal konfirmasi`~~ (✅ Dihapus).
 - ~~`hooks/useTeamsManagement.ts:L98`: `// Update selected team status jika modal sedang terbuka`~~ (✅ Dihapus).
-- `hooks/useScoringManagement.ts:L365`: `// Handlers` (tepat sebelum return object `selectCourt, ...`).
+- ~~`hooks/useScoringManagement.ts:L365`: `// Handlers`~~ (✅ Dihapus).
 - ~~`app/admin/(protected)/tournament-setup/page.tsx:L26`: `// Ambil data pengaturan turnamen yang aktif jika sudah ada (mode edit)`~~ (✅ Dihapus).
 - ~~`app/admin/(protected)/bracket/actions.ts:L172`: `// Ambil data tim untuk pasangan nama pemain`~~ (✅ Dihapus).
-- `app/admin/(protected)/scoring/actions.ts:L343`: `// Ambil pengaturan golden point dari tournament_settings`.
+- ~~`app/admin/(protected)/scoring/actions.ts:L343`: `// Ambil pengaturan golden point dari tournament_settings`~~ (✅ Dihapus).
 
 ---
 

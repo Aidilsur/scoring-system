@@ -6,8 +6,9 @@ import type { Match } from '@/types/domain'
 import { SESSION_LOCK_TTL_MS } from '@/lib/scoring'
 
 export const matchDetailQueryKey = (matchId: string | null, userEmail?: string) =>
-    userEmail ? ['match', matchId, userEmail.toLowerCase().trim()] : ['match', matchId]
-export const matchHistoryCountQueryKey = (matchId: string | null) => ['match_history_count', matchId]
+    userEmail
+        ? ['match', matchId, userEmail.toLowerCase().trim()]
+        : ['match', matchId]
 
 export interface MatchDetailData {
     match: Match | null

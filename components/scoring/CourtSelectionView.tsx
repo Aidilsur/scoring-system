@@ -3,22 +3,23 @@
 import React from 'react'
 import Link from 'next/link'
 import { ArrowRight, ShieldCheck, Zap, Layers } from 'lucide-react'
-import { Badge, Button } from '@/components/ui'
+import { Badge } from '@/components/ui'
 import { useCourtsQuery } from '@/hooks/useCourtsQuery'
 
-export interface CourtSelectionViewProps {
+interface CourtSelectionViewProps {
     isReferee?: boolean
-    userEmail?: string
 }
 
-export function CourtSelectionView({ isReferee = false, userEmail }: CourtSelectionViewProps) {
+export function CourtSelectionView({ isReferee = false }: CourtSelectionViewProps) {
     const { data: courts, isLoading } = useCourtsQuery()
 
     return (
         <div className="min-h-screen bg-zinc-950 text-zinc-100 p-4 sm:p-6 md:p-8">
             <div className="max-w-4xl mx-auto space-y-6">
                 {/* Header Halaman */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-zinc-800">
+                <div
+                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-zinc-800"
+                >
                     <div>
                         <div className="flex items-center gap-2 text-xs text-zinc-400 mb-1 font-mono">
                             <span>PORTAL SCORING</span>
@@ -26,7 +27,9 @@ export function CourtSelectionView({ isReferee = false, userEmail }: CourtSelect
                             <span className="text-lime-400 font-bold">PILIH COURT</span>
                         </div>
 
-                        <h1 className="font-[family-name:var(--font-anton)] text-3xl sm:text-4xl text-white uppercase tracking-tight flex items-center gap-2.5">
+                        <h1
+                            className="font-[family-name:var(--font-anton)] text-3xl sm:text-4xl text-white uppercase tracking-tight flex items-center gap-2.5"
+                        >
                             <Zap className="w-8 h-8 text-lime-400 fill-lime-400/20" />
                             Live Scoring Pertandingan
                         </h1>
@@ -49,8 +52,12 @@ export function CourtSelectionView({ isReferee = false, userEmail }: CourtSelect
                         Memuat daftar lapangan (court)...
                     </div>
                 ) : !courts || courts.length === 0 ? (
-                    <div className="p-12 rounded-2xl bg-zinc-900/60 border border-zinc-800 text-center space-y-3">
-                        <div className="w-12 h-12 rounded-xl bg-zinc-800 text-zinc-400 flex items-center justify-center mx-auto">
+                    <div
+                        className="p-12 rounded-2xl bg-zinc-900/60 border border-zinc-800 text-center space-y-3"
+                    >
+                        <div
+                            className="w-12 h-12 rounded-xl bg-zinc-800 text-zinc-400 flex items-center justify-center mx-auto"
+                        >
                             <Layers className="w-6 h-6" />
                         </div>
                         <h4 className="text-sm font-bold text-white uppercase tracking-wider">
@@ -88,7 +95,9 @@ export function CourtSelectionView({ isReferee = false, userEmail }: CourtSelect
                                         </p>
                                     </div>
 
-                                    <div className="pt-4 border-t border-zinc-800/80 flex items-center justify-between text-xs font-bold text-lime-400 group-hover:translate-x-1 transition-transform">
+                                    <div
+                                        className="pt-4 border-t border-zinc-800/80 flex items-center justify-between text-xs font-bold text-lime-400 group-hover:translate-x-1 transition-transform"
+                                    >
                                         <span>Buka Jadwal Court</span>
                                         <ArrowRight className="w-4 h-4" />
                                     </div>

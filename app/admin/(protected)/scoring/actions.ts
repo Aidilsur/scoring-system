@@ -13,13 +13,13 @@ import {
 } from '@/lib/scoring'
 import type { Match, MatchRound, MatchStatus } from '@/types/domain'
 
-export interface ScoringActionResponse {
+interface ScoringActionResponse {
     success: boolean
     message: string
     data?: Match
 }
 
-export interface SessionClaimResponse {
+interface SessionClaimResponse {
     success: boolean
     isOwner: boolean
     message: string
@@ -32,7 +32,8 @@ export interface SessionClaimResponse {
  * Basis identifikasi menggunakan email user yang terautentikasi (admin_users).
  * Jika match sudah diklaim akun lain dan claimed_at masih dalam TTL (2 menit),
  * permintaan ditolak (isOwner: false) dan akun/device lain masuk mode read-only.
- * Jika akun yang login SAMA, klaim diperbarui dan user dapat melanjutkan scoring di tab/device manapun.
+ * Jika akun yang login SAMA, klaim diperbarui dan user dapat melanjutkan
+ * scoring di tab/device manapun.
  */
 export async function claimScorerSessionAction(
     matchId: string,
@@ -57,8 +58,11 @@ export async function claimScorerSessionAction(
         }
 
         const now = Date.now()
-        const claimedAtTime = match.active_scorer_claimed_at ? new Date(match.active_scorer_claimed_at).getTime() : 0
-        const isExpired = !match.active_scorer_claimed_at || (now - claimedAtTime > SESSION_LOCK_TTL_MS)
+        const claimedAtTime = match.active_scorer_claimed_at
+            ? new Date(match.active_scorer_claimed_at).getTime()
+            : 0
+        const isExpired =
+            !match.active_scorer_claimed_at || (now - claimedAtTime > SESSION_LOCK_TTL_MS)
         const isCurrentOwner = match.active_scorer_session_id?.toLowerCase().trim() === userEmail
 
         // Jika sudah diklaim akun lain dan belum kedaluwarsa (<= 2 menit)
@@ -295,12 +299,15 @@ export async function recordPointAction(
             return { success: false, message: 'Pertandingan sudah selesai. Gunakan Undo jika ingin mengubah poin.' }
         }
 
-        // Compare-and-swap: verifikasi active_scorer_session_id di database masih sama dengan user email yang melakukan request
+        // Compare-and-swap: verifikasi active_scorer_session_id di database
+        // masih sama dengan user email yang melakukan request
         const now = Date.now()
         const claimedAtTime = currentMatch.active_scorer_claimed_at
             ? new Date(currentMatch.active_scorer_claimed_at).getTime()
             : 0
-        const isClaimExpired = !currentMatch.active_scorer_claimed_at || (now - claimedAtTime > SESSION_LOCK_TTL_MS)
+        const isClaimExpired =
+            !currentMatch.active_scorer_claimed_at ||
+            now - claimedAtTime > SESSION_LOCK_TTL_MS
 
         if (
             currentMatch.active_scorer_session_id &&
@@ -313,7 +320,8 @@ export async function recordPointAction(
             }
         }
 
-        // Cek apakah ada match LAIN di court yang sama yang sedang live (mencegah 2 match live bersamaan di court fisik sama)
+        // Cek apakah ada match LAIN di court yang sama yang sedang live
+        // (mencegah 2 match live bersamaan di court fisik sama)
         if (currentMatch.court_id) {
             const { data: conflictingLiveMatches } = await supabase
                 .from('matches')
@@ -329,8 +337,12 @@ export async function recordPointAction(
 
             if (conflictingLiveMatches && conflictingLiveMatches.length > 0) {
                 const liveM = conflictingLiveMatches[0]
-                const teamAData = (Array.isArray(liveM.team_a) ? liveM.team_a[0] : liveM.team_a) as { player1_name?: string; player2_name?: string } | null
-                const teamBData = (Array.isArray(liveM.team_b) ? liveM.team_b[0] : liveM.team_b) as { player1_name?: string; player2_name?: string } | null
+                const teamAData = (
+                    Array.isArray(liveM.team_a) ? liveM.team_a[0] : liveM.team_a
+                ) as { player1_name?: string; player2_name?: string } | null
+                const teamBData = (
+                    Array.isArray(liveM.team_b) ? liveM.team_b[0] : liveM.team_b
+                ) as { player1_name?: string; player2_name?: string } | null
                 const teamA = `${teamAData?.player1_name || 'Tim A'}/${teamAData?.player2_name || ''}`.trim()
                 const teamB = `${teamBData?.player1_name || 'Tim B'}/${teamBData?.player2_name || ''}`.trim()
                 return {
@@ -340,7 +352,6 @@ export async function recordPointAction(
             }
         }
 
-        // Ambil pengaturan golden point dari tournament_settings
         const { data: settings } = await supabase
             .from('tournament_settings')
             .select('golden_point')
@@ -412,7 +423,9 @@ export async function recordPointAction(
                 const matchWinner = checkMatchWinner(finalGamesA, finalGamesB, round)
                 if (matchWinner) {
                     finalStatus = 'completed'
-                    finalWinnerId = matchWinner === 'team_a' ? currentMatch.team_a_id : currentMatch.team_b_id
+                    finalWinnerId = matchWinner === 'team_a'
+                        ? currentMatch.team_a_id
+                        : currentMatch.team_b_id
                     finalCompletedAt = new Date().toISOString()
                 }
             } else {
@@ -444,7 +457,9 @@ export async function recordPointAction(
                 const matchWinner = checkMatchWinner(finalGamesA, finalGamesB, round)
                 if (matchWinner) {
                     finalStatus = 'completed'
-                    finalWinnerId = matchWinner === 'team_a' ? currentMatch.team_a_id : currentMatch.team_b_id
+                    finalWinnerId = matchWinner === 'team_a'
+                        ? currentMatch.team_a_id
+                        : currentMatch.team_b_id
                     finalCompletedAt = new Date().toISOString()
                 }
             } else {
@@ -453,7 +468,8 @@ export async function recordPointAction(
             }
         }
 
-        // 5. Jika status match sebelumnya 'scheduled', ubah menjadi 'live' saat poin pertama dicatat
+        // 5. Jika status match sebelumnya 'scheduled',
+        // ubah menjadi 'live' saat poin pertama dicatat
         if (finalStatus === 'scheduled') {
             finalStatus = 'live'
         }
@@ -544,7 +560,9 @@ export async function undoLastPointAction(
             const claimedAtTime = currentMatch.active_scorer_claimed_at
                 ? new Date(currentMatch.active_scorer_claimed_at).getTime()
                 : 0
-            const isClaimExpired = !currentMatch.active_scorer_claimed_at || (now - claimedAtTime > SESSION_LOCK_TTL_MS)
+            const isClaimExpired =
+                !currentMatch.active_scorer_claimed_at ||
+                now - claimedAtTime > SESSION_LOCK_TTL_MS
 
             if (
                 currentMatch.active_scorer_session_id &&
@@ -626,25 +644,5 @@ export async function undoLastPointAction(
             success: false,
             message: err instanceof Error ? err.message : 'Terjadi kesalahan sistem saat melakukan undo.',
         }
-    }
-}
-
-/**
- * Server Action: Mengambil jumlah snapshot riwayat untuk suatu match
- */
-export async function getScoreHistoryCountAction(matchId: string): Promise<number> {
-    try {
-        const supabase = await createClient()
-        const { count, error } = await supabase
-            .from('match_score_history')
-            .select('id', { count: 'exact', head: true })
-            .eq('match_id', matchId)
-
-        if (error) {
-            return 0
-        }
-        return count || 0
-    } catch {
-        return 0
     }
 }

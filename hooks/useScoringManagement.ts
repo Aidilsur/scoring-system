@@ -362,7 +362,6 @@ export function useScoringManagement(
         historyCount: matchDetailQuery.data?.historyCount || 0,
         isMatchLoading: matchDetailQuery.isLoading,
 
-        // Handlers
         selectCourt,
         selectMatch,
         backToMatchList,

@@ -8,10 +8,7 @@ interface MatchScoringPageProps {
     params: Promise<{ courtId: string; matchId: string }>
 }
 
-export async function generateMetadata({
-    params,
-}: MatchScoringPageProps): Promise<Metadata> {
-    const { matchId } = await params
+export async function generateMetadata(): Promise<Metadata> {
     return {
         title: 'Live Scoring — Padel Tournament',
         description: 'Pencatatan skor live pertandingan padel turnamen.',

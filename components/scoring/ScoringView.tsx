@@ -8,7 +8,7 @@ import { CourtMatchList } from './CourtMatchList'
 import { LiveScoringBoard } from './LiveScoringBoard'
 import { useScoringManagement } from '@/hooks/useScoringManagement'
 
-export interface ScoringViewProps {
+interface ScoringViewProps {
     isReferee?: boolean
     userEmail?: string
 }
@@ -17,7 +17,7 @@ export interface ScoringViewProps {
  * ScoringView: Komponen Container View utama modul scoring wasit / admin.
  * Memisahkan mode pemilihan court & match list dengan mode papan scoring aktif.
  */
-export function ScoringView({ isReferee = false, userEmail }: ScoringViewProps) {
+function ScoringView({ isReferee = false, userEmail }: ScoringViewProps) {
     const {
         selectedCourtId,
         selectedMatchId,
@@ -49,7 +49,9 @@ export function ScoringView({ isReferee = false, userEmail }: ScoringViewProps) 
         <div className="min-h-screen bg-zinc-950 text-zinc-100 p-4 sm:p-6 md:p-8">
             <div className="max-w-4xl mx-auto space-y-6">
                 {/* Header Halaman */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-zinc-800">
+                <div
+                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-zinc-800"
+                >
                     <div>
                         <div className="flex items-center gap-2 text-xs text-zinc-400 mb-1 font-mono">
                             <span>PORTAL SCORING</span>
@@ -67,7 +69,9 @@ export function ScoringView({ isReferee = false, userEmail }: ScoringViewProps) 
                             )}
                         </div>
 
-                        <h1 className="font-[family-name:var(--font-anton)] text-3xl sm:text-4xl text-white uppercase tracking-tight flex items-center gap-2.5">
+                        <h1
+                            className="font-[family-name:var(--font-anton)] text-3xl sm:text-4xl text-white uppercase tracking-tight flex items-center gap-2.5"
+                        >
                             <Zap className="w-8 h-8 text-lime-400 fill-lime-400/20" />
                             Live Scoring Pertandingan
                         </h1>

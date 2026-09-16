@@ -28,5 +28,5 @@ export default async function AdminScoringPage() {
 
     const isReferee = adminUser?.role === 'referee'
 
-    return <CourtSelectionView isReferee={isReferee} userEmail={email} />
+    return <CourtSelectionView isReferee={isReferee} />
 }
