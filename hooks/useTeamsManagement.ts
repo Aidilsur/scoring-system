@@ -95,7 +95,6 @@ export function useTeamsManagement() {
                 // Invalidate cache TanStack Query agar UI update otomatis tanpa reload
                 queryClient.invalidateQueries({ queryKey: ['teams'] })
 
-                // Update selected team status jika modal sedang terbuka
                 if (selectedTeam && selectedTeam.id === variables.teamId) {
                     setSelectedTeam((prev) =>
                         prev ? { ...prev, status: variables.status as TeamStatus } : null

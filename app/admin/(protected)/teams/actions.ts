@@ -3,7 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { TeamStatus } from '@/types/domain'
 
-export interface ActionResponse {
+interface ActionResponse {
     success: boolean
     message: string
 }

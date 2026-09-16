@@ -39,7 +39,12 @@ export function TeamCard({
         : 'Kategori Umum'
 
     return (
-        <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 sm:p-5 shadow-lg shadow-black/30 space-y-4 hover:border-zinc-700 transition">
+        <div
+            className={[
+                'bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 sm:p-5',
+                'shadow-lg shadow-black/30 space-y-4 hover:border-zinc-700 transition',
+            ].join(' ')}
+        >
             {/* Header: Kategori & Status */}
             <div className="flex items-start justify-between gap-2">
                 <div>
@@ -54,7 +59,12 @@ export function TeamCard({
             </div>
 
             {/* Info baris: WhatsApp & Tanggal */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-zinc-400 pt-2 border-t border-zinc-800">
+            <div
+                className={[
+                    'grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-zinc-400',
+                    'pt-2 border-t border-zinc-800',
+                ].join(' ')}
+            >
                 <div className="flex items-center gap-1.5">
                     <span className="font-medium text-zinc-500">WhatsApp:</span>
                     <a
@@ -73,7 +83,12 @@ export function TeamCard({
             </div>
 
             {/* Tombol Aksi */}
-            <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-zinc-800">
+            <div
+                className={[
+                    'flex flex-wrap items-center justify-between gap-2',
+                    'pt-2 border-t border-zinc-800',
+                ].join(' ')}
+            >
                 <Button
                     type="button"
                     variant="outline"

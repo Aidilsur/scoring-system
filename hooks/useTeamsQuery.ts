@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
 import { Team, Category } from '@/types/domain'
 
-export interface TeamsQueryFilters {
+interface TeamsQueryFilters {
     status?: string
     categoryId?: string
 }

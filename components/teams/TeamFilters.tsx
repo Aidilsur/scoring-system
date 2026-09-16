@@ -42,9 +42,20 @@ export function TeamFilters({
     ]
 
     return (
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-zinc-50 dark:bg-zinc-900/60 p-3 sm:p-4 rounded-xl border border-zinc-200 dark:border-zinc-800">
+        <div
+            className={[
+                'flex flex-col md:flex-row md:items-center justify-between',
+                'gap-4 bg-zinc-50 dark:bg-zinc-900/60 p-3 sm:p-4 rounded-xl',
+                'border border-zinc-200 dark:border-zinc-800',
+            ].join(' ')}
+        >
             {/* Status Tabs */}
-            <div className="flex flex-wrap items-center gap-1 bg-zinc-200/60 dark:bg-zinc-800/80 p-1 rounded-lg">
+            <div
+                className={[
+                    'flex flex-wrap items-center gap-1',
+                    'bg-zinc-200/60 dark:bg-zinc-800/80 p-1 rounded-lg',
+                ].join(' ')}
+            >
                 {STATUS_TABS.map((tab) => {
                     const isActive = statusFilter === tab.id
                     return (
@@ -52,11 +63,19 @@ export function TeamFilters({
                             key={tab.id}
                             type="button"
                             onClick={() => onStatusChange(tab.id)}
-                            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition cursor-pointer ${
+                            className={[
+                                'px-3 py-1.5 rounded-md text-xs font-semibold',
+                                'transition cursor-pointer',
                                 isActive
-                                    ? 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white shadow-xs'
-                                    : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
-                            }`}
+                                    ? [
+                                          'bg-white dark:bg-zinc-900 text-zinc-900',
+                                          'dark:text-white shadow-xs',
+                                      ].join(' ')
+                                    : [
+                                          'text-zinc-600 dark:text-zinc-400',
+                                          'hover:text-zinc-900 dark:hover:text-white',
+                                      ].join(' '),
+                            ].join(' ')}
                         >
                             {tab.label}
                         </button>
@@ -67,7 +86,10 @@ export function TeamFilters({
             {/* Category Dropdown & Counter */}
             <div className="flex items-center gap-3">
                 <div className="text-xs text-zinc-500 shrink-0">
-                    Total: <strong className="text-zinc-800 dark:text-zinc-200">{totalCount} Tim</strong>
+                    Total:{' '}
+                    <strong className="text-zinc-800 dark:text-zinc-200">
+                        {totalCount} Tim
+                    </strong>
                 </div>
 
                 <SelectInput

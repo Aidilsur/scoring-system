@@ -17,7 +17,7 @@ Daftar modul diurutkan berdasarkan tingkat urgensi dan jumlah pelanggaran terban
 | **P5** | **`admin/tournament-setup`** | 6 temuan | 1 hook (`useTournamentSettingsForm`) | **62 baris** | `TOURNAMENT_STATUS_CONFIG` | 1 |
 | **P6** | **`admin/categories`** | 4 temuan | 1 hook (`useCategoriesManagement`) | **53 baris** | `CATEGORY_LEVEL_CONFIG` | 2 |
 | **P7** | **`register`** | 4 temuan | 1 hook (`useTeamRegistration`) | **13 baris** | - | 3 |
-| **P8** | **`admin/teams`** | 2 temuan | 1 hook (`useTeamsManagement`) | **38 baris** | - | 1 |
+| **P8** | **`admin/teams`** | ~~2 temuan~~ ✅ Selesai dibersihkan | 1 hook (`useTeamsManagement`) | ~~38 baris~~ ✅ 0 baris | - | ~~1~~ ✅ Dihapus |
 | **P9** | **`admin/draw`** | ~~10 temuan~~ ✅ Selesai dibersihkan | Relatif bersih | ~~37 baris~~ ✅ 0 baris | - | ~~1~~ ✅ Dihapus |
 
 ---
@@ -97,6 +97,11 @@ Daftar modul diurutkan berdasarkan tingkat urgensi dan jumlah pelanggaran terban
     - ~~L1: Type `RoundRobinMatchPair`~~ (dijadikan interface internal).
   - `hooks/useDrawQuery.ts`:
     - ~~L9: `ACTIVE_CATEGORIES_QUERY_KEY`~~ (dijadikan konstanta internal).
+- **admin/teams (✅ Selesai)**:
+  - `app/admin/(protected)/teams/actions.ts`:
+    - ~~L6: Interface `ActionResponse`~~ (dijadikan interface internal).
+  - `hooks/useTeamsQuery.ts`:
+    - ~~L7: Interface `TeamsQueryFilters`~~ (dijadikan interface internal).
 - **admin/schedule**:
   - `lib/schedule/generateMatchSchedule.ts`:
     - L24, L30, L34, L60: Type `ScheduledMatchItem`, `UnscheduledMatchItem`, `ScheduleResult`, `GenerateScheduleOptions`.
@@ -228,6 +233,7 @@ Komentar yang hanya mengulang apa yang sudah jelas dari nama method/variable/fun
   - L217: `// Modal`
   - L221: `// Form`
 - ~~`hooks/useDrawManagement.ts:L112`: `// Buka modal konfirmasi`~~ (✅ Dihapus).
+- ~~`hooks/useTeamsManagement.ts:L98`: `// Update selected team status jika modal sedang terbuka`~~ (✅ Dihapus).
 - `hooks/useScoringManagement.ts:L365`: `// Handlers` (tepat sebelum return object `selectCourt, ...`).
 - `app/admin/(protected)/tournament-setup/page.tsx:L26`: `// Ambil data pengaturan turnamen yang aktif jika sudah ada (mode edit)`.
 - `app/admin/(protected)/bracket/actions.ts:L172`: `// Ambil data tim untuk pasangan nama pemain`.
