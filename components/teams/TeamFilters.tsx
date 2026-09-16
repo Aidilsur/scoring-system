@@ -2,6 +2,7 @@ import React from 'react'
 import { Category } from '@/types/domain'
 import { formatCategoryBadge } from '@/utils/format'
 import { SelectInput } from '@/components/ui'
+import { cn } from '@/lib/utils'
 
 interface TeamFiltersProps {
     statusFilter: string
@@ -43,18 +44,18 @@ export function TeamFilters({
 
     return (
         <div
-            className={[
+            className={cn(
                 'flex flex-col md:flex-row md:items-center justify-between',
                 'gap-4 bg-zinc-50 dark:bg-zinc-900/60 p-3 sm:p-4 rounded-xl',
-                'border border-zinc-200 dark:border-zinc-800',
-            ].join(' ')}
+                'border border-zinc-200 dark:border-zinc-800'
+            )}
         >
             {/* Status Tabs */}
             <div
-                className={[
+                className={cn(
                     'flex flex-wrap items-center gap-1',
-                    'bg-zinc-200/60 dark:bg-zinc-800/80 p-1 rounded-lg',
-                ].join(' ')}
+                    'bg-zinc-200/60 dark:bg-zinc-800/80 p-1 rounded-lg'
+                )}
             >
                 {STATUS_TABS.map((tab) => {
                     const isActive = statusFilter === tab.id
@@ -63,19 +64,12 @@ export function TeamFilters({
                             key={tab.id}
                             type="button"
                             onClick={() => onStatusChange(tab.id)}
-                            className={[
-                                'px-3 py-1.5 rounded-md text-xs font-semibold',
-                                'transition cursor-pointer',
+                            className={cn(
+                                'px-3 py-1.5 rounded-md text-xs font-semibold transition cursor-pointer',
                                 isActive
-                                    ? [
-                                          'bg-white dark:bg-zinc-900 text-zinc-900',
-                                          'dark:text-white shadow-xs',
-                                      ].join(' ')
-                                    : [
-                                          'text-zinc-600 dark:text-zinc-400',
-                                          'hover:text-zinc-900 dark:hover:text-white',
-                                      ].join(' '),
-                            ].join(' ')}
+                                    ? 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white shadow-xs'
+                                    : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
+                            )}
                         >
                             {tab.label}
                         </button>

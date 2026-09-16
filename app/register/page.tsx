@@ -10,8 +10,7 @@ import { AlertTriangle } from 'lucide-react'
 export const metadata: Metadata = {
     title: 'Pendaftaran Peserta Turnamen Padel',
     description:
-        'Daftarkan tim Anda untuk turnamen padel resmi. Pilih kategori, ' +
-        'isi data pasangan, dan unggah bukti pembayaran.',
+        'Daftarkan tim Anda untuk turnamen padel resmi. Pilih kategori, isi data pasangan, dan unggah bukti pembayaran.',
 }
 
 export const dynamic = 'force-dynamic'
@@ -37,20 +36,9 @@ export default async function RegisterPage() {
     }))
 
     return (
-        <main
-            className={
-                'min-h-screen bg-zinc-950 text-zinc-100 py-10 sm:py-16 px-4 ' +
-                'sm:px-6 lg:px-8 flex flex-col justify-center items-center ' +
-                'relative overflow-hidden'
-            }
-        >
+        <main className="min-h-screen bg-zinc-950 text-zinc-100 py-10 sm:py-16 px-4 sm:px-6 lg:px-8 flex flex-col justify-center items-center relative overflow-hidden">
             {/* Ambient Sports Undertone Blur */}
-            <div
-                className={
-                    'absolute top-10 left-1/2 -translate-x-1/2 w-96 h-96 ' +
-                    'bg-lime-400/5 rounded-full blur-3xl pointer-events-none'
-                }
-            />
+            <div className="absolute top-10 left-1/2 -translate-x-1/2 w-96 h-96 bg-lime-400/5 rounded-full blur-3xl pointer-events-none" />
 
             <div className="w-full max-w-xl mx-auto relative z-10">
                 {/* Header Section */}
@@ -60,42 +48,23 @@ export default async function RegisterPage() {
                         Pendaftaran Dibuka
                     </Badge>
 
-                    <h1
-                        className={
-                            'font-[family-name:var(--font-anton)] text-3xl sm:text-4xl ' +
-                            'lg:text-5xl uppercase tracking-tight text-white'
-                        }
-                    >
+                    <h1 className="font-[family-name:var(--font-anton)] text-3xl sm:text-4xl lg:text-5xl uppercase tracking-tight text-white">
                         Padel Tournament Registration
                     </h1>
 
-                    <p
-                        className={
-                            'text-sm sm:text-base text-zinc-400 max-w-md ' +
-                            'mx-auto leading-relaxed'
-                        }
-                    >
-                        Lengkapi formulir di bawah ini untuk mendaftarkan tim Anda.
-                        Pastikan data pasangan dan bukti transfer valid untuk diverifikasi
-                        panitia.
+                    <p className="text-sm sm:text-base text-zinc-400 max-w-md mx-auto leading-relaxed">
+                        Lengkapi formulir di bawah ini untuk mendaftarkan tim Anda. Pastikan data pasangan dan bukti transfer valid untuk diverifikasi panitia.
                     </p>
                 </div>
 
                 {/* Banner jika belum ada kategori aktif di DB */}
                 {categories.length === 0 && (
-                    <div
-                        className={
-                            'mb-6 bg-amber-950/40 border border-amber-900/60 rounded-2xl ' +
-                            'p-4 text-amber-300 text-xs sm:text-sm flex items-start gap-3'
-                        }
-                    >
+                    <div className="mb-6 bg-amber-950/40 border border-amber-900/60 rounded-2xl p-4 text-amber-300 text-xs sm:text-sm flex items-start gap-3">
                         <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
                         <div>
                             <p className="font-semibold text-amber-200">Pemberitahuan</p>
                             <p className="mt-0.5 text-amber-300/90">
-                                Belum ada kategori turnamen yang aktif di database.
-                                Silakan tambahkan data kategori di database Supabase
-                                terlebih dahulu agar pendaftaran dapat dipilih.
+                                Belum ada kategori turnamen yang aktif di database. Silakan tambahkan data kategori di database Supabase terlebih dahulu agar pendaftaran dapat dipilih.
                             </p>
                         </div>
                     </div>

@@ -12,6 +12,7 @@ import {
 } from 'lucide-react'
 import { useDrawManagement } from '@/hooks/useDrawManagement'
 import { SelectInput, Card } from '@/components/ui'
+import { cn } from '@/lib/utils'
 import { DrawPreviewCard } from './DrawPreviewCard'
 import { DrawGroupsView } from './DrawGroupsView'
 import { DrawRegenerateConfirmModal } from './DrawRegenerateConfirmModal'
@@ -28,8 +29,7 @@ const DRAW_RULE_HINTS = [
   {
     label: 'Hanya Tim Confirmed',
     description:
-      'Hanya tim yang telah diverifikasi pembayarannya (status confirmed) ' +
-      'yang masuk ke dalam undian.',
+      'Hanya tim yang telah diverifikasi pembayarannya (status confirmed) yang masuk ke dalam undian.',
   },
   {
     label: 'Pengacakan Fisher-Yates',
@@ -39,8 +39,7 @@ const DRAW_RULE_HINTS = [
   {
     label: 'Jadwal Otomatis',
     description:
-      'Pertandingan round robin langsung digenerate tanpa duplikat ' +
-      '(n × (n - 1) / 2 match per grup).',
+      'Pertandingan round robin langsung digenerate tanpa duplikat (n × (n - 1) / 2 match per grup).',
   },
   {
     label: 'Kunci Regenerate',
@@ -86,10 +85,10 @@ export function DrawManagementView({
     <div className="space-y-8">
       {/* Top Header & Breadcrumbs */}
       <div
-        className={[
+        className={cn(
           'flex flex-col sm:flex-row sm:items-center justify-between',
-          'gap-4 pb-4 border-b border-zinc-800',
-        ].join(' ')}
+          'gap-4 pb-4 border-b border-zinc-800'
+        )}
       >
         <div>
           <div className="flex items-center gap-2 text-xs text-zinc-400 mb-1">
@@ -102,10 +101,10 @@ export function DrawManagementView({
             </span>
           </div>
           <h1
-            className={[
+            className={cn(
               'font-[family-name:var(--font-anton)] text-3xl sm:text-4xl',
-              'text-white uppercase tracking-tight',
-            ].join(' ')}
+              'text-white uppercase tracking-tight'
+            )}
           >
             Drawing Grup &amp; Jadwal
           </h1>
@@ -120,12 +119,12 @@ export function DrawManagementView({
           type="button"
           onClick={() => refetchDraw()}
           disabled={isLoadingDraw || isRefetchingDraw}
-          className={[
+          className={cn(
             'inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold',
             'rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300',
             'hover:text-white hover:border-zinc-700 transition cursor-pointer',
-            'disabled:opacity-50',
-          ].join(' ')}
+            'disabled:opacity-50'
+          )}
         >
           <RotateCw
             className={`w-3.5 h-3.5 ${
@@ -139,13 +138,13 @@ export function DrawManagementView({
       {/* Toast Notification */}
       {toast && (
         <div
-          className={[
+          className={cn(
             'flex items-start justify-between gap-3 p-4 rounded-2xl border',
             'text-xs font-medium animate-in fade-in slide-in-from-top-2 duration-200',
             toast.type === 'success'
               ? 'bg-lime-400/10 border-lime-400/30 text-lime-300'
-              : 'bg-rose-500/10 border-rose-500/30 text-rose-300',
-          ].join(' ')}
+              : 'bg-rose-500/10 border-rose-500/30 text-rose-300'
+          )}
         >
           <div className="flex items-center gap-2.5">
             {toast.type === 'success' ? (

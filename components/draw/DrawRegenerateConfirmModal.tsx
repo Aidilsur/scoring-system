@@ -3,6 +3,7 @@
 import React from 'react'
 import { AlertTriangle, X } from 'lucide-react'
 import { Button } from '@/components/ui'
+import { cn } from '@/lib/utils'
 
 export interface DrawRegenerateConfirmModalProps {
   isOpen: boolean
@@ -25,27 +26,27 @@ export function DrawRegenerateConfirmModal({
     <div
       role="dialog"
       aria-modal="true"
-      className={[
+      className={cn(
         'fixed inset-0 z-50 flex items-center justify-center p-4',
-        'bg-black/85 backdrop-blur-md animate-in fade-in duration-200',
-      ].join(' ')}
+        'bg-black/85 backdrop-blur-md animate-in fade-in duration-200'
+      )}
     >
       <div
-        className={[
+        className={cn(
           'relative w-full max-w-md bg-zinc-900 border border-zinc-800',
-          'rounded-2xl shadow-2xl shadow-black/80 p-6 overflow-hidden',
-        ].join(' ')}
+          'rounded-2xl shadow-2xl shadow-black/80 p-6 overflow-hidden'
+        )}
       >
         {/* Close Button */}
         <button
           onClick={onClose}
           disabled={isGenerating}
           aria-label="Tutup dialog"
-          className={[
+          className={cn(
             'absolute top-4 right-4 p-1.5 rounded-lg text-zinc-400',
             'hover:text-white hover:bg-zinc-800 transition cursor-pointer',
-            'disabled:opacity-50',
-          ].join(' ')}
+            'disabled:opacity-50'
+          )}
         >
           <X className="w-5 h-5" />
         </button>
@@ -53,10 +54,10 @@ export function DrawRegenerateConfirmModal({
         {/* Modal Header */}
         <div className="flex items-start gap-3.5 mb-4">
           <div
-            className={[
+            className={cn(
               'p-2.5 rounded-xl bg-amber-500/15 border border-amber-500/30',
-              'text-amber-400 shrink-0',
-            ].join(' ')}
+              'text-amber-400 shrink-0'
+            )}
           >
             <AlertTriangle className="w-6 h-6" />
           </div>
@@ -75,10 +76,10 @@ export function DrawRegenerateConfirmModal({
 
         {/* Modal Body */}
         <div
-          className={[
+          className={cn(
             'space-y-2.5 text-xs text-zinc-300 bg-zinc-950/80 p-3.5',
-            'rounded-xl border border-zinc-800 mb-6',
-          ].join(' ')}
+            'rounded-xl border border-zinc-800 mb-6'
+          )}
         >
           <p>
             Tindakan ini akan{' '}

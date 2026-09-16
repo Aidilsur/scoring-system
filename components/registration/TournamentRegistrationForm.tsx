@@ -79,45 +79,19 @@ export default function TournamentRegistrationForm({
     if (response?.success) {
         return (
             <Card variant="elevated" className="border-lime-400/30 text-center shadow-2xl">
-                <div
-                    className={
-                        'w-16 h-16 bg-lime-400/15 border border-lime-400/30 text-lime-400 ' +
-                        'rounded-full flex items-center justify-center mx-auto mb-5 ' +
-                        'ring-8 ring-lime-400/10'
-                    }
-                >
+                <div className="w-16 h-16 bg-lime-400/15 border border-lime-400/30 text-lime-400 rounded-full flex items-center justify-center mx-auto mb-5 ring-8 ring-lime-400/10">
                     <Check className="w-8 h-8" />
                 </div>
 
-                <h3
-                    className={
-                        'font-[family-name:var(--font-anton)] text-2xl sm:text-3xl ' +
-                        'uppercase tracking-tight text-white mb-2'
-                    }
-                >
+                <h3 className="font-[family-name:var(--font-anton)] text-2xl sm:text-3xl uppercase tracking-tight text-white mb-2">
                     Pendaftaran Berhasil Terkirim!
                 </h3>
-                <p
-                    className={
-                        'text-zinc-300 text-sm sm:text-base leading-relaxed ' +
-                        'max-w-md mx-auto mb-6'
-                    }
-                >
+                <p className="text-zinc-300 text-sm sm:text-base leading-relaxed max-w-md mx-auto mb-6">
                     {response.message}
                 </p>
 
-                <div
-                    className={
-                        'bg-zinc-950/80 border border-zinc-800 rounded-xl p-4 ' +
-                        'text-xs sm:text-sm text-zinc-300 mb-8 max-w-md mx-auto text-left'
-                    }
-                >
-                    <p
-                        className={
-                            'font-bold text-lime-400 uppercase tracking-wider mb-1.5 ' +
-                            'flex items-center gap-1.5 text-xs'
-                        }
-                    >
+                <div className="bg-zinc-950/80 border border-zinc-800 rounded-xl p-4 text-xs sm:text-sm text-zinc-300 mb-8 max-w-md mx-auto text-left">
+                    <p className="font-bold text-lime-400 uppercase tracking-wider mb-1.5 flex items-center gap-1.5 text-xs">
                         <Info className="w-4 h-4 shrink-0" />
                         Langkah Selanjutnya:
                     </p>
@@ -127,10 +101,7 @@ export default function TournamentRegistrationForm({
                                 {step.highlight ? (
                                     <>
                                         Status tim Anda saat ini adalah{' '}
-                                        <strong className="font-bold text-amber-300">
-                                            {step.highlight}
-                                        </strong>
-                                        .
+                                        <strong className="font-bold text-amber-300">{step.highlight}</strong>.
                                     </>
                                 ) : (
                                     step.text
@@ -152,17 +123,10 @@ export default function TournamentRegistrationForm({
             <Card variant="elevated" className="space-y-7">
                 {/* Banner Error Global jika submit gagal */}
                 {response && !response.success && (
-                    <div
-                        className={
-                            'bg-rose-950/40 border border-rose-900/60 rounded-2xl ' +
-                            'p-4 text-rose-300 text-sm flex items-start gap-3'
-                        }
-                    >
+                    <div className="bg-rose-950/40 border border-rose-900/60 rounded-2xl p-4 text-rose-300 text-sm flex items-start gap-3">
                         <AlertCircle className="w-5 h-5 text-rose-500 shrink-0 mt-0.5" />
                         <div>
-                            <p className="font-semibold text-rose-200">
-                                Gagal Mengirim Pendaftaran
-                            </p>
+                            <p className="font-semibold text-rose-200">Gagal Mengirim Pendaftaran</p>
                             <p className="mt-0.5 text-xs sm:text-sm text-rose-400">
                                 {response.message}
                             </p>
@@ -193,12 +157,7 @@ export default function TournamentRegistrationForm({
 
                 {/* Section 2: Data Pemain */}
                 <div className="pt-2 border-t border-zinc-800">
-                    <h4
-                        className={
-                            'text-xs font-bold uppercase tracking-wider text-lime-400 ' +
-                            'mb-4 flex items-center gap-1.5'
-                        }
-                    >
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-lime-400 mb-4 flex items-center gap-1.5">
                         <Users className="w-4 h-4" />
                         Informasi Pasangan Pemain
                     </h4>
@@ -228,12 +187,7 @@ export default function TournamentRegistrationForm({
 
                 {/* Section 3: Kontak & Komunitas */}
                 <div className="pt-2 border-t border-zinc-800">
-                    <h4
-                        className={
-                            'text-xs font-bold uppercase tracking-wider text-lime-400 ' +
-                            'mb-4 flex items-center gap-1.5'
-                        }
-                    >
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-lime-400 mb-4 flex items-center gap-1.5">
                         <Phone className="w-4 h-4" />
                         Kontak & Akun Komunitas
                     </h4>
@@ -248,10 +202,7 @@ export default function TournamentRegistrationForm({
                             placeholder="081234567890"
                             disabled={isSubmitting}
                             error={errors.phone_number}
-                            helperText={
-                                'Digunakan panitia untuk konfirmasi dan ' +
-                                'pengumuman jadwal match.'
-                            }
+                            helperText="Digunakan panitia untuk konfirmasi dan pengumuman jadwal match."
                         />
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -280,12 +231,7 @@ export default function TournamentRegistrationForm({
 
                 {/* Section 4: Bukti Pembayaran */}
                 <div className="pt-2 border-t border-zinc-800">
-                    <h4
-                        className={
-                            'text-xs font-bold uppercase tracking-wider text-lime-400 ' +
-                            'mb-2 flex items-center gap-1.5'
-                        }
-                    >
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-lime-400 mb-2 flex items-center gap-1.5">
                         <Receipt className="w-4 h-4" />
                         Bukti Pembayaran <span className="text-rose-500">*</span>
                     </h4>
@@ -297,10 +243,7 @@ export default function TournamentRegistrationForm({
                         accept="image/jpeg,image/png,image/webp,application/pdf"
                         disabled={isSubmitting}
                         error={errors.payment_proof}
-                        helperText={
-                            'Format file yang didukung: JPG, PNG, WEBP, atau PDF ' +
-                            '(maksimal 5MB).'
-                        }
+                        helperText="Format file yang didukung: JPG, PNG, WEBP, atau PDF (maksimal 5MB)."
                         selectedFile={selectedFile}
                         filePreview={filePreview}
                         onFileChange={handleFileChange}

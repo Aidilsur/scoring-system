@@ -82,9 +82,7 @@ export function validatePaymentProofFile(file: unknown): {
     if (!ALLOWED_FILE_TYPES.includes(file.type)) {
         return {
             success: false,
-            error:
-                'Format file tidak didukung. Harap unggah gambar ' +
-                '(JPG, PNG, WEBP) atau dokumen PDF',
+            error: 'Format file tidak didukung. Harap unggah gambar (JPG, PNG, WEBP) atau dokumen PDF',
         }
     }
 

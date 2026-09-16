@@ -11,6 +11,7 @@ import {
   AlertCircle,
 } from 'lucide-react'
 import { Card, Button, Badge } from '@/components/ui'
+import { cn } from '@/lib/utils'
 
 export interface DrawPreviewCardProps {
   categoryName?: string
@@ -45,10 +46,10 @@ export function DrawPreviewCard({
   return (
     <Card variant="elevated" className="space-y-6">
       <div
-        className={[
+        className={cn(
           'flex flex-col sm:flex-row sm:items-center justify-between',
-          'gap-3 pb-4 border-b border-zinc-800',
-        ].join(' ')}
+          'gap-3 pb-4 border-b border-zinc-800'
+        )}
       >
         <div>
           <div className="flex items-center gap-2">
@@ -99,10 +100,10 @@ export function DrawPreviewCard({
       {/* Warning/Alert Messages */}
       {hasStartedMatches && (
         <div
-          className={[
+          className={cn(
             'flex items-start gap-3 p-3.5 rounded-xl bg-rose-500/10',
-            'border border-rose-500/30 text-rose-300 text-xs',
-          ].join(' ')}
+            'border border-rose-500/30 text-rose-300 text-xs'
+          )}
         >
           <Lock className="w-4 h-4 mt-0.5 shrink-0 text-rose-400" />
           <div>
@@ -122,10 +123,10 @@ export function DrawPreviewCard({
 
       {isNotEnoughTeams && !hasStartedMatches && (
         <div
-          className={[
+          className={cn(
             'flex items-start gap-3 p-3.5 rounded-xl bg-amber-500/10',
-            'border border-amber-500/30 text-amber-300 text-xs',
-          ].join(' ')}
+            'border border-amber-500/30 text-amber-300 text-xs'
+          )}
         >
           <AlertCircle className="w-4 h-4 mt-0.5 shrink-0 text-amber-400" />
           <div>
@@ -144,10 +145,10 @@ export function DrawPreviewCard({
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {/* Confirmed Teams */}
         <div
-          className={[
+          className={cn(
             'p-4 rounded-2xl bg-zinc-900/60 border border-zinc-800',
-            'flex items-center gap-3.5',
-          ].join(' ')}
+            'flex items-center gap-3.5'
+          )}
         >
           <div className="p-3 rounded-xl bg-lime-400/10 border border-lime-400/20 text-lime-400">
             <Users className="w-5 h-5" />
@@ -165,16 +166,16 @@ export function DrawPreviewCard({
 
         {/* Groups Distribution */}
         <div
-          className={[
+          className={cn(
             'p-4 rounded-2xl bg-zinc-900/60 border border-zinc-800',
-            'flex items-center gap-3.5',
-          ].join(' ')}
+            'flex items-center gap-3.5'
+          )}
         >
           <div
-            className={[
+            className={cn(
               'p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20',
-              'text-emerald-400',
-            ].join(' ')}
+              'text-emerald-400'
+            )}
           >
             <Layers className="w-5 h-5" />
           </div>
@@ -193,10 +194,10 @@ export function DrawPreviewCard({
 
         {/* Round Robin Matches */}
         <div
-          className={[
+          className={cn(
             'p-4 rounded-2xl bg-zinc-900/60 border border-zinc-800',
-            'flex items-center gap-3.5',
-          ].join(' ')}
+            'flex items-center gap-3.5'
+          )}
         >
           <div className="p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
             <CalendarCheck className="w-5 h-5" />

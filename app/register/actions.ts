@@ -98,8 +98,7 @@ export async function registerTeamAction(
             return {
                 success: false,
                 message:
-                    `Gagal mengunggah bukti pembayaran: ${uploadError.message}. ` +
-                    `Pastikan bucket 'payment-proofs' sudah dibuat di Supabase Storage.`,
+                    `Gagal mengunggah bukti pembayaran: ${uploadError.message}. Pastikan bucket 'payment-proofs' sudah dibuat di Supabase Storage.`,
             }
         }
 
@@ -132,8 +131,7 @@ export async function registerTeamAction(
         return {
             success: true,
             message:
-                'Pendaftaran berhasil dikirim! Data tim Anda telah tercatat dengan status ' +
-                'pending. Panitia akan segera memverifikasi bukti pembayaran Anda.',
+                'Pendaftaran berhasil dikirim! Data tim Anda telah tercatat dengan status pending. Panitia akan segera memverifikasi bukti pembayaran Anda.',
         }
     } catch (err: unknown) {
         console.error('Unexpected Register Action Error:', err)

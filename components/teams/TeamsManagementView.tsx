@@ -8,6 +8,7 @@ import { TeamFilters } from './TeamFilters'
 import { TeamCard } from './TeamCard'
 import { TeamDetailModal } from './TeamDetailModal'
 import { Button } from '@/components/ui'
+import { cn } from '@/lib/utils'
 
 /**
  * TeamsManagementView
@@ -41,10 +42,10 @@ export function TeamsManagementView() {
         <div className="space-y-6">
             {/* Top Navigation & Header */}
             <div
-                className={[
+                className={cn(
                     'flex flex-col sm:flex-row sm:items-center justify-between',
-                    'gap-4 pb-4 border-b border-zinc-800',
-                ].join(' ')}
+                    'gap-4 pb-4 border-b border-zinc-800'
+                )}
             >
                 <div>
                     <div className="flex items-center gap-2 text-xs text-zinc-400 mb-1">
@@ -57,10 +58,10 @@ export function TeamsManagementView() {
                         </span>
                     </div>
                     <h1
-                        className={[
+                        className={cn(
                             'font-[family-name:var(--font-anton)] text-3xl sm:text-4xl',
-                            'text-white uppercase tracking-tight',
-                        ].join(' ')}
+                            'text-white uppercase tracking-tight'
+                        )}
                     >
                         Kelola &amp; Verifikasi Peserta
                     </h1>
@@ -91,13 +92,13 @@ export function TeamsManagementView() {
             {/* Toast Notification */}
             {toast && (
                 <div
-                    className={[
+                    className={cn(
                         'p-4 rounded-xl text-xs sm:text-sm flex items-center',
                         'justify-between gap-3 border',
                         toast.type === 'success'
                             ? 'bg-lime-400/10 text-lime-300 border-lime-400/30'
-                            : 'bg-rose-500/10 text-rose-300 border-rose-500/30',
-                    ].join(' ')}
+                            : 'bg-rose-500/10 text-rose-300 border-rose-500/30'
+                    )}
                 >
                     <div className="flex items-center gap-2">
                         {toast.type === 'success' ? (
@@ -135,19 +136,19 @@ export function TeamsManagementView() {
             {isLoading ? (
                 <div className="py-16 text-center space-y-3">
                     <div
-                        className={[
+                        className={cn(
                             'w-6 h-6 border-2 border-lime-400 border-t-transparent',
-                            'rounded-full animate-spin mx-auto',
-                        ].join(' ')}
+                            'rounded-full animate-spin mx-auto'
+                        )}
                     />
                     <p className="text-xs text-zinc-400">Memuat data pendaftar dari database...</p>
                 </div>
             ) : isError ? (
                 <div
-                    className={[
+                    className={cn(
                         'p-6 bg-rose-950/30 border border-rose-900/60 rounded-2xl',
-                        'text-center space-y-2',
-                    ].join(' ')}
+                        'text-center space-y-2'
+                    )}
                 >
                     <p className="text-sm font-semibold text-rose-300">
                         Gagal memuat data tim
@@ -163,10 +164,10 @@ export function TeamsManagementView() {
                 </div>
             ) : teams.length === 0 ? (
                 <div
-                    className={[
+                    className={cn(
                         'py-16 text-center border border-dashed border-zinc-800',
-                        'rounded-2xl space-y-2',
-                    ].join(' ')}
+                        'rounded-2xl space-y-2'
+                    )}
                 >
                     <p className="text-sm font-bold text-white uppercase tracking-wide">
                         Tidak ada tim yang cocok dengan filter saat ini
