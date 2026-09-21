@@ -1,26 +1,28 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { useQueryClient, useMutation } from '@tanstack/react-query'
 import { useTeamsQuery, useCategoriesQuery } from '@/hooks/useTeamsQuery'
-import {
-    updateTeamStatusAction,
-    getPaymentProofSignedUrlAction,
-} from '@/app/admin/(protected)/teams/actions'
-import { Team, TeamStatus } from '@/types/domain'
-import { showToast } from '@/lib/toast'
+import { getPaymentProofSignedUrlAction } from '@/app/admin/(protected)/teams/actions'
+import { Team } from '@/types/domain'
+import { useTeamFilters } from '@/hooks/useTeamFilters'
+import { useTeamMutations, ToastNotification } from '@/hooks/useTeamMutations'
 
-export interface ToastNotification {
-    type: 'success' | 'error'
-    message: string
-}
+export type { ToastNotification }
 
+/**
+ * useTeamsManagement (Thin Composer)
+ * Menggabungkan useTeamFilters, useTeamMutations, data queries, dan state modal detail.
+ * Sesuai docs/component-architecture.md §E dan §K.
+ */
 export function useTeamsManagement() {
-    const queryClient = useQueryClient()
-
     // 1. Filter States
-    const [statusFilter, setStatusFilter] = useState<string>('all')
-    const [categoryFilter, setCategoryFilter] = useState<string>('all')
+    const {
+        statusFilter,
+        setStatusFilter,
+        categoryFilter,
+        setCategoryFilter,
+        resetFilters,
+    } = useTeamFilters()
 
     // 2. Modal & Detail States
     const [selectedTeam, setSelectedTeam] = useState<Team | null>(null)
@@ -28,12 +30,29 @@ export function useTeamsManagement() {
     const [signedPaymentUrl, setSignedPaymentUrl] = useState<string | null>(null)
     const [isLoadingSignedUrl, setIsLoadingSignedUrl] = useState<boolean>(false)
 
-    // 3. Toast State
-    const [toast, setToast] = useState<ToastNotification | null>(null)
-
-    const clearToast = useCallback(() => {
-        setToast(null)
+    const closeDetail = useCallback(() => {
+        setIsDetailOpen(false)
+        setSelectedTeam(null)
+        setSignedPaymentUrl(null)
     }, [])
+
+    // 3. Mutations
+    const {
+        updateStatus,
+        approveTeam,
+        rejectTeam,
+        isUpdating,
+        toast,
+        clearToast,
+    } = useTeamMutations({
+        onStatusUpdated: (teamId, newStatus) => {
+            if (selectedTeam && selectedTeam.id === teamId) {
+                setSelectedTeam((prev) =>
+                    prev ? { ...prev, status: newStatus } : null
+                )
+            }
+        },
+    })
 
     // 4. Queries
     const {
@@ -49,7 +68,7 @@ export function useTeamsManagement() {
 
     const { data: categories = [] } = useCategoriesQuery()
 
-    // 5. Open Detail Handler with Signed URL Fetch
+    // 5. Detail Modal Handlers
     const openDetail = useCallback(async (team: Team) => {
         setSelectedTeam(team)
         setIsDetailOpen(true)
@@ -73,59 +92,6 @@ export function useTeamsManagement() {
         }
     }, [])
 
-    const closeDetail = useCallback(() => {
-        setIsDetailOpen(false)
-        setSelectedTeam(null)
-        setSignedPaymentUrl(null)
-    }, [])
-
-    // 6. Mutation for Status Update
-    const updateMutation = useMutation({
-        mutationFn: async ({
-            teamId,
-            status,
-        }: {
-            teamId: string
-            status: 'confirmed' | 'rejected'
-        }) => {
-            return await updateTeamStatusAction(teamId, status)
-        },
-        onSuccess: (res, variables) => {
-            if (res.success) {
-                // Invalidate cache TanStack Query agar UI update otomatis tanpa reload
-                queryClient.invalidateQueries({ queryKey: ['teams'] })
-
-                if (selectedTeam && selectedTeam.id === variables.teamId) {
-                    setSelectedTeam((prev) =>
-                        prev ? { ...prev, status: variables.status as TeamStatus } : null
-                    )
-                }
-
-                setToast({ type: 'success', message: res.message })
-                showToast.success(res.message)
-            } else {
-                setToast({ type: 'error', message: res.message })
-                showToast.error(res.message)
-            }
-        },
-        onError: (err) => {
-            const errMsg =
-                err instanceof Error ? err.message : 'Gagal memperbarui status tim.'
-            setToast({
-                type: 'error',
-                message: errMsg,
-            })
-            showToast.error(errMsg)
-        },
-    })
-
-    const updateStatus = useCallback(
-        (teamId: string, status: 'confirmed' | 'rejected') => {
-            updateMutation.mutate({ teamId, status })
-        },
-        [updateMutation]
-    )
-
     return {
         // Data & Query States
         teams,
@@ -140,6 +106,7 @@ export function useTeamsManagement() {
         setStatusFilter,
         categoryFilter,
         setCategoryFilter,
+        resetFilters,
 
         // Modal Controls
         selectedTeam,
@@ -151,10 +118,13 @@ export function useTeamsManagement() {
 
         // Actions & Mutation
         updateStatus,
-        isUpdating: updateMutation.isPending,
+        approveTeam,
+        rejectTeam,
+        isUpdating,
 
         // Toast Feedback
         toast,
         clearToast,
     }
 }
+

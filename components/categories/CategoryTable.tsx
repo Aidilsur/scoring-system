@@ -77,7 +77,7 @@ export function CategoryTable({
         return (
             <Card
                 variant="bordered"
-                className="bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 p-8"
+                className="bg-zinc-900 border-zinc-800 p-8"
             >
                 <div className="flex flex-col items-center justify-center py-12 text-zinc-500 space-y-3">
                     <Loader2 className="w-8 h-8 animate-spin text-emerald-500" />
@@ -91,7 +91,7 @@ export function CategoryTable({
         return (
             <Card
                 variant="bordered"
-                className="bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 p-8 sm:p-12 text-center space-y-4"
+                className="bg-zinc-900 border-zinc-800 p-8 sm:p-12 text-center space-y-4"
             >
                 <div
                     className="w-14 h-14 mx-auto rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 flex items-center justify-center"
@@ -99,10 +99,10 @@ export function CategoryTable({
                     <Tag className="w-7 h-7" />
                 </div>
                 <div className="max-w-md mx-auto space-y-1.5">
-                    <h3 className="text-lg font-bold text-zinc-900 dark:text-white">
+                    <h3 className="text-lg font-bold text-white">
                         Belum Ada Kategori Turnamen
                     </h3>
-                    <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                    <p className="text-xs text-zinc-400 leading-relaxed">
                         Kategori turnamen merupakan prasyarat sebelum peserta dapat mendaftar dan proses drawing grup dijalankan. Buat kategori pertama Anda sekarang.
                     </p>
                 </div>

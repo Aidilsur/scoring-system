@@ -17,7 +17,7 @@ Daftar modul diurutkan berdasarkan tingkat urgensi dan jumlah pelanggaran terban
 | **P5** | **`admin/tournament-setup`** | ~~6 temuan~~ ✅ Selesai dibersihkan | 1 hook (`useTournamentSettingsForm`) | ~~62 baris~~ ✅ Selesai di-wrap | ~~`TOURNAMENT_STATUS_CONFIG`~~ ✅ Selesai di-refactor | ~~1~~ ✅ Dihapus |
 | **P6** | **`admin/categories`** | ~~4 temuan~~ ✅ Selesai dibersihkan | 1 hook (`useCategoriesManagement`) | ~~53 baris~~ ✅ Selesai di-wrap | ~~`CATEGORY_LEVEL_CONFIG`~~ ✅ Selesai di-refactor | ~~2~~ ✅ Dihapus |
 | **P7** | **`register`** | ~~4 temuan~~ ✅ Selesai dibersihkan | 1 hook (`useTeamRegistration`) | ~~13 baris~~ ✅ 0 baris | - | ~~3~~ ✅ Dihapus |
-| **P8** | **`admin/teams`** | ~~2 temuan~~ ✅ Selesai dibersihkan | 1 hook (`useTeamsManagement`) | ~~38 baris~~ ✅ 0 baris | - | ~~1~~ ✅ Dihapus |
+| **P8** | **`admin/teams`** | ~~2 temuan~~ ✅ Selesai dibersihkan | ~~1 hook (`useTeamsManagement`)~~ ✅ Dipecah (`useTeamFilters`, `useTeamMutations`) | ~~38 baris~~ ✅ 0 baris | - | ~~1~~ ✅ Dihapus |
 | **P9** | **`admin/draw`** | ~~10 temuan~~ ✅ Selesai dibersihkan | Relatif bersih | ~~37 baris~~ ✅ 0 baris | - | ~~1~~ ✅ Dihapus |
 
 ---
@@ -164,7 +164,7 @@ Berikut daftar custom hook yang menangani lebih dari 1 tanggung jawab dan rekome
 | **`useKnockoutSchedule`**<br>`hooks/useKnockoutSchedule.ts` *(329 baris)* | 1. TanStack query data fetching & transformasi knockout pairings<br>2. Modal state & form slot penugasan court/waktu<br>3. Mutasi penjadwalan match knockout & unschedule | • `useKnockoutScheduleQuery`<br>• `useKnockoutScheduleFormModal`<br>• `useKnockoutScheduleMutations` |
 | **`useCategoriesManagement`**<br>`hooks/useCategoriesManagement.ts` *(236 baris)* | 1. Modal open/close & edit mode state<br>2. Category form state & auto-suggested name generation<br>3. 4 mutasi CRUD terpisah (create, update, toggle active, delete) | • `useCategoryFormModal`<br>• `useCategoryMutations` |
 | **`useBracketManagement`**<br>`hooks/useBracketManagement.ts` *(207 baris)* | 1. Category selector state<br>2. Modal pairing assignment form (tim 1 & tim 2)<br>3. Mutasi bracket (auto-generate, update single pairing, reset) | • `useBracketPairingModal`<br>• `useBracketMutations` |
-| **`useTeamsManagement`**<br>`hooks/useTeamsManagement.ts` *(162 baris)* | 1. Filter kategori, status, dan search term<br>2. Detail modal state untuk preview bukti transfer<br>3. Mutasi status tim (approve, reject, bayar) & delete tim | • `useTeamFilters`<br>• `useTeamMutations` |
+| ~~**`useTeamsManagement`**<br>`hooks/useTeamsManagement.ts` *(162 baris)*~~ | ~~1. Filter kategori dan status<br>2. Detail modal state untuk preview bukti transfer<br>3. Mutasi status tim (approve, reject)~~ *(Catatan: fitur delete team & search ditunda karena flow UI belum ditentukan)* | ✅ **Selesai dipecah**:<br>• `useTeamFilters` (kategori & status)<br>• `useTeamMutations` (approve & reject)<br>(composed via thin `useTeamsManagement`) |
 
 ---
 

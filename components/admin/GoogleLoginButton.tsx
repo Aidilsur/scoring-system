@@ -28,7 +28,7 @@ export function GoogleLoginButton({
             onClick={() => signInWithGoogle(redirectTo)}
             isLoading={isLoggingIn}
             loadingText="Mengarahkan ke Google..."
-            className={`w-full bg-white dark:bg-zinc-800/90 hover:bg-zinc-50 dark:hover:bg-zinc-700/80 text-zinc-800 dark:text-zinc-100 border-zinc-300 dark:border-zinc-700 shadow-md shadow-black/5 dark:shadow-black/20 gap-3 py-4 text-sm sm:text-base font-semibold ${className}`}
+            className={`w-full bg-zinc-800/90 hover:bg-zinc-700/80 text-zinc-100 border-zinc-700 shadow-md shadow-black/20 gap-3 py-4 text-sm sm:text-base font-semibold ${className}`}
         >
             <GoogleIcon />
             <span>Login with Google</span>

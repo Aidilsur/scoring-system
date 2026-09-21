@@ -179,7 +179,7 @@ export function TeamDetailModal({
                         <div className="space-y-3">
                             {!isPdf ? (
                                 <div
-                                    className="border border-zinc-200 dark:border-zinc-700 rounded-xl overflow-hidden max-h-72 flex items-center justify-center bg-zinc-950"
+                                    className="border border-zinc-700 rounded-xl overflow-hidden max-h-72 flex items-center justify-center bg-zinc-950"
                                 >
                                     <img
                                         src={signedPaymentUrl}
@@ -189,16 +189,16 @@ export function TeamDetailModal({
                                 </div>
                             ) : (
                                 <div
-                                    className="p-4 border border-zinc-200 dark:border-zinc-700 rounded-xl flex items-center gap-3 bg-zinc-50 dark:bg-zinc-800/40"
+                                    className="p-4 border border-zinc-700 rounded-xl flex items-center gap-3 bg-zinc-800/40"
                                 >
                                     <div
-                                        className="w-10 h-10 bg-rose-100 dark:bg-rose-950/60 text-rose-600 rounded-lg flex items-center justify-center font-bold text-xs shrink-0"
+                                        className="w-10 h-10 bg-rose-950/60 text-rose-400 rounded-lg flex items-center justify-center font-bold text-xs shrink-0"
                                     >
                                         PDF
                                     </div>
                                     <div className="min-w-0 flex-1">
                                         <p
-                                            className="text-xs font-semibold text-zinc-900 dark:text-white truncate"
+                                            className="text-xs font-semibold text-white truncate"
                                         >
                                             {team.payment_proof_url.split('/').pop()}
                                         </p>
@@ -214,7 +214,7 @@ export function TeamDetailModal({
                                     href={signedPaymentUrl}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold hover:underline inline-flex items-center gap-1"
+                                    className="text-xs text-emerald-400 font-semibold hover:underline inline-flex items-center gap-1"
                                 >
                                     <span>Buka Dokumen di Tab Baru</span>
                                     <ExternalLink className="w-3.5 h-3.5" />
@@ -223,7 +223,7 @@ export function TeamDetailModal({
                         </div>
                     ) : (
                         <p
-                            className="text-xs text-rose-500 p-3 bg-rose-50 dark:bg-rose-950/30 rounded-lg"
+                            className="text-xs text-rose-400 p-3 bg-rose-950/30 rounded-lg"
                         >
                             Bukti pembayaran tidak dapat dimuat atau path berkas tidak ditemukan.
                         </p>

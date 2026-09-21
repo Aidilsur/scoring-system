@@ -44,11 +44,11 @@ export function TeamFilters({
 
     return (
         <div
-            className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-zinc-50 dark:bg-zinc-900/60 p-3 sm:p-4 rounded-xl border border-zinc-200 dark:border-zinc-800"
+            className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-zinc-900/80 p-3 sm:p-4 rounded-xl border border-zinc-800"
         >
             {/* Status Tabs */}
             <div
-                className="flex flex-wrap items-center gap-1 bg-zinc-200/60 dark:bg-zinc-800/80 p-1 rounded-lg"
+                className="flex flex-wrap items-center gap-1 bg-zinc-800/60 border border-zinc-700/50 p-1 rounded-lg"
             >
                 {STATUS_TABS.map((tab) => {
                     const isActive = statusFilter === tab.id
@@ -60,10 +60,8 @@ export function TeamFilters({
                             className={cn(
                                 'px-3 py-1.5 rounded-md text-xs font-semibold transition cursor-pointer',
                                 {
-                                    'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white shadow-xs':
-                                        isActive,
-                                    'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white':
-                                        !isActive,
+                                    'bg-zinc-700 text-white shadow-xs': isActive,
+                                    'text-zinc-400 hover:text-white': !isActive,
                                 }
                             )}
                         >
@@ -75,9 +73,9 @@ export function TeamFilters({
 
             {/* Category Dropdown & Counter */}
             <div className="flex items-center gap-3">
-                <div className="text-xs text-zinc-500 shrink-0">
+                <div className="text-xs text-zinc-400 shrink-0">
                     Total:{' '}
-                    <strong className="text-zinc-800 dark:text-zinc-200">
+                    <strong className="text-zinc-200">
                         {totalCount} Tim
                     </strong>
                 </div>
