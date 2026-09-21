@@ -35,7 +35,7 @@ const CATEGORY_RULES_INFO = [
     {
         label: 'Kebijakan Hapus Kategori (§4.1 & DB Schema)',
         description:
-            'Kategori tidak dapat dihapus jika sudah memiliki tim terdaftar (ON DELETE RESTRICT). Gunakan tombol toggle status untuk menutup pendaftaran jika kategori sudah tidak dipakai.',
+            'Kategori hanya dapat dihapus jika berstatus nonaktif dan tidak memiliki tim terdaftar (ON DELETE RESTRICT). Gunakan tombol toggle status untuk menutup pendaftaran terlebih dahulu.',
     },
     {
         label: 'Prasyarat Drawing (§4.3)',
@@ -67,6 +67,8 @@ export function CategoriesManagementView() {
         handleSubmit,
         toggleActive,
         togglingCategoryId,
+        deleteCategory,
+        deletingCategoryId,
         toast,
         clearToast,
     } = useCategoriesManagement()
@@ -240,7 +242,9 @@ export function CategoriesManagementView() {
                 categories={categories}
                 isLoading={isLoading}
                 togglingCategoryId={togglingCategoryId}
+                deletingCategoryId={deletingCategoryId}
                 onToggleActive={toggleActive}
+                onDeleteCategory={deleteCategory}
                 onOpenAddModal={openAddModal}
             />
 

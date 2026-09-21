@@ -5,6 +5,7 @@ import { useQueryClient, useMutation } from '@tanstack/react-query'
 import {
     createCategoryAction,
     toggleCategoryActiveAction,
+    deleteCategoryAction,
 } from '@/app/admin/(protected)/categories/actions'
 import { categorySchema, CategoryInput } from '@/lib/validations/category'
 import { CategoryFormValues } from './useCategoryFormModal'
@@ -32,14 +33,17 @@ export function useCategoryMutations({
     // 1. Status Toggle Loading State
     const [togglingCategoryId, setTogglingCategoryId] = useState<string | null>(null)
 
-    // 2. Toast Notification State
+    // 2. Delete Category Loading State
+    const [deletingCategoryId, setDeletingCategoryId] = useState<string | null>(null)
+
+    // 3. Toast Notification State
     const [toast, setToast] = useState<ToastNotification | null>(null)
 
     const clearToast = useCallback(() => {
         setToast(null)
     }, [])
 
-    // 3. Submit Add Category Mutation
+    // 4. Submit Add Category Mutation
     const handleSubmit = useCallback(
         async (e: React.FormEvent<HTMLFormElement>) => {
             e.preventDefault()
@@ -98,7 +102,7 @@ export function useCategoryMutations({
         [values, queryClient, onSuccess, setFieldErrors, setIsSubmitting]
     )
 
-    // 4. Toggle Active Mutation
+    // 5. Toggle Active Mutation
     const toggleMutation = useMutation({
         mutationFn: async ({
             categoryId,
@@ -146,10 +150,51 @@ export function useCategoryMutations({
         [toggleMutation]
     )
 
+    // 6. Delete Category Mutation
+    const deleteMutation = useMutation({
+        mutationFn: async (categoryId: string) => {
+            setDeletingCategoryId(categoryId)
+            return await deleteCategoryAction(categoryId)
+        },
+        onSuccess: (res) => {
+            if (res.success) {
+                setToast({
+                    type: 'success',
+                    message: res.message,
+                })
+                queryClient.invalidateQueries({ queryKey: ['admin-categories'] })
+                queryClient.invalidateQueries({ queryKey: ['categories'] })
+            } else {
+                setToast({
+                    type: 'error',
+                    message: res.message,
+                })
+            }
+        },
+        onError: (err: Error) => {
+            setToast({
+                type: 'error',
+                message: err.message || 'Gagal menghapus kategori.',
+            })
+        },
+        onSettled: () => {
+            setDeletingCategoryId(null)
+        },
+    })
+
+    const deleteCategory = useCallback(
+        async (categoryId: string) => {
+            return await deleteMutation.mutateAsync(categoryId)
+        },
+        [deleteMutation]
+    )
+
     return {
         handleSubmit,
         toggleActive,
         togglingCategoryId,
+        deleteCategory,
+        deletingCategoryId,
         toast,
         clearToast,
     }

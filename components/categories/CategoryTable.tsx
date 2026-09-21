@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
     Users,
     Layers,
@@ -7,16 +7,20 @@ import {
     Loader2,
     Plus,
     Tag,
+    Trash2,
 } from 'lucide-react'
 import { Badge, Switch, Button, Card } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { CategoryWithTeamCount, PartnerType, CategoryLevel } from '@/types/domain'
+import { CategoryDeleteConfirmModal } from './CategoryDeleteConfirmModal'
 
 interface CategoryTableProps {
     categories: CategoryWithTeamCount[]
     isLoading: boolean
     togglingCategoryId: string | null
+    deletingCategoryId: string | null
     onToggleActive: (categoryId: string, currentStatus: boolean) => void
+    onDeleteCategory: (categoryId: string) => Promise<unknown> | void
     onOpenAddModal: () => void
 }
 
@@ -70,9 +74,14 @@ export function CategoryTable({
     categories,
     isLoading,
     togglingCategoryId,
+    deletingCategoryId,
     onToggleActive,
+    onDeleteCategory,
     onOpenAddModal,
 }: CategoryTableProps) {
+    const [categoryToDelete, setCategoryToDelete] =
+        useState<CategoryWithTeamCount | null>(null)
+
     if (isLoading) {
         return (
             <Card
@@ -146,6 +155,7 @@ export function CategoryTable({
                             const partnerInfo = formatPartnerType(category.partner_type)
                             const levelInfo = formatCategoryLevel(category.level)
                             const isToggling = togglingCategoryId === category.id
+                            const isDeleting = deletingCategoryId === category.id
                             const isActive = Boolean(category.is_active)
 
                             return (
@@ -204,7 +214,7 @@ export function CategoryTable({
                                         </span>
                                     </td>
 
-                                    {/* Status & Inline Switch Toggle */}
+                                    {/* Status & Inline Switch Toggle & Delete Button */}
                                     <td className="px-5 py-4">
                                         <div className="flex items-center justify-end gap-3">
                                             <div className="text-right">
@@ -238,7 +248,7 @@ export function CategoryTable({
                                                 <Switch
                                                     id={`switch-${category.id}`}
                                                     checked={isActive}
-                                                    disabled={isToggling}
+                                                    disabled={isToggling || isDeleting}
                                                     onChange={() =>
                                                         onToggleActive(category.id, isActive)
                                                     }
@@ -251,6 +261,40 @@ export function CategoryTable({
                                                     </div>
                                                 )}
                                             </div>
+
+                                            {/* Tombol Hapus Kategori */}
+                                            <button
+                                                type="button"
+                                                disabled={isActive || isDeleting}
+                                                onClick={() => {
+                                                    if (!isActive) {
+                                                        setCategoryToDelete(category)
+                                                    }
+                                                }}
+                                                title={
+                                                    isActive
+                                                        ? 'Nonaktifkan kategori dulu'
+                                                        : 'Hapus Kategori'
+                                                }
+                                                aria-label={
+                                                    isActive
+                                                        ? 'Kategori masih aktif'
+                                                        : `Hapus kategori ${category.name}`
+                                                }
+                                                className={cn(
+                                                    'p-2 rounded-xl border transition',
+                                                    'cursor-pointer',
+                                                    isActive
+                                                        ? 'border-zinc-800/60 bg-zinc-900/40 text-zinc-600 opacity-40 cursor-not-allowed'
+                                                        : 'border-zinc-800 bg-zinc-800/40 text-zinc-400 hover:text-rose-400 hover:border-rose-500/30 hover:bg-rose-500/10'
+                                                )}
+                                            >
+                                                {isDeleting ? (
+                                                    <Loader2 className="w-4 h-4 animate-spin text-rose-400" />
+                                                ) : (
+                                                    <Trash2 className="w-4 h-4" />
+                                                )}
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -266,6 +310,7 @@ export function CategoryTable({
                     const partnerInfo = formatPartnerType(category.partner_type)
                     const levelInfo = formatCategoryLevel(category.level)
                     const isToggling = togglingCategoryId === category.id
+                    const isDeleting = deletingCategoryId === category.id
                     const isActive = Boolean(category.is_active)
 
                     return (
@@ -309,15 +354,62 @@ export function CategoryTable({
                                     <Switch
                                         id={`switch-mobile-${category.id}`}
                                         checked={isActive}
-                                        disabled={isToggling}
+                                        disabled={isToggling || isDeleting}
                                         onChange={() => onToggleActive(category.id, isActive)}
                                     />
+                                    {/* Tombol Hapus Kategori (Mobile) */}
+                                    <button
+                                        type="button"
+                                        disabled={isActive || isDeleting}
+                                        onClick={() => {
+                                            if (!isActive) {
+                                                setCategoryToDelete(category)
+                                            }
+                                        }}
+                                        title={
+                                            isActive
+                                                ? 'Nonaktifkan kategori dulu'
+                                                : 'Hapus Kategori'
+                                        }
+                                        aria-label={
+                                            isActive
+                                                ? 'Kategori masih aktif'
+                                                : `Hapus kategori ${category.name}`
+                                        }
+                                        className={cn(
+                                            'p-2 rounded-xl border transition',
+                                            'cursor-pointer',
+                                            isActive
+                                                ? 'border-zinc-800/60 bg-zinc-900/40 text-zinc-600 opacity-40 cursor-not-allowed'
+                                                : 'border-zinc-800 bg-zinc-800/40 text-zinc-400 hover:text-rose-400 hover:border-rose-500/30 hover:bg-rose-500/10'
+                                        )}
+                                    >
+                                        {isDeleting ? (
+                                            <Loader2 className="w-4 h-4 animate-spin text-rose-400" />
+                                        ) : (
+                                            <Trash2 className="w-4 h-4" />
+                                        )}
+                                    </button>
                                 </div>
                             </div>
                         </Card>
                     )
                 })}
             </div>
+
+            {/* Modal Konfirmasi Hapus Kategori */}
+            <CategoryDeleteConfirmModal
+                isOpen={Boolean(categoryToDelete)}
+                categoryName={categoryToDelete?.name}
+                isDeleting={deletingCategoryId === categoryToDelete?.id}
+                onClose={() => setCategoryToDelete(null)}
+                onConfirm={async () => {
+                    if (categoryToDelete) {
+                        await onDeleteCategory(categoryToDelete.id)
+                        setCategoryToDelete(null)
+                    }
+                }}
+            />
         </div>
     )
 }

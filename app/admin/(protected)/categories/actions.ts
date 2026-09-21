@@ -174,3 +174,118 @@ export async function toggleCategoryActiveAction(
         }
     }
 }
+
+/**
+ * Server Action: Menghapus kategori turnamen permanen
+ * Business rule:
+ * - Kategori hanya bisa dihapus jika is_active = false
+ * - Tangkap FK constraint violation (ON DELETE RESTRICT dari tabel teams)
+ */
+export async function deleteCategoryAction(
+    categoryId: string
+): Promise<CategoryActionResponse> {
+    try {
+        const supabase = await createClient()
+
+        // 1. Verifikasi autentikasi admin
+        const {
+            data: { user },
+            error: authError,
+        } = await supabase.auth.getUser()
+
+        if (authError || !user) {
+            return {
+                success: false,
+                message: 'Akses ditolak. Silakan login sebagai admin terlebih dahulu.',
+            }
+        }
+
+        if (!categoryId) {
+            return {
+                success: false,
+                message: 'ID kategori tidak valid.',
+            }
+        }
+
+        // 2. Cek kategori & status aktif
+        const { data: category, error: fetchError } = await supabase
+            .from('categories')
+            .select('id, name, is_active')
+            .eq('id', categoryId)
+            .single()
+
+        if (fetchError || !category) {
+            return {
+                success: false,
+                message: 'Kategori tidak ditemukan.',
+            }
+        }
+
+        if (category.is_active) {
+            return {
+                success: false,
+                message: 'Nonaktifkan kategori terlebih dahulu sebelum menghapus.',
+            }
+        }
+
+        // 3. Cek apakah ada tim terdaftar (pre-check friendly message)
+        const { count: teamCount, error: countError } = await supabase
+            .from('teams')
+            .select('id', { count: 'exact', head: true })
+            .eq('category_id', categoryId)
+
+        if (!countError && teamCount && teamCount > 0) {
+            return {
+                success: false,
+                message: 'Kategori ini masih memiliki tim terdaftar, tidak dapat dihapus.',
+            }
+        }
+
+        // 4. Eksekusi penghapusan di database
+        const { error: deleteError } = await supabase
+            .from('categories')
+            .delete()
+            .eq('id', categoryId)
+
+        if (deleteError) {
+            console.error('Error deleting category:', deleteError)
+            if (
+                deleteError.code === '23503' ||
+                deleteError.message.includes('foreign key') ||
+                deleteError.message.includes('violates foreign key')
+            ) {
+                return {
+                    success: false,
+                    message:
+                        'Kategori ini masih memiliki tim terdaftar, tidak dapat dihapus.',
+                }
+            }
+            return {
+                success: false,
+                message: `Gagal menghapus kategori: ${deleteError.message}`,
+            }
+        }
+
+        // 5. Revalidate cache halaman yang bergantung pada categories
+        revalidatePath('/admin/categories')
+        revalidatePath('/register')
+        revalidatePath('/admin/teams')
+        revalidatePath('/admin/draw')
+        revalidatePath('/admin/schedule')
+        revalidatePath('/admin/bracket')
+
+        return {
+            success: true,
+            message: `Kategori "${category.name}" berhasil dihapus.`,
+        }
+    } catch (err: unknown) {
+        console.error('Unexpected error in deleteCategoryAction:', err)
+        const errMsg =
+            err instanceof Error ? err.message : 'Terjadi kesalahan sistem yang tidak terduga.'
+        return {
+            success: false,
+            message: errMsg,
+        }
+    }
+}
+

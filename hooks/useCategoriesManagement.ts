@@ -36,11 +36,13 @@ export function useCategoriesManagement() {
         applySuggestedName,
     } = useCategoryFormModal()
 
-    // 2. Mutations Hook (Create & Toggle Active)
+    // 2. Mutations Hook (Create, Toggle Active & Delete)
     const {
         handleSubmit,
         toggleActive,
         togglingCategoryId,
+        deleteCategory,
+        deletingCategoryId,
         toast,
         clearToast,
     } = useCategoryMutations({
@@ -80,9 +82,11 @@ export function useCategoriesManagement() {
         applySuggestedName,
         handleSubmit,
 
-        // Status toggle
+        // Status toggle & delete
         toggleActive,
         togglingCategoryId,
+        deleteCategory,
+        deletingCategoryId,
 
         // Toast notification
         toast,
