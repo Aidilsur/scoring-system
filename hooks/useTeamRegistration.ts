@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useRef, useTransition, useCallback } from 'react'
-import { registerTeamAction, RegisterActionResponse } from '@/app/register/actions'
-import {
-    teamRegistrationSchema,
-    validatePaymentProofFile,
-} from '@/lib/validations/team-registration'
+import { useCallback } from 'react'
+import { RegisterActionResponse } from '@/app/register/actions'
+import { validatePaymentProofFile } from '@/lib/validations/team-registration'
+import { useTeamRegistrationForm } from './useTeamRegistrationForm'
+import { usePaymentReceiptUpload } from './usePaymentReceiptUpload'
+import { useTeamRegistrationSubmit } from './useTeamRegistrationSubmit'
 
 interface UseTeamRegistrationReturn {
     isSubmitting: boolean
@@ -22,162 +22,92 @@ interface UseTeamRegistrationReturn {
 }
 
 /**
- * Custom hook untuk mengelola state dan business logic pendaftaran tim:
- * - Validasi Zod form & file
- * - Pemanggilan Server Action registerTeamAction
- * - Manajemen file preview & cleanup
- * - Error handling & loading state
+ * Thin composer hook untuk formulir pendaftaran tim.
+ * Meng-compose tiga hook bertanggung jawab tunggal:
+ * - useTeamRegistrationForm  : state errors form & validasi Zod
+ * - usePaymentReceiptUpload  : validasi file (mime, size) & preview
+ * - useTeamRegistrationSubmit: panggil Server Action, loading state, toast
  */
 export function useTeamRegistration(): UseTeamRegistrationReturn {
-    const [isSubmitting, startTransition] = useTransition()
-    const [response, setResponse] = useState<RegisterActionResponse | null>(null)
-    const [errors, setErrors] = useState<Record<string, string>>({})
-    const [selectedFile, setSelectedFile] = useState<File | null>(null)
-    const [filePreview, setFilePreview] = useState<string | null>(null)
+    const form = useTeamRegistrationForm()
+    const upload = usePaymentReceiptUpload()
 
-    const formRef = useRef<HTMLFormElement>(null)
-    const fileInputRef = useRef<HTMLInputElement>(null)
+    // Merge errors: form errors + file upload error
+    const mergedErrors: Record<string, string> = {
+        ...form.errors,
+        ...(upload.fileError ? { payment_proof: upload.fileError } : {}),
+    }
 
-    const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0] || null
-        if (!file) {
-            setSelectedFile(null)
-            setFilePreview(null)
-            return
-        }
+    // Saat file change dari upload hook, sync payment_proof error ke form errors jika ada
+    const handleFileChange = useCallback(
+        (e: React.ChangeEvent<HTMLInputElement>) => {
+            upload.handleFileChange(e)
+            // Hapus error payment_proof dari form jika file baru berhasil dipilih
+            // (error file dikelola langsung oleh upload.fileError, bukan form.errors)
+            form.setErrors((prev) => {
+                const next = { ...prev }
+                delete next.payment_proof
+                return next
+            })
+        },
+        [upload, form]
+    )
 
-        const fileCheck = validatePaymentProofFile(file)
-        if (!fileCheck.success && fileCheck.error) {
-            setErrors((prev) => ({ ...prev, payment_proof: fileCheck.error! }))
-            setSelectedFile(null)
-            setFilePreview(null)
-            return
-        }
-
-        // Hapus error bukti pembayaran jika file valid
-        setErrors((prev) => {
-            const next = { ...prev }
-            delete next.payment_proof
-            return next
-        })
-
-        setSelectedFile(file)
-
-        if (file.type.startsWith('image/')) {
-            const url = URL.createObjectURL(file)
-            setFilePreview(url)
-        } else {
-            setFilePreview(null)
-        }
-    }, [])
-
-    // Hapus file yang sudah dipilih
-    const removeFile = useCallback(() => {
-        setSelectedFile(null)
-        if (filePreview) {
-            URL.revokeObjectURL(filePreview)
-            setFilePreview(null)
-        }
-        if (fileInputRef.current) {
-            fileInputRef.current.value = ''
-        }
-    }, [filePreview])
-
-    // Reset notifikasi sukses jika ingin mendaftarkan tim lain
-    const resetSuccessState = useCallback(() => {
-        setResponse(null)
-        setErrors({})
-        setSelectedFile(null)
-        setFilePreview(null)
-    }, [])
+    const { isSubmitting, response, resetResponse, submit } = useTeamRegistrationSubmit({
+        onSuccess: () => {
+            form.formRef.current?.reset()
+            form.clearErrors()
+            upload.resetUpload()
+        },
+        onFieldErrors: (fieldErrors) => {
+            form.setErrors(fieldErrors)
+        },
+    })
 
     const handleSubmit = useCallback(
         async (e: React.FormEvent<HTMLFormElement>) => {
             e.preventDefault()
-            setResponse(null)
 
             const formData = new FormData(e.currentTarget)
 
-            // Fail-safe: jika browser FormData belum menangkap file tapi selectedFile ada di state
-            const currentFileInForm = formData.get('payment_proof')
-            const isFileEmpty =
-                !currentFileInForm ||
-                (currentFileInForm instanceof File && currentFileInForm.size === 0)
-            if (isFileEmpty && selectedFile) {
-                formData.set('payment_proof', selectedFile)
-            }
-
-            // Ekstrak nilai untuk validasi Zod client-side cepat
-            const rawValues = {
-                category_id: formData.get('category_id')?.toString() || '',
-                player1_name: formData.get('player1_name')?.toString() || '',
-                player2_name: formData.get('player2_name')?.toString() || '',
-                phone_number: formData.get('phone_number')?.toString() || '',
-                instagram_handle: formData.get('instagram_handle')?.toString() || '',
-                reclub_handle: formData.get('reclub_handle')?.toString() || '',
-            }
-
-            const zodResult = teamRegistrationSchema.safeParse(rawValues)
-            const fileResult = validatePaymentProofFile(formData.get('payment_proof'))
-
-            const validationErrors: Record<string, string> = {}
-
-            if (!zodResult.success) {
-                for (const issue of zodResult.error.issues) {
-                    const fieldName = issue.path[0]?.toString()
-                    if (fieldName && !validationErrors[fieldName]) {
-                        validationErrors[fieldName] = issue.message
+            await submit({
+                formData,
+                selectedFile: upload.selectedFile,
+                validateForm: form.validateFormData,
+                validateFile: validatePaymentProofFile,
+                onValidationErrors: (errors) => {
+                    // Pisahkan error file dari form errors
+                    const { payment_proof, ...formOnly } = errors
+                    form.setErrors(formOnly)
+                    if (payment_proof) {
+                        upload.clearFileError()
+                        // Masukkan payment_proof ke form.errors agar merged ke mergedErrors
+                        form.setErrors((prev) => ({ ...prev, payment_proof }))
                     }
-                }
-            }
-
-            if (!fileResult.success && fileResult.error) {
-                validationErrors['payment_proof'] = fileResult.error
-            }
-
-            if (Object.keys(validationErrors).length > 0) {
-                setErrors(validationErrors)
-                const firstErrorField = Object.keys(validationErrors)[0]
-                const el = document.getElementById(firstErrorField)
-                el?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-                return
-            }
-
-            setErrors({})
-
-            // Jalankan Server Action
-            startTransition(async () => {
-                const res = await registerTeamAction(null, formData)
-                setResponse(res)
-
-                if (res.success) {
-                    formRef.current?.reset()
-                    setSelectedFile(null)
-                    if (filePreview) {
-                        URL.revokeObjectURL(filePreview)
-                        setFilePreview(null)
-                    }
-                    if (fileInputRef.current) {
-                        fileInputRef.current.value = ''
-                    }
-                } else if (res.errors) {
-                    setErrors(res.errors)
-                }
+                },
+                scrollToFirstError: form.scrollToFirstError,
             })
         },
-        [selectedFile, filePreview]
+        [submit, upload, form]
     )
+
+    // Reset semua state (sukses → daftar tim lain)
+    const resetSuccessState = useCallback(() => {
+        resetResponse()
+        form.clearErrors()
+        upload.resetUpload()
+    }, [resetResponse, form, upload])
 
     return {
         isSubmitting,
         response,
-        errors,
-        selectedFile,
-        filePreview,
-        formRef,
-        fileInputRef,
+        errors: mergedErrors,
+        selectedFile: upload.selectedFile,
+        filePreview: upload.filePreview,
+        formRef: form.formRef,
+        fileInputRef: upload.fileInputRef,
         handleFileChange,
-        removeFile,
+        removeFile: upload.removeFile,
         resetSuccessState,
         handleSubmit,
     }
