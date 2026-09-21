@@ -1,94 +1,76 @@
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useCallback } from 'react'
+import { useCategoryScheduleQuery } from './useScheduleQuery'
 import {
-    useCategoriesWithGroupsQuery,
-    useCategoryScheduleQuery,
-    CATEGORY_SCHEDULE_QUERY_KEY,
-} from './useScheduleQuery'
+    useScheduleFilters,
+    ScheduleGenerationMode,
+} from './useScheduleFilters'
 import {
-    generateCategoryScheduleAction,
-    generateAllCategoriesScheduleAction,
-    resetAllGroupSchedulesAction,
-} from '@/app/admin/(protected)/schedule/actions'
-import { showToast } from '@/lib/toast'
+    useScheduleGenerationForm,
+    UnscheduledWarningInfo,
+} from './useScheduleGenerationForm'
+import {
+    useScheduleMutations,
+    ScheduleToast,
+} from './useScheduleMutations'
 
-export type ScheduleGenerationMode = 'step_by_step' | 'parallel'
+export type { ScheduleGenerationMode, ScheduleToast, UnscheduledWarningInfo }
 
-export interface ScheduleToast {
-    type: 'success' | 'error' | 'warning'
-    message: string
-}
-
-interface UnscheduledWarningInfo {
-    count: number
-    matchIds: string[]
-}
-
+/**
+ * useScheduleManagement
+ * Thin composer hook yang meng-orchestrate:
+ * 1. Form state parameter penjadwalan & warning (useScheduleGenerationForm)
+ * 2. Filter & navigasi kategori (useScheduleFilters)
+ * 3. Query data jadwal pertandingan (useCategoryScheduleQuery)
+ * 4. Mutasi generate & reset jadwal (useScheduleMutations)
+ *
+ * Mematuhi docs/component-architecture.md §K.
+ */
 export function useScheduleManagement(initialCategoryId?: string) {
-    const queryClient = useQueryClient()
-
-    // 1. Mode Penjadwalan: 'step_by_step' (default) vs 'parallel'
-    const [scheduleMode, setScheduleModeState] = useState<ScheduleGenerationMode>('step_by_step')
-
-    // 2. Kategori yang dipilih untuk mode bertahap (single category)
-    const [singleCategoryId, setSingleCategoryId] = useState<string>(
-        initialCategoryId && initialCategoryId !== 'ALL' ? initialCategoryId : ''
-    )
-
-    // 3. State dialog konfirmasi (single regenerate, all regenerate, reset)
-    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false)
-    const [confirmModalMode, setConfirmModalMode] = useState<'single' | 'all' | 'reset'>('single')
-
-    // 4. State notifikasi toast
-    const [toast, setToast] = useState<ScheduleToast | null>(null)
-
-    // 5. State warning khusus unscheduled matches
-    const [unscheduledWarning, setUnscheduledWarning] =
-        useState<UnscheduledWarningInfo | null>(null)
-
-    const clearToast = useCallback(() => {
-        setToast(null)
-    }, [])
-
-    const clearUnscheduledWarning = useCallback(() => {
-        setUnscheduledWarning(null)
-    }, [])
-
-    // 6. Query semua kategori yang sudah memiliki groups hasil draw
+    // 1. Generation form state (mode, modal, warning)
     const {
-        data: categories = [],
-        isLoading: isLoadingCategories,
-        isError: isCategoriesError,
-        error: categoriesError,
-    } = useCategoriesWithGroupsQuery()
+        scheduleMode,
+        setScheduleModeState,
+        unscheduledWarning,
+        setUnscheduledWarning,
+        clearUnscheduledWarning,
+        isConfirmModalOpen,
+        setIsConfirmModalOpen,
+        confirmModalMode,
+        setConfirmModalMode,
+    } = useScheduleGenerationForm()
 
-    // Auto-select kategori pertama saat categories berhasil dimuat
-    useEffect(() => {
-        if (!singleCategoryId && categories.length > 0) {
-            setSingleCategoryId(categories[0].id)
-        }
-    }, [categories, singleCategoryId])
+    // 2. Filters & category navigation
+    const {
+        categories,
+        isLoadingCategories,
+        isCategoriesError,
+        categoriesError,
+        singleCategoryId,
+        setSingleCategoryId,
+        selectedCategoryId,
+        setSelectedCategoryId,
+        selectedCategory,
+        isAllMode,
+    } = useScheduleFilters({ initialCategoryId, scheduleMode })
 
-    // ID kategori aktif berdasarkan mode saat ini
-    const selectedCategoryId = scheduleMode === 'parallel' ? 'ALL' : singleCategoryId
-
+    // Wire handler setScheduleMode dengan auto-select kategori pertama
     const setScheduleMode = useCallback(
         (mode: ScheduleGenerationMode) => {
             setScheduleModeState(mode)
-            if (mode === 'step_by_step' && !singleCategoryId && categories.length > 0) {
+            if (
+                mode === 'step_by_step' &&
+                !singleCategoryId &&
+                categories.length > 0
+            ) {
                 setSingleCategoryId(categories[0].id)
             }
         },
-        [categories, singleCategoryId]
+        [categories, singleCategoryId, setSingleCategoryId, setScheduleModeState]
     )
 
-    const setSelectedCategoryId = useCallback((id: string) => {
-        setSingleCategoryId(id)
-    }, [])
-
-    // 7. Query data jadwal untuk kategori terpilih (atau 'ALL' untuk global)
+    // 3. Query data jadwal untuk kategori terpilih (atau 'ALL' untuk global)
     const {
         data: scheduleData,
         isLoading: isLoadingSchedule,
@@ -96,212 +78,27 @@ export function useScheduleManagement(initialCategoryId?: string) {
         refetch: refetchSchedule,
     } = useCategoryScheduleQuery(selectedCategoryId)
 
-    // 8. Mutation untuk generate per-kategori (Generate Bertahap)
-    const { mutateAsync: runGenerateSchedule, isPending: isGeneratingSingle } = useMutation({
-        mutationFn: async (catId: string) => {
-            return await generateCategoryScheduleAction(catId)
-        },
-        onSuccess: (result) => {
-            queryClient.invalidateQueries({ queryKey: CATEGORY_SCHEDULE_QUERY_KEY })
-
-            if (result.success) {
-                if (result.unscheduledCount && result.unscheduledCount > 0) {
-                    setToast({
-                        type: 'warning',
-                        message: result.message,
-                    })
-                    showToast.warning(result.message)
-                    setUnscheduledWarning({
-                        count: result.unscheduledCount,
-                        matchIds: result.unscheduledMatchIds || [],
-                    })
-                } else {
-                    setToast({
-                        type: 'success',
-                        message: result.message,
-                    })
-                    showToast.success(result.message)
-                    setUnscheduledWarning(null)
-                }
-            } else {
-                setToast({
-                    type: 'error',
-                    message: result.message,
-                })
-                showToast.error(result.message)
-            }
-        },
-        onError: (err: unknown) => {
-            const errMsg =
-                err instanceof Error ? err.message : 'Terjadi kesalahan sistem saat membuat jadwal.'
-            setToast({
-                type: 'error',
-                message: errMsg,
-            })
-            showToast.error(errMsg)
-        },
-    })
-
-    // 9. Mutation untuk generate SEMUA kategori secara paralel
-    const { mutateAsync: runGenerateAllSchedule, isPending: isGeneratingAll } = useMutation({
-        mutationFn: async () => {
-            return await generateAllCategoriesScheduleAction()
-        },
-        onSuccess: (result) => {
-            queryClient.invalidateQueries({ queryKey: CATEGORY_SCHEDULE_QUERY_KEY })
-
-            if (result.success) {
-                if (result.unscheduledCount && result.unscheduledCount > 0) {
-                    setToast({
-                        type: 'warning',
-                        message: result.message,
-                    })
-                    showToast.warning(result.message)
-                    setUnscheduledWarning({
-                        count: result.unscheduledCount,
-                        matchIds: result.unscheduledMatchIds || [],
-                    })
-                } else {
-                    setToast({
-                        type: 'success',
-                        message: result.message,
-                    })
-                    showToast.success(result.message)
-                    setUnscheduledWarning(null)
-                }
-            } else {
-                setToast({
-                    type: 'error',
-                    message: result.message,
-                })
-                showToast.error(result.message)
-            }
-        },
-        onError: (err: unknown) => {
-            const errMsg =
-                err instanceof Error
-                    ? err.message
-                    : 'Terjadi kesalahan sistem saat membuat jadwal paralel.'
-            setToast({
-                type: 'error',
-                message: errMsg,
-            })
-            showToast.error(errMsg)
-        },
-    })
-
-    // 10. Mutation untuk Reset Semua Jadwal Pertandingan Babak Grup
-    const { mutateAsync: runResetAllSchedules, isPending: isResetting } = useMutation({
-        mutationFn: async () => {
-            return await resetAllGroupSchedulesAction()
-        },
-        onSuccess: (result) => {
-            queryClient.invalidateQueries({ queryKey: CATEGORY_SCHEDULE_QUERY_KEY })
-
-            if (result.success) {
-                setToast({
-                    type: 'success',
-                    message: result.message,
-                })
-                showToast.success(result.message)
-                setUnscheduledWarning(null)
-            } else {
-                setToast({
-                    type: 'error',
-                    message: result.message,
-                })
-                showToast.error(result.message)
-            }
-        },
-        onError: (err: unknown) => {
-            const errMsg =
-                err instanceof Error ? err.message : 'Terjadi kesalahan sistem saat mereset jadwal.'
-            setToast({
-                type: 'error',
-                message: errMsg,
-            })
-            showToast.error(errMsg)
-        },
-    })
-
-    // 11. Action Handlers
-    const handleTriggerSchedule = useCallback(async () => {
-        if (!singleCategoryId) return
-
-        if (scheduleData?.hasExistingSchedule) {
-            setConfirmModalMode('single')
-            setIsConfirmModalOpen(true)
-            return
-        }
-
-        clearToast()
-        clearUnscheduledWarning()
-        await runGenerateSchedule(singleCategoryId)
-    }, [
+    // 4. Mutations & Action Handlers
+    const {
+        isGenerating,
+        isGeneratingSingle,
+        isGeneratingAll,
+        isResetting,
+        toast,
+        clearToast,
+        handleTriggerSchedule,
+        handleTriggerAllSchedule,
+        handleTriggerReset,
+        handleConfirmRegenerate,
+    } = useScheduleMutations({
         singleCategoryId,
-        scheduleData?.hasExistingSchedule,
-        clearToast,
-        clearUnscheduledWarning,
-        runGenerateSchedule,
-    ])
-
-    const handleTriggerAllSchedule = useCallback(async () => {
-        if (scheduleData?.hasExistingSchedule) {
-            setConfirmModalMode('all')
-            setIsConfirmModalOpen(true)
-            return
-        }
-
-        clearToast()
-        clearUnscheduledWarning()
-        await runGenerateAllSchedule()
-    }, [
-        scheduleData?.hasExistingSchedule,
-        clearToast,
-        clearUnscheduledWarning,
-        runGenerateAllSchedule,
-    ])
-
-    const handleTriggerReset = useCallback(() => {
-        setConfirmModalMode('reset')
-        setIsConfirmModalOpen(true)
-    }, [])
-
-    const handleConfirmModalAction = useCallback(async () => {
-        setIsConfirmModalOpen(false)
-        clearToast()
-        clearUnscheduledWarning()
-
-        if (confirmModalMode === 'reset') {
-            await runResetAllSchedules()
-        } else if (confirmModalMode === 'all') {
-            await runGenerateAllSchedule()
-        } else if (singleCategoryId) {
-            await runGenerateSchedule(singleCategoryId)
-        }
-    }, [
+        scheduleData,
         confirmModalMode,
-        singleCategoryId,
-        clearToast,
+        setConfirmModalMode,
+        setIsConfirmModalOpen,
+        setUnscheduledWarning,
         clearUnscheduledWarning,
-        runResetAllSchedules,
-        runGenerateAllSchedule,
-        runGenerateSchedule,
-    ])
-
-    const isAllMode = scheduleMode === 'parallel'
-    const selectedCategory = isAllMode
-        ? {
-              id: 'ALL',
-              name: 'Semua Kategori (Jadwal Gabungan Paralel)',
-              partner_type: 'fix' as const,
-              level: 'bronze' as const,
-              is_active: true,
-              created_at: '',
-          }
-        : categories.find((c) => c.id === singleCategoryId)
-
-    const isGenerating = isGeneratingSingle || isGeneratingAll || isResetting
+    })
 
     return {
         scheduleMode,
@@ -333,6 +130,6 @@ export function useScheduleManagement(initialCategoryId?: string) {
         handleTriggerSchedule,
         handleTriggerAllSchedule,
         handleTriggerReset,
-        handleConfirmRegenerate: handleConfirmModalAction,
+        handleConfirmRegenerate,
     }
 }
