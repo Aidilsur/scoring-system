@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { checkGroupStageComplete } from './checkGroupStageComplete'
+import { checkGroupStageComplete } from '../checkGroupStageComplete'
 
 describe('checkGroupStageComplete', () => {
     it("1. Semua match round='group' berstatus 'completed' → true", () => {

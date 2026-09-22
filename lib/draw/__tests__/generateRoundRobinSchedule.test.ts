@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { generateRoundRobinSchedule } from './generateRoundRobinSchedule'
+import { generateRoundRobinSchedule } from '../generateRoundRobinSchedule'
 
 describe('generateRoundRobinSchedule', () => {
     it("1. generateRoundRobinSchedule(['A','B','C','D']) → menghasilkan 6 pasangan tanpa duplikat", () => {

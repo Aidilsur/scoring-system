@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { generateGroupDraw } from './generateGroupDraw'
+import { generateGroupDraw } from '../generateGroupDraw'
 import type { Team } from '@/types/domain'
 
 function createMockTeams(count: number): Team[] {

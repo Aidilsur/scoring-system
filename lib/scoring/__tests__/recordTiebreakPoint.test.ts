@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { recordTiebreakPoint } from './recordTiebreakPoint'
+import { recordTiebreakPoint } from '../recordTiebreakPoint'
 
 describe('recordTiebreakPoint', () => {
     describe('Kelompok 1 - requireWinBy2 = true (tiebreak fase grup)', () => {

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { checkSemifinalComplete } from './checkSemifinalComplete'
+import { checkSemifinalComplete } from '../checkSemifinalComplete'
 
 describe('checkSemifinalComplete', () => {
     it("1. Tepat 2 match round='semifinal', keduanya completed → true", () => {

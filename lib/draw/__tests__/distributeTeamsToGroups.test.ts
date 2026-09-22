@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { distributeTeamsToGroups } from './distributeTeamsToGroups'
+import { distributeTeamsToGroups } from '../distributeTeamsToGroups'
 
 describe('distributeTeamsToGroups', () => {
     describe('Habis dibagi rata', () => {

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { generateFinalPairing } from './generateFinalPairing'
+import { generateFinalPairing } from '../generateFinalPairing'
 
 describe('generateFinalPairing', () => {
     it("1. 2 match semifinal valid, thirdPlaceEnabled=true", () => {

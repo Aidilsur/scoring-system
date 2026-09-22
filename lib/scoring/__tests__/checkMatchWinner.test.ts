@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { checkMatchWinner } from './checkMatchWinner'
+import { checkMatchWinner } from '../checkMatchWinner'
 
 describe('checkMatchWinner', () => {
     it("1. round='group', gamesA=3, gamesB=1 → winner: 'team_a'", () => {

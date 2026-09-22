@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { shouldStartTiebreakGame } from './shouldStartTiebreakGame'
+import { shouldStartTiebreakGame } from '../shouldStartTiebreakGame'
 
 describe('shouldStartTiebreakGame', () => {
     it("1. round='group', gamesA=2, gamesB=2 → true", () => {

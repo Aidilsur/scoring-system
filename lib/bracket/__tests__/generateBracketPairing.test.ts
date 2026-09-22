@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { generateBracketPairing } from './generateBracketPairing'
+import { generateBracketPairing } from '../generateBracketPairing'
 
 describe('generateBracketPairing', () => {
     it("1. 2 grup dengan format {winner, runnerUp} → pola silang A1xB2, B1xA2", () => {

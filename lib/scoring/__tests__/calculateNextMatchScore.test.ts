@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { calculateNextMatchScore } from './calculateNextMatchScore'
+import { calculateNextMatchScore } from '../calculateNextMatchScore'
 import type { Match } from '@/types/domain'
 
 function createMockMatch(overrides?: Partial<Match>): Match {

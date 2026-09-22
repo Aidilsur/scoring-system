@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { recordPoint } from './recordPoint'
-import type { RegularGameState } from './types'
+import { recordPoint } from '../recordPoint'
+import type { RegularGameState } from '../types'
 
 describe('recordPoint', () => {
     describe('Kelompok 1 - Progresi Poin Normal (belum deuce)', () => {
