@@ -29,6 +29,7 @@ export interface ActiveCategory {
 
 interface TournamentRegistrationFormProps {
     categories: ActiveCategory[]
+    defaultCategoryId?: string
 }
 
 interface RegistrationNextStep {
@@ -60,6 +61,7 @@ const REGISTRATION_NEXT_STEPS: readonly RegistrationNextStep[] = [
  */
 export default function TournamentRegistrationForm({
     categories,
+    defaultCategoryId,
 }: TournamentRegistrationFormProps) {
     const {
         isSubmitting,
@@ -140,7 +142,7 @@ export default function TournamentRegistrationForm({
                     name="category_id"
                     label="Kategori Kelas Turnamen"
                     required
-                    defaultValue=""
+                    defaultValue={defaultCategoryId || ""}
                     disabled={isSubmitting || categories.length === 0}
                     error={errors.category_id}
                     helperText="Pilih kategori yang sesuai dengan pasangan dan skill level Anda."

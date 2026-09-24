@@ -1,6 +1,7 @@
 import React from 'react'
 import { HeroSection } from './HeroSection'
 import { HomeSectionPlaceholder } from './HomeSectionPlaceholder'
+import { HomeCategoriesSection } from './HomeCategoriesSection'
 import { HomeScrollNavigator, HomeSectionItem } from './HomeScrollNavigator'
 
 export interface HomeViewProps {
@@ -57,16 +58,8 @@ export function HomeView({ tournamentName }: HomeViewProps) {
             {/* Section 1: Hero */}
             <HeroSection tournamentName={tournamentName} />
 
-            {/* Section 2: Categories (Placeholder) */}
-            <HomeSectionPlaceholder
-                id="categories"
-                sectionIndex={2}
-                totalSections={5}
-                title="Tournament Categories"
-                category="Registration Phase"
-                description="Browse competition brackets organized by team type (Fix/Mix) and player skill levels (Beginner/Bronze)."
-                nextSectionId="tournament-info"
-            />
+            {/* Section 2: Categories */}
+            <HomeCategoriesSection />
 
             {/* Section 3: Tournament Info (Placeholder) */}
             <HomeSectionPlaceholder

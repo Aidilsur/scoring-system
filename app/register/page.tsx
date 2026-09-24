@@ -15,7 +15,9 @@ export const metadata: Metadata = {
 
 export const dynamic = 'force-dynamic'
 
-export default async function RegisterPage() {
+export default async function RegisterPage(props: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
+    const searchParams = await props.searchParams;
+    const defaultCategoryId = typeof searchParams.category === 'string' ? searchParams.category : undefined;
     const supabase = await createClient()
 
     const { data, error } = await supabase
@@ -71,7 +73,7 @@ export default async function RegisterPage() {
                 )}
 
                 {/* Client Component Form */}
-                <TournamentRegistrationForm categories={categories} />
+                <TournamentRegistrationForm categories={categories} defaultCategoryId={defaultCategoryId} />
 
                 {/* Footer Notes */}
                 <div className="mt-8 text-center text-xs text-zinc-500 space-y-1">
