@@ -1,5 +1,6 @@
 export * from './HeroSection'
 export * from './HomeSectionPlaceholder'
 export * from './HomeCategoriesSection'
+export * from './HomeHowItWorksSection'
 export * from './HomeScrollNavigator'
 export * from './HomeView'

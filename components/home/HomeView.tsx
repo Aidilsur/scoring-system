@@ -2,6 +2,7 @@ import React from 'react'
 import { HeroSection } from './HeroSection'
 import { HomeSectionPlaceholder } from './HomeSectionPlaceholder'
 import { HomeCategoriesSection } from './HomeCategoriesSection'
+import { HomeHowItWorksSection } from './HomeHowItWorksSection'
 import { HomeScrollNavigator, HomeSectionItem } from './HomeScrollNavigator'
 
 export interface HomeViewProps {
@@ -72,16 +73,8 @@ export function HomeView({ tournamentName }: HomeViewProps) {
                 nextSectionId="how-it-works"
             />
 
-            {/* Section 4: How It Works (Placeholder) */}
-            <HomeSectionPlaceholder
-                id="how-it-works"
-                sectionIndex={4}
-                totalSections={5}
-                title="How It Works"
-                category="Sport Tech Flow"
-                description="From participant registration and admin verification, to automated group draws and live TV scoring."
-                nextSectionId="footer"
-            />
+            {/* Section 4: How It Works */}
+            <HomeHowItWorksSection />
 
             {/* Section 5: Footer & Links (Placeholder) */}
             <HomeSectionPlaceholder
