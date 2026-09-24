@@ -231,6 +231,9 @@ export async function saveTournamentSettingsAction(
                     match_duration_minutes: validData.match_duration_minutes,
                     daily_start_time: validData.daily_start_time,
                     daily_end_time: validData.daily_end_time,
+                    event_date: validData.event_date?.trim() || null,
+                    venue_name: validData.venue_name?.trim() || null,
+                    venue_address: validData.venue_address?.trim() || null,
                     updated_at: new Date().toISOString(),
                 })
                 .eq('id', targetId)
@@ -258,6 +261,9 @@ export async function saveTournamentSettingsAction(
                     match_duration_minutes: validData.match_duration_minutes,
                     daily_start_time: validData.daily_start_time,
                     daily_end_time: validData.daily_end_time,
+                    event_date: validData.event_date?.trim() || null,
+                    venue_name: validData.venue_name?.trim() || null,
+                    venue_address: validData.venue_address?.trim() || null,
                     status: 'draft',
                 })
                 .select()
@@ -306,3 +312,5 @@ export async function saveTournamentSettingsAction(
         }
     }
 }
+
+export const updateTournamentSettingsAction = saveTournamentSettingsAction

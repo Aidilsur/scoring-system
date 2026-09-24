@@ -56,6 +56,9 @@ export interface TournamentSettings {
     daily_start_time: string
     daily_end_time: string
     status: TournamentStatus
+    event_date?: string | null
+    venue_name?: string | null
+    venue_address?: string | null
     created_at?: string
     updated_at?: string
 }

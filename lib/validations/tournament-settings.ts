@@ -53,6 +53,10 @@ export const tournamentSettingsSchema = z.object({
             message: 'Format jam selesai tidak valid (HH:mm)',
         })
         .default('18:00'),
+
+    event_date: z.string().nullable().optional(),
+    venue_name: z.string().nullable().optional(),
+    venue_address: z.string().nullable().optional(),
 }).refine(
     (data) => {
         if (data.daily_start_time && data.daily_end_time) {

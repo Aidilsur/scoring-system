@@ -371,6 +371,7 @@ export type Database = {
           created_at: string
           daily_end_time: string
           daily_start_time: string
+          event_date: string | null
           golden_point_enabled: boolean
           id: string
           match_duration_minutes: number
@@ -380,11 +381,14 @@ export type Database = {
           team_per_group: number
           third_place_enabled: boolean
           updated_at: string
+          venue_address: string | null
+          venue_name: string | null
         }
         Insert: {
           created_at?: string
           daily_end_time?: string
           daily_start_time?: string
+          event_date?: string | null
           golden_point_enabled?: boolean
           id?: string
           match_duration_minutes?: number
@@ -394,11 +398,14 @@ export type Database = {
           team_per_group?: number
           third_place_enabled?: boolean
           updated_at?: string
+          venue_address?: string | null
+          venue_name?: string | null
         }
         Update: {
           created_at?: string
           daily_end_time?: string
           daily_start_time?: string
+          event_date?: string | null
           golden_point_enabled?: boolean
           id?: string
           match_duration_minutes?: number
@@ -408,6 +415,8 @@ export type Database = {
           team_per_group?: number
           third_place_enabled?: boolean
           updated_at?: string
+          venue_address?: string | null
+          venue_name?: string | null
         }
         Relationships: []
       }

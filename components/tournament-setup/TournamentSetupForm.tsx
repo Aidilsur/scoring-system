@@ -100,62 +100,113 @@ export function TournamentSetupForm({
                     )}
                 </div>
 
-                {/* Field 1: Nama Turnamen */}
-                <TextInput
-                    id="tournament-name"
-                    name="name"
-                    label="Nama Turnamen"
-                    required
-                    placeholder="Contoh: Jakarta Padel Open 2026"
-                    value={values.name}
-                    error={fieldErrors.name}
-                    helperText="Nama resmi turnamen yang akan tampil pada banner display dan pendaftaran."
-                    onChange={(e) => onFieldChange('name', e.target.value)}
-                    disabled={isSubmitting}
-                />
+                {/* Section 1: Informasi Publik Turnamen */}
+                <div className="space-y-4">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-lime-400">
+                        Informasi Publik Turnamen
+                    </h3>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
-                    {/* Field 2: Tim per Grup */}
+                    {/* Field 1: Nama Turnamen */}
                     <TextInput
-                        id="team-per-group"
-                        name="team_per_group"
-                        type="number"
-                        label="Jumlah Tim per Grup"
+                        id="tournament-name"
+                        name="name"
+                        label="Nama Turnamen"
                         required
-                        min={2}
-                        max={16}
-                        value={values.team_per_group}
-                        error={fieldErrors.team_per_group}
-                        helperText="Standar format round robin adalah 4 tim per grup."
-                        onChange={(e) =>
-                            onFieldChange(
-                                'team_per_group',
-                                parseInt(e.target.value, 10) || 0
-                            )
-                        }
+                        placeholder="Contoh: Jakarta Padel Open 2026"
+                        value={values.name}
+                        error={fieldErrors.name}
+                        helperText="Nama resmi turnamen yang akan tampil pada banner display dan pendaftaran."
+                        onChange={(e) => onFieldChange('name', e.target.value)}
                         disabled={isSubmitting}
                     />
 
-                    {/* Field 3: Jumlah Lapangan / Court */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-1">
+                        <TextInput
+                            id="event-date"
+                            name="event_date"
+                            type="date"
+                            label="Tanggal Pelaksanaan"
+                            value={values.event_date}
+                            error={fieldErrors.event_date}
+                            helperText="Opsional: Tanggal pelaksanaan turnamen."
+                            onChange={(e) => onFieldChange('event_date', e.target.value)}
+                            disabled={isSubmitting}
+                        />
+                        <TextInput
+                            id="venue-name"
+                            name="venue_name"
+                            label="Nama Venue / Lokasi"
+                            placeholder="Contoh: Padel Club Jakarta"
+                            value={values.venue_name}
+                            error={fieldErrors.venue_name}
+                            helperText="Opsional: Nama tempat turnamen berlangsung."
+                            onChange={(e) => onFieldChange('venue_name', e.target.value)}
+                            disabled={isSubmitting}
+                        />
+                    </div>
+
                     <TextInput
-                        id="number-of-courts"
-                        name="number_of_courts"
-                        type="number"
-                        label="Jumlah Court / Lapangan"
-                        required
-                        min={1}
-                        max={30}
-                        value={values.number_of_courts}
-                        error={fieldErrors.number_of_courts}
-                        helperText="Jumlah court aktif untuk penjadwalan match & tampilan layar TV."
-                        onChange={(e) =>
-                            onFieldChange(
-                                'number_of_courts',
-                                parseInt(e.target.value, 10) || 0
-                            )
-                        }
+                        id="venue-address"
+                        name="venue_address"
+                        label="Alamat Venue Lengkap"
+                        placeholder="Contoh: Jl. Sudirman No. 123, Jakarta"
+                        value={values.venue_address}
+                        error={fieldErrors.venue_address}
+                        helperText="Opsional: Alamat lengkap tempat turnamen."
+                        onChange={(e) => onFieldChange('venue_address', e.target.value)}
                         disabled={isSubmitting}
                     />
+                </div>
+
+                {/* Section 2: Format Turnamen & Lapangan */}
+                <div className="pt-5 border-t border-zinc-800 space-y-4">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-lime-400">
+                        Format Turnamen &amp; Lapangan
+                    </h3>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        {/* Field 2: Tim per Grup */}
+                        <TextInput
+                            id="team-per-group"
+                            name="team_per_group"
+                            type="number"
+                            label="Jumlah Tim per Grup"
+                            required
+                            min={2}
+                            max={16}
+                            value={values.team_per_group}
+                            error={fieldErrors.team_per_group}
+                            helperText="Standar format round robin adalah 4 tim per grup."
+                            onChange={(e) =>
+                                onFieldChange(
+                                    'team_per_group',
+                                    parseInt(e.target.value, 10) || 0
+                                )
+                            }
+                            disabled={isSubmitting}
+                        />
+
+                        {/* Field 3: Jumlah Lapangan / Court */}
+                        <TextInput
+                            id="number-of-courts"
+                            name="number_of_courts"
+                            type="number"
+                            label="Jumlah Court / Lapangan"
+                            required
+                            min={1}
+                            max={30}
+                            value={values.number_of_courts}
+                            error={fieldErrors.number_of_courts}
+                            helperText="Jumlah court aktif untuk penjadwalan match & tampilan layar TV."
+                            onChange={(e) =>
+                                onFieldChange(
+                                    'number_of_courts',
+                                    parseInt(e.target.value, 10) || 0
+                                )
+                            }
+                            disabled={isSubmitting}
+                        />
+                    </div>
                 </div>
 
                 {/* Section Baru: Jadwal & Waktu Pertandingan */}

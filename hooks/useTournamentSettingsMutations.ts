@@ -22,6 +22,9 @@ export interface TournamentFormValues {
     match_duration_minutes: number
     daily_start_time: string
     daily_end_time: string
+    event_date: string
+    venue_name: string
+    venue_address: string
 }
 
 export interface UseTournamentSettingsMutationsOptions {
@@ -46,6 +49,9 @@ export function mapSettingsToFormValues(data: TournamentSettings): TournamentFor
         daily_end_time: data.daily_end_time
             ? data.daily_end_time.slice(0, 5)
             : '18:00',
+        event_date: data.event_date || '',
+        venue_name: data.venue_name || '',
+        venue_address: data.venue_address || '',
     }
 }
 

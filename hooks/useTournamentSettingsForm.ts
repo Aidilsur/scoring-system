@@ -23,6 +23,9 @@ export const DEFAULT_FORM_VALUES: TournamentFormValues = {
     match_duration_minutes: 45,
     daily_start_time: '08:00',
     daily_end_time: '18:00',
+    event_date: '',
+    venue_name: '',
+    venue_address: '',
 }
 
 /**
